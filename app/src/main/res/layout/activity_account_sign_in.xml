@@ -86,13 +86,6 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="30dp" />
 
-    <!-- Background Image -->
-    <ImageView
-        android:id="@+id/google_image"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop"/>
-
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/google_button"
         android:layout_width="match_parent"

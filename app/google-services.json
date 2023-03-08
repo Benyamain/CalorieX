@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "1057075750906",
+    "project_id": "caloriex-ecbd0",
+    "storage_bucket": "caloriex-ecbd0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1057075750906:android:bc00258d9a369d542ce643",
+        "android_client_info": {
+          "package_name": "benyacoob.caloriex"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1057075750906-9mkasmqqvrdo3287l5vn59g5sfplq0kj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCTeDlt1u-c2P0OsjZAYzO7hLRWCHZN5kw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1057075750906-9mkasmqqvrdo3287l5vn59g5sfplq0kj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1057075750906:android:a78d51568ea6deab2ce643",
+        "android_client_info": {
+          "package_name": "com.example.caloriex"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1057075750906-9mkasmqqvrdo3287l5vn59g5sfplq0kj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCTeDlt1u-c2P0OsjZAYzO7hLRWCHZN5kw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1057075750906-9mkasmqqvrdo3287l5vn59g5sfplq0kj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
