@@ -1,0 +1,188 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#2D2A3E">
+
+    <!-- Create Account Title -->
+    <TextView
+        android:id="@+id/energy_settings_title_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Energy Settings"
+        android:textColor="@color/white"
+        android:textAllCaps="true"
+        android:fontFamily="sans-serif-condensed"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:layout_marginStart="40dp" />
+
+    <TextView
+        android:id="@+id/bmr_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/energy_settings_title_textview"
+        android:layout_marginStart="16dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignBaseline="@id/bmr_spinner_box"
+        android:text="BMR"
+        android:textColor="@color/white"
+        android:textAlignment="center"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/activity_level_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_below="@id/bmr_textview"
+        android:layout_alignParentStart="true"
+        android:layout_alignBaseline="@id/activity_level_spinner_box"
+        android:textColor="@color/white"
+        android:text="Activity Level"
+        android:textAlignment="center"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/weight_goal_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/activity_level_textview"
+        android:layout_marginStart="16dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignBaseline="@id/weight_goal_spinner_box"
+        android:text="Weight Goal"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="16sp" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/bmr_spinner_box"
+        android:layout_width="200dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="65dp"
+        android:layout_marginTop="60dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/energy_settings_title_textview"
+        app:boxBackgroundColor="@color/white"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:hint="Mifflin St. Jeor"
+        android:textColorHint="#A2A5AB">
+
+        <AutoCompleteTextView
+            android:id="@+id/bmr_autocomplete_textview"
+            android:layout_width="match_parent"
+            android:hapticFeedbackEnabled="false"
+            android:layout_height="wrap_content"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/activity_level_spinner_box"
+        android:layout_width="150dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="65dp"
+        android:layout_marginTop="10dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/bmr_spinner_box"
+        app:boxBackgroundColor="@color/white"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:hint="Sedentary"
+        android:textColorHint="#A2A5AB">
+
+        <AutoCompleteTextView
+            android:id="@+id/activity_level_autocomplete_textview"
+            android:layout_width="match_parent"
+            android:hapticFeedbackEnabled="false"
+            android:layout_height="wrap_content"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/weight_goal_spinner_box"
+        android:layout_width="105dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="65dp"
+        android:layout_marginTop="10dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/activity_level_spinner_box"
+        app:boxBackgroundColor="@color/white"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:hint="90"
+        android:textColorHint="#A2A5AB">
+
+        <AutoCompleteTextView
+            android:id="@+id/weight_goal_autocomplete_textview"
+            android:layout_width="match_parent"
+            android:hapticFeedbackEnabled="false"
+            android:layout_height="wrap_content"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="26dp"
+        android:layout_below="@id/bmr_spinner_box"
+        android:layout_alignParentEnd="true"
+        android:layout_alignBottom="@id/activity_level_spinner_box"
+        android:layout_alignBaseline="@id/activity_level_spinner_box"
+        android:layout_marginTop="32dp"
+        android:textColor="#A2A5AB"
+        android:text="kcal"
+        android:textAlignment="center"
+        android:textSize="16sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="26dp"
+        android:layout_below="@id/energy_settings_title_textview"
+        android:layout_alignParentEnd="true"
+        android:layout_alignBottom="@id/bmr_spinner_box"
+        android:layout_alignBaseline="@id/bmr_spinner_box"
+        android:layout_marginTop="84dp"
+        android:textColor="#A2A5AB"
+        android:text="kcal"
+        android:textAlignment="center"
+        android:textSize="16sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="37dp"
+        android:layout_below="@id/activity_level_spinner_box"
+        android:layout_alignParentEnd="true"
+        android:layout_alignBottom="@id/weight_goal_spinner_box"
+        android:layout_alignBaseline="@id/weight_goal_spinner_box"
+        android:layout_marginTop="32dp"
+        android:textColor="#A2A5AB"
+        android:text="kg"
+        android:textAlignment="center"
+        android:textSize="16sp" />
+
+
+    <!-- Sign Up Button -->
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/dashboard_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Dashboard"
+        android:fontFamily="sans-serif"
+        android:textStyle="bold"
+        android:textAllCaps="false"
+        android:layout_centerHorizontal="true"
+        android:textSize="16sp"
+        android:textColor="@color/white"
+        android:background="@drawable/rounded_button"
+        android:layout_below="@id/weight_goal_spinner_box"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="150dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp" />
+
+</RelativeLayout>

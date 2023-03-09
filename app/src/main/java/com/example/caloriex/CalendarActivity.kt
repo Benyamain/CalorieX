@@ -4,6 +4,8 @@ import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.ViewGroup
+import android.view.Window
 import android.widget.CalendarView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
@@ -18,6 +20,11 @@ class CalendarActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
+        // Remove the title bar from the popup activity
+        supportRequestWindowFeature(Window.FEATURE_NO_TITLE)
+
         setContentView(R.layout.activity_calendar)
 
         calendarView = findViewById(R.id.calendar_view)
@@ -37,6 +44,12 @@ class CalendarActivity : AppCompatActivity() {
         // Sends the new date
         okTextView.setOnClickListener {
             intentToDashboard(selectedDate)
+        }
+
+        // Get the dialog window and set its size
+        val dialogWindow: Window? = window
+        dialogWindow?.let {
+            it.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
         }
     }
 
