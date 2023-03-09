@@ -1,0 +1,9 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menu_calendar"
+        android:title=""
+        android:icon="@drawable/ic_calendar_foreground"
+        app:actionLayout="@layout/menu_item_calendar"
+        app:showAsAction="always"/>
+</menu>

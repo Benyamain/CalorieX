@@ -1,0 +1,28 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menu_diary"
+        android:icon="@drawable/ic_diary_foreground"
+        app:actionLayout="@layout/menu_item_diary"
+        app:showAsAction="ifRoom"
+        android:title="@null" />
+    <item
+        android:id="@+id/menu_plus"
+        android:icon="@drawable/ic_plus_foreground"
+        app:actionLayout="@layout/menu_item_plus"
+        app:showAsAction="always"
+        android:title="@null" />
+    <item
+        android:id="@+id/menu_charts"
+        android:icon="@drawable/ic_charts_foreground"
+        app:actionLayout="@layout/menu_item_charts"
+        app:showAsAction="ifRoom"
+        android:title="@null" />
+    <item
+        android:id="@+id/menu_settings"
+        android:icon="@drawable/ic_settings_foreground"
+        app:showAsAction="ifRoom"
+        app:actionLayout="@layout/menu_item_setting"
+        android:title="@null" />
+
+</menu>

@@ -5,15 +5,14 @@
 
     <!-- Create Account Title -->
     <TextView
-        android:id="@+id/title_textview"
+        android:id="@+id/login_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Create an account"
+        android:text="Login"
         android:textColor="@color/white"
         android:textAllCaps="true"
         android:fontFamily="sans-serif-condensed"
         android:textSize="28sp"
-
         android:textStyle="bold"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="50dp"
@@ -21,7 +20,7 @@
 
     <!-- Email Edit Text -->
     <EditText
-        android:id="@+id/email_edittext"
+        android:id="@+id/login_email_edittext"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:hint="Email Address"
@@ -39,7 +38,7 @@
 
     <!-- Password Edit Text -->
     <EditText
-        android:id="@+id/password_edittext"
+        android:id="@+id/login_password_edittext"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:hint="Password"
@@ -51,71 +50,68 @@
         android:fontFamily="sans-serif"
         android:background="@drawable/rounded_edit_text"
         android:inputType="textPassword"
-        android:layout_below="@id/email_edittext"
+        android:layout_below="@id/login_email_edittext"
         android:layout_marginTop="20dp"
         android:layout_marginStart="30dp"
         android:layout_marginEnd="30dp" />
 
     <!-- Sign Up Button -->
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/signup_button"
+        android:id="@+id/login_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Create an Account"
+        android:text="Login"
         android:fontFamily="sans-serif"
         android:textStyle="bold"
         android:textAllCaps="false"
         android:textSize="16sp"
         android:textColor="@color/white"
         android:background="@drawable/rounded_button"
-        android:layout_below="@id/password_edittext"
+        android:layout_below="@id/login_password_edittext"
         android:layout_marginTop="40dp"
         android:layout_marginStart="30dp"
         android:layout_marginEnd="30dp" />
 
-    <!-- Already Have an Account Text -->
     <TextView
-        android:id="@+id/already_have_account_textview"
+        android:id="@+id/or_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Already have an account?"
+        android:text="OR"
         android:fontFamily="sans-serif"
-        android:clickable="true"
         android:textColor="#A2A5AB"
         android:textSize="16sp"
-        android:layout_below="@id/signup_button"
+        android:layout_below="@id/login_button"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp"
-        android:focusable="true" />
+        android:layout_marginTop="30dp" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/signup_google_button"
+        android:id="@+id/login_google_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Sign up with Google"
+        android:text="Login with Google"
         android:fontFamily="sans-serif"
         android:textStyle="bold"
         android:textAllCaps="false"
         android:textSize="16sp"
         android:textColor="#A2A5AB"
         android:background="@drawable/rounded_edit_text"
-        android:layout_below="@id/already_have_account_textview"
-        android:layout_marginTop="60dp"
+        android:layout_below="@id/or_textview"
+        android:layout_marginTop="30dp"
         android:layout_marginStart="30dp"
         android:layout_marginEnd="30dp" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/signup_facebook_button"
+        android:id="@+id/login_facebook_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Sign up with Facebook"
+        android:text="Login with Facebook"
         android:textAllCaps="false"
         android:textStyle="bold"
         android:textSize="16sp"
         android:fontFamily="sans-serif"
         android:textColor="@color/white"
         android:background="@drawable/rounded_facebook_button"
-        android:layout_below="@id/signup_google_button"
+        android:layout_below="@id/login_google_button"
         android:layout_marginTop="20dp"
         android:layout_marginStart="30dp"
         android:layout_marginEnd="30dp" />

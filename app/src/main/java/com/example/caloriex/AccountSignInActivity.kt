@@ -4,12 +4,23 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.TextView
 
 class AccountSignInActivity : AppCompatActivity() {
+
+    private lateinit var alreadyHaveAccountTextView: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_account_sign_in)
+
+        alreadyHaveAccountTextView = findViewById(R.id.already_have_account_textview)
+
+        // Send user to do native login if they already have an account
+        alreadyHaveAccountTextView.setOnClickListener {
+            val intent = Intent(this, ExistingLoginActivity::class.java)
+            startActivity(intent)
+        }
 
       /* Going to be set to true once the user logins in successfully
 

@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/white">
+    android:background="#2D2A3E">
 
     <ImageView
         android:layout_width="wrap_content"
@@ -17,7 +17,7 @@
         android:text="Welcome!"
         android:textAllCaps="true"
         android:fontFamily="sans-serif-condensed"
-        android:textColor="#1A1A1A"
+        android:textColor="@color/white"
         android:textSize="28sp"
         android:textStyle="bold"
         android:layout_gravity="center_horizontal"/>
@@ -31,7 +31,7 @@
         android:textStyle="bold"
     android:textAllCaps="false"
     android:textSize="16sp"
-    android:textColor="@color/black"
+    android:textColor="@color/white"
     android:background="@drawable/rounded_button"
     android:layout_margin="32dp" />
 </LinearLayout>
