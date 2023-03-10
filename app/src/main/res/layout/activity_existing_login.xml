@@ -25,7 +25,7 @@
         android:layout_height="48dp"
         android:hint="Email Address"
         android:textColorHint="#A2A5AB"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         android:fontFamily="sans-serif"
         android:textSize="16sp"
         android:paddingStart="20dp"
