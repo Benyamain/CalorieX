@@ -8,4 +8,6 @@ class DashboardActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dashboard)
     }
+
+    // overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
 }

@@ -15,4 +15,14 @@
         <item name="cardCornerRadius">8dp</item>
     </style>
 
+    <style name="CustomAlertDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:background">#2D2A3E</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:buttonBarButtonStyle">@style/CustomAlertDialogButtonStyle</item>
+    </style>
+
+    <style name="CustomAlertDialogButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">#A2A5AB</item>
+    </style>
+
 </resources>

@@ -74,7 +74,7 @@ class AccountSignInActivity : AppCompatActivity() {
                             Log.w("Failure", "createUserWithEmail:failure", task.exception)
                             Toast.makeText(
                                 applicationContext,
-                                "Authentication Failed: ${task.exception?.message.toString()}",
+                                "Authentication Error!",
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
@@ -122,7 +122,7 @@ class AccountSignInActivity : AppCompatActivity() {
                                         // When task is successful redirect to profile activity
                                         Toast.makeText(
                                             applicationContext,
-                                            "Authentication successful ${auth.currentUser?.uid}",
+                                            "Successfully signed in!",
                                             Toast.LENGTH_SHORT
                                         ).show()
                                         keepUserLoggedIn()
@@ -130,7 +130,7 @@ class AccountSignInActivity : AppCompatActivity() {
                                         // When task is unsuccessful display Toast
                                         Toast.makeText(
                                             applicationContext,
-                                            "Authentication Failed :" + task.exception?.message,
+                                            "Authentication Error!",
                                             Toast.LENGTH_SHORT
                                         ).show()
                                     }
@@ -151,7 +151,8 @@ class AccountSignInActivity : AppCompatActivity() {
         val editor = sharedPreferences.edit()
         editor.putBoolean("isLoggedIn", true)
         editor.apply()
-        startActivity(Intent(this, MessageMotivationActivity::class.java))
+        startActivity(Intent(this, ProfileDetailsActivity::class.java))
         finish()
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
     }
 }

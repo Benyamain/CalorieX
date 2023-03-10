@@ -15,10 +15,12 @@ class LauncherActivity : AppCompatActivity() {
         if (isLoggedIn) {
             startActivity(Intent(this, StartTrackingActivity::class.java))
             finish()
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
         } else {
             // If the user is not logged in, redirect them to the sign in screen:
             startActivity(Intent(this, GetStartedActivity::class.java))
             finish()
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
         }
     }
 }

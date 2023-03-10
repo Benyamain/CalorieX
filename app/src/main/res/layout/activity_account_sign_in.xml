@@ -99,20 +99,4 @@
         android:layout_marginTop="60dp"
         android:layout_marginEnd="30dp" />
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/signup_facebook_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Sign up with Facebook"
-        android:textAllCaps="false"
-        android:textStyle="bold"
-        android:textSize="16sp"
-        android:fontFamily="sans-serif"
-        android:textColor="@color/white"
-        android:background="@drawable/rounded_facebook_button"
-        android:layout_below="@id/sign_up_google_button"
-        android:layout_marginTop="20dp"
-        android:layout_marginStart="30dp"
-        android:layout_marginEnd="30dp" />
-
 </RelativeLayout>

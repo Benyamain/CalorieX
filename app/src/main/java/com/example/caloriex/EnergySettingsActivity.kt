@@ -7,7 +7,7 @@ import android.widget.Button
 
 class EnergySettingsActivity : AppCompatActivity() {
 
-    private lateinit var dashboardBtn: Button
+    private lateinit var continueBtn: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -17,12 +17,13 @@ class EnergySettingsActivity : AppCompatActivity() {
     }
 
     private fun changeActivity() {
-        dashboardBtn = findViewById(R.id.dashboard_button)
+        continueBtn = findViewById(R.id.second_continue_button)
 
-        // Waiting for the click event from user. Once done so, this will prompt DashboardActivity
-        dashboardBtn.setOnClickListener {
-            val intent = Intent(this, DashboardActivity::class.java)
+        // Waiting for the click event from user. Once done so, this will prompt MessageMotivationActivity
+        continueBtn.setOnClickListener {
+            val intent = Intent(this, MessageMotivationActivity::class.java)
             startActivity(intent)
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
         }
     }
 }

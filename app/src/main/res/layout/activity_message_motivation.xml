@@ -16,6 +16,7 @@
         android:layout_height="wrap_content"
         android:text="Ready to Chase Your Goals?"
         android:textAllCaps="true"
+        android:textAlignment="center"
         android:fontFamily="sans-serif-condensed"
         android:textColor="@color/white"
         android:textSize="28sp"

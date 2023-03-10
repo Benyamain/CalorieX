@@ -70,7 +70,7 @@ class ExistingLoginActivity : AppCompatActivity() {
                             // If sign in fails, display a message to the user.
                             Log.w("Sign in fail", "signInWithEmail:failure", task.exception)
                             Toast.makeText(
-                                baseContext, "Authentication failed - ${task.exception?.message}",
+                                baseContext, "Authentication Error!",
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
@@ -113,7 +113,7 @@ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) 
                                     // When task is successful redirect to profile activity
                                     Toast.makeText(
                                         applicationContext,
-                                        "Authentication successful ${auth.currentUser?.uid}",
+                                        "Successfully signed in!",
                                         Toast.LENGTH_SHORT
                                     ).show()
                                     keepUserLoggedIn()
@@ -121,7 +121,7 @@ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) 
                                     // When task is unsuccessful display Toast
                                     Toast.makeText(
                                         applicationContext,
-                                        "Authentication Failed :" + task.exception?.message,
+                                        "Authentication Error!",
                                         Toast.LENGTH_SHORT
                                     ).show()
                                 }
@@ -144,5 +144,6 @@ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) 
         editor.apply()
         startActivity(Intent(this, MessageMotivationActivity::class.java))
         finish()
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
     }
 }

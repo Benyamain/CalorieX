@@ -14,11 +14,13 @@
         <activity
             android:name=".LogoutActivity"
             android:exported="false"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:noHistory="true" />
         <activity
             android:name=".MessageMotivationActivity"
             android:exported="false"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:noHistory="true" />
         <activity
             android:name=".NutritionInfoActivity"
             android:exported="false"
@@ -26,15 +28,18 @@
         <activity
             android:name=".EnergySettingsActivity"
             android:exported="false"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:noHistory="true" />
         <activity
             android:name=".ProfileDetailsActivity"
             android:exported="false"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:noHistory="true" />
         <activity
             android:name=".ExistingLoginActivity"
             android:exported="false"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:noHistory="true" />
         <activity
             android:name=".CalendarActivity"
             android:exported="false"
@@ -53,15 +58,18 @@
         <activity
             android:name=".StartTrackingActivity"
             android:exported="false"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:noHistory="true" />
         <activity
             android:name=".DashboardActivity"
             android:exported="false"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:noHistory="true" />
         <activity
             android:name=".GetStartedActivity"
             android:exported="true"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait"
+            android:noHistory="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
@@ -69,7 +77,8 @@
         <activity
             android:name=".AccountSignInActivity"
             android:exported="true"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait"
+            android:noHistory="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
@@ -77,7 +86,8 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait"
+            android:noHistory="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>

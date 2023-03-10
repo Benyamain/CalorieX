@@ -25,6 +25,7 @@ class ProfileDetailsActivity : AppCompatActivity() {
         continueBtn.setOnClickListener {
             val intent = Intent(this, EnergySettingsActivity::class.java)
             startActivity(intent)
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
         }
     }
 }

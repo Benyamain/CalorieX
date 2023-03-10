@@ -25,7 +25,7 @@
         android:layout_height="48dp"
         android:hint="Email Address"
         android:textColorHint="#A2A5AB"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         android:fontFamily="sans-serif"
         android:textSize="16sp"
         android:paddingStart="20dp"
@@ -92,22 +92,6 @@
         android:layout_centerInParent="true"
         android:layout_marginStart="30dp"
         android:layout_marginTop="30dp"
-        android:layout_marginEnd="30dp" />
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/login_facebook_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Login with Facebook"
-        android:textAllCaps="false"
-        android:textStyle="bold"
-        android:textSize="16sp"
-        android:fontFamily="sans-serif"
-        android:textColor="@color/white"
-        android:background="@drawable/rounded_facebook_button"
-        android:layout_below="@id/sign_in_google_button"
-        android:layout_marginTop="20dp"
-        android:layout_marginStart="30dp"
         android:layout_marginEnd="30dp" />
 
 </RelativeLayout>
