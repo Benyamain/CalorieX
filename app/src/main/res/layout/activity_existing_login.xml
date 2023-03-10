@@ -84,20 +84,14 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="30dp" />
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/login_google_button"
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/sign_in_google_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Login with Google"
-        android:fontFamily="sans-serif"
-        android:textStyle="bold"
-        android:textAllCaps="false"
-        android:textSize="16sp"
-        android:textColor="#A2A5AB"
-        android:background="@drawable/rounded_edit_text"
         android:layout_below="@id/or_textview"
-        android:layout_marginTop="30dp"
+        android:layout_centerInParent="true"
         android:layout_marginStart="30dp"
+        android:layout_marginTop="30dp"
         android:layout_marginEnd="30dp" />
 
     <androidx.appcompat.widget.AppCompatButton
@@ -111,7 +105,7 @@
         android:fontFamily="sans-serif"
         android:textColor="@color/white"
         android:background="@drawable/rounded_facebook_button"
-        android:layout_below="@id/login_google_button"
+        android:layout_below="@id/sign_in_google_button"
         android:layout_marginTop="20dp"
         android:layout_marginStart="30dp"
         android:layout_marginEnd="30dp" />
