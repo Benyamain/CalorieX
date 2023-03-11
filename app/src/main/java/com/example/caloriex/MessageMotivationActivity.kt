@@ -26,4 +26,8 @@ class MessageMotivationActivity : AppCompatActivity() {
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
         }
     }
+
+    override fun onBackPressed() {
+        // Do nothing
+    }
 }

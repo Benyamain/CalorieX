@@ -91,6 +91,7 @@ class AccountSignInActivity : AppCompatActivity() {
         // Send user to do native login if they already have an account
         alreadyHaveAccountTextView.setOnClickListener {
             startActivity(Intent(this, ExistingLoginActivity::class.java))
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
         }
     }
 
@@ -154,5 +155,9 @@ class AccountSignInActivity : AppCompatActivity() {
         startActivity(Intent(this, ProfileDetailsActivity::class.java))
         finish()
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+    }
+
+    override fun onBackPressed() {
+        // Do nothing
     }
 }

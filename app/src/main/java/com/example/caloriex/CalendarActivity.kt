@@ -58,4 +58,8 @@ class CalendarActivity : AppCompatActivity() {
         intent.putExtra("date", newDate)
         startActivity(intent)
     }
+
+    override fun onBackPressed() {
+        // Do nothing
+    }
 }

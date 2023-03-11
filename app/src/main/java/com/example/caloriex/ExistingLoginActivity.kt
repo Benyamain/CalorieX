@@ -146,4 +146,8 @@ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) 
         finish()
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
     }
+
+    override fun onBackPressed() {
+        // Do nothing
+    }
 }

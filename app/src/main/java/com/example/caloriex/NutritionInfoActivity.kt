@@ -10,4 +10,8 @@ class NutritionInfoActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_nutrition_info)
     }
+
+    override fun onBackPressed() {
+        // Do nothing
+    }
 }

@@ -1,5 +1,6 @@
 package com.example.caloriex
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 
@@ -10,4 +11,8 @@ class DashboardActivity : AppCompatActivity() {
     }
 
     // overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+
+    override fun onBackPressed() {
+        // Do nothing
+    }
 }

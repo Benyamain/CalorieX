@@ -2,6 +2,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="#2D2A3E">
 
     <!-- Create Account Title -->
@@ -180,14 +181,15 @@
         android:layout_below="@id/height_edittext"
         app:boxBackgroundColor="@color/white"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-        android:hint="Male"
+        android:hint="Sex"
         android:textColorHint="#A2A5AB">
 
         <AutoCompleteTextView
-            android:id="@+id/sex_autocomplete_textview"
+            android:id="@+id/sex_spinner_box_dropdown"
             android:layout_width="match_parent"
             android:hapticFeedbackEnabled="false"
-            android:layout_height="wrap_content"/>
+            android:editable="false"
+            android:layout_height="wrap_content" />
 
     </com.google.android.material.textfield.TextInputLayout>
 

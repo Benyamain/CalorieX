@@ -3,6 +3,8 @@ package com.example.caloriex
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import android.widget.Button
 
 class ProfileDetailsActivity : AppCompatActivity() {
@@ -27,5 +29,20 @@ class ProfileDetailsActivity : AppCompatActivity() {
             startActivity(intent)
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
         }
+
+        val sexOptionsAutocompleteTextView =
+            findViewById<AutoCompleteTextView>(R.id.sex_spinner_box_dropdown)
+        val sexOptions = resources.getStringArray(R.array.sex_options)
+
+        val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, sexOptions)
+        sexOptionsAutocompleteTextView.setAdapter(adapter)
+
+        sexOptionsAutocompleteTextView.setOnItemClickListener { parent, view, position, id ->
+            sexOptionsAutocompleteTextView.setSelection(position)
+        }
+    }
+
+    override fun onBackPressed() {
+        // Do nothing
     }
 }

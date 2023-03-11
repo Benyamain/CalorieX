@@ -97,4 +97,8 @@ class LogoutActivity : AppCompatActivity() {
             alertDialog.show()
         }
     }
+
+    override fun onBackPressed() {
+        // Do nothing
+    }
 }

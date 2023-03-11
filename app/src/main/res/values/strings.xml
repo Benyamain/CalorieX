@@ -1,5 +1,21 @@
 <resources>
     <string name="app_name">CalorieX</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string-array name="activity_level_options">
+        <item>Sedentary</item>
+        <item>Lightly Active</item>
+        <item>Moderately Active</item>
+        <item>Very Active</item>
+        <item>Extremely Active</item>
+    </string-array>
+
+    <string-array name="bmr_options">
+        <item>Mifflin St. Jeor</item>
+        <item>Harris-Benedict</item>
+    </string-array>
+
+    <string-array name="sex_options">
+        <item>Male</item>
+        <item>Female</item>
+    </string-array>
 </resources>
