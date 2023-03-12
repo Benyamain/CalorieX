@@ -37,4 +37,6 @@
         android:textSize="16sp"
         android:textStyle="bold" />
 
+    <include layout="@layout/bottom_navigation_view" />
+
 </RelativeLayout>

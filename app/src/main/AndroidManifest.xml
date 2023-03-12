@@ -8,90 +8,17 @@
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_app_icon"
         android:label="@string/app_name"
+        android:screenOrientation="portrait"
         android:supportsRtl="true"
         android:theme="@style/Theme.CalorieX"
         tools:targetApi="31" >
         <activity
-            android:name=".LogoutActivity"
-            android:exported="false"
-            android:screenOrientation="portrait"
-            android:noHistory="true" />
-        <activity
-            android:name=".MessageMotivationActivity"
-            android:exported="false"
-            android:screenOrientation="portrait"
-            android:noHistory="true" />
-        <activity
-            android:name=".NutritionInfoActivity"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".EnergySettingsActivity"
-            android:exported="false"
-            android:screenOrientation="portrait"
-            android:noHistory="true" />
-        <activity
-            android:name=".ProfileDetailsActivity"
-            android:exported="false"
-            android:screenOrientation="portrait"
-            android:noHistory="true" />
-        <activity
-            android:name=".ExistingLoginActivity"
-            android:exported="false"
-            android:screenOrientation="portrait"
-            android:noHistory="true" />
-        <activity
-            android:name=".CalendarActivity"
-            android:exported="false"
-            android:screenOrientation="portrait"
-            android:theme="@style/DialogStyle" />
-        <activity
             android:name=".LauncherActivity"
-            android:exported="true"
-            android:screenOrientation="portrait" >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".StartTrackingActivity"
-            android:exported="false"
-            android:screenOrientation="portrait"
-            android:noHistory="true" />
-        <activity
-            android:name=".DashboardActivity"
-            android:exported="false"
-            android:screenOrientation="portrait"
-            android:noHistory="true" />
-        <activity
-            android:name=".GetStartedActivity"
-            android:exported="true"
-            android:screenOrientation="portrait"
-            android:noHistory="true" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".AccountSignInActivity"
-            android:exported="true"
-            android:screenOrientation="portrait"
-            android:noHistory="true" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".MainActivity"
-            android:exported="true"
-            android:screenOrientation="portrait"
-            android:noHistory="true" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
-        </activity>
     </application>
-
 </manifest>

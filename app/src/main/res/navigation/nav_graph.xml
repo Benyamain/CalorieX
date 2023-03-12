@@ -1,0 +1,103 @@
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" >
+
+    <fragment
+        android:id="@+id/startTrackingFragment"
+        android:name="com.example.caloriex.StartTrackingFragment"
+        android:label="Start Tracking Fragment">
+        <action
+            android:id="@+id/action_startTrackingFragment_to_dashboardFragment"
+            app:destination="@id/"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left" />
+        <action
+            android:id="@+id/action_startTrackingFragment_to_logoutFragment"
+            app:destination="@id/logoutFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.example.caloriex.AccountSignInFragment"
+        android:label="Login Fragment">
+        <action
+            android:id="@+id/action_loginFragment_to_existingLoginFragment"
+            app:destination="@id/existingLoginFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left" />
+        <action
+            android:id="@+id/action_loginFragment_to_profileDetailsFragment"
+            app:destination="@id/profileDetailsFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/existingLoginFragment"
+        android:name="com.example.caloriex.ExistingLoginFragment"
+        android:label="Existing Login Fragment">
+        <action
+            android:id="@+id/action_existingLoginFragment_to_dashboardFragment"
+            app:destination="@id/dashboardFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left" />
+        <action
+            android:id="@+id/action_existingLoginFragment_to_messageMotivationFragment"
+            app:destination="@id/messageMotivationFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/profileDetailsFragment"
+        android:name="com.example.caloriex.ProfileDetailsFragment"
+        android:label="Profile Details Fragment">
+        <action
+            android:id="@+id/action_profileDetailsFragment_to_energySettingsFragment"
+            app:destination="@id/energySettingsFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/energySettingsFragment"
+        android:name="com.example.caloriex.EnergySettingsFragment"
+        android:label="Energy Settings Fragment">
+        <action
+            android:id="@+id/action_energySettingsFragment_to_dashboardFragment"
+            app:destination="@id/dashboardFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/messageMotivationFragment"
+        android:name="com.example.caloriex.MessageMotivationFragment"
+        android:label="Message Motivation Fragment">
+        <action
+            android:id="@+id/action_messageMotivationFragment_to_dashboardFragment"
+            app:destination="@id/dashboardFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left" />
+        <action
+            android:id="@+id/action_messageMotivationFragment_to_logoutFragment"
+            app:destination="@id/logoutFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/logoutFragment"
+        android:name="com.example.caloriex.LogoutFragment"
+        android:label="Logout Fragment">
+        <action
+            android:id="@+id/action_logoutFragment_to_launcherFragment"
+            app:destination="@id/launcherFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popUpTo="@+id/launcherFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+</navigation>
+
