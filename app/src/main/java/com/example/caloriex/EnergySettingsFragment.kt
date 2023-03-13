@@ -35,7 +35,7 @@ class EnergySettingsFragment : Fragment() {
 
         // Waiting for the click event from user. Once done so, this will prompt MessageMotivationActivity
         continueBtn.setOnClickListener {
-            findNavController().navigate(R.id.messagemotivation)
+            findNavController().navigate(R.id.action_energySettingsFragment_to_messageMotivationFragment)
         }
 
         val activityLevelAutocompleteTextView =

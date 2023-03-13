@@ -40,7 +40,7 @@ class ProfileDetailsFragment : Fragment() {
 
         // Waiting for the click event from user. Once done so, this will prompt EnergySettingsActivity
         continueBtn.setOnClickListener {
-            findNavController().navigate(R.id.energysettings)
+            findNavController().navigate(R.id.action_profileDetailsFragment_to_energySettingsFragment)
         }
 
         val sexOptionsAutocompleteTextView =

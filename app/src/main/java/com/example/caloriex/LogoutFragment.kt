@@ -73,15 +73,13 @@ class LogoutFragment : Fragment() {
 
             // Set the positive button with yes name Lambda OnClickListener method is use of DialogInterface interface.
             builder.setPositiveButton("Yes") { dialog, which ->
-                requireActivity().finish()
-
                 Toast.makeText(
                     requireContext(),
                     "Successfully signed out!",
                     Toast.LENGTH_SHORT
                 ).show()
 
-                navController.navigate(R.id.getstarted)
+                navController.navigate(R.id.action_logoutFragment_to_getStartedFragment)
             }
 
             // Set the Negative button with No name Lambda OnClickListener method is use of DialogInterface interface.
@@ -112,10 +110,31 @@ class LogoutFragment : Fragment() {
         // Customize the label visibility mode
         navigationView.labelVisibilityMode = NavigationBarView.LABEL_VISIBILITY_SELECTED
 
-
         // Customize the item selection behavior
         navigationView.setOnItemSelectedListener { menuItem ->
-            NavigationUI.onNavDestinationSelected(menuItem, navController)
+            when (menuItem.itemId) {
+                R.id.menu_diary -> {
+                    // Navigate to destination1
+                    navController.navigate(R.id.action_settingsFragment_to_dashboardFragment)
+                    true
+                }
+
+                // Need one for menu_plus
+
+                R.id.menu_charts -> {
+                    // Navigate to destination2
+                    navController.navigate(R.id.action_settingsFragment_to_chartsFragment)
+                    true
+                }
+
+                R.id.menu_settings -> {
+                    // Navigate to destination2
+                    navController.navigate(R.id.logoutFragment)
+                    true
+                }
+                // Add more destinations here...
+                else -> false
+            }
         }
     }
 
@@ -123,6 +142,6 @@ class LogoutFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         // Set the selected item of bottom navigation view when the fragment is resumed
-        navigationView.menu.findItem(findNavController().currentDestination!!.id).isChecked = true
+      //  navigationView.menu.findItem(findNavController().currentDestination!!.id).isChecked = true
     }
 }

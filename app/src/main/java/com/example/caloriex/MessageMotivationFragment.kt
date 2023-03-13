@@ -1,6 +1,5 @@
 package com.example.caloriex
 
-import DashboardFragment
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -30,7 +29,7 @@ class MessageMotivationFragment : Fragment() {
 
         // Waiting for the click event from user. Once done so, this will prompt DashboardActivity
         definitelyBtn.setOnClickListener {
-            findNavController().navigate(R.id.dashboard)
+            findNavController().navigate(R.id.action_messageMotivationFragment_to_dashboardFragment)
         }
     }
 

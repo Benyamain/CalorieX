@@ -158,6 +158,6 @@ class ExistingLoginFragment : Fragment() {
         editor.putBoolean("isLoggedIn", true)
         editor.apply()
 
-        findNavController().navigate(R.id.messagemotivation)
+        findNavController().navigate(R.id.action_existingLoginFragment_to_messageMotivationFragment)
     }
 }

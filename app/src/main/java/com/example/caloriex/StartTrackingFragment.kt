@@ -1,6 +1,5 @@
 package com.example.caloriex
 
-import DashboardFragment
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -37,7 +36,7 @@ class StartTrackingFragment : Fragment() {
 
         // Set click listener on the button to launch the dashboard:
         startTrackingBtn.setOnClickListener {
-            findNavController().navigate(R.id.dashboard)
+            findNavController().navigate(R.id.action_startTrackingFragment_to_dashboardFragment)
         }
     }
 }

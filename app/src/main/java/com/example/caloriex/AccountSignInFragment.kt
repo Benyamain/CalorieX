@@ -97,7 +97,7 @@ class AccountSignInFragment : Fragment() {
 
         // Send user to do native login if they already have an account
         alreadyHaveAccountTextView.setOnClickListener {
-            findNavController().navigate(R.id.existinglogin)
+            findNavController().navigate(R.id.action_accountSignInFragment_to_existingLoginFragment)
         }
 
         return view
@@ -139,7 +139,7 @@ class AccountSignInFragment : Fragment() {
                                         // When task is successful redirect to profile activity
                                         Toast.makeText(
                                             requireContext(),
-                                            "Successfully signed in!",
+                                            "Successfully created account!",
                                             Toast.LENGTH_SHORT
                                         ).show()
                                         keepUserLoggedIn()
@@ -168,6 +168,6 @@ class AccountSignInFragment : Fragment() {
         editor.putBoolean("isLoggedIn", true)
         editor.apply()
 
-        findNavController().navigate(R.id.profiledetails)
+        findNavController().navigate(R.id.action_accountSignInFragment_to_profileDetailsFragment)
     }
 }

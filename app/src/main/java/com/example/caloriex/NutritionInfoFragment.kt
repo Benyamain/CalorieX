@@ -48,6 +48,6 @@ class NutritionInfoFragment : Fragment() {
         val destinationFragment = DashboardFragment()
       //  destinationFragment.arguments = bundle
 
-        findNavController().navigate(R.id.dashboard)
+        //findNavController().navigate(R.id.dashboard)
     }
 }

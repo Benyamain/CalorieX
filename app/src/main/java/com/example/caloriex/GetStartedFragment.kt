@@ -20,7 +20,7 @@ class GetStartedFragment : Fragment() {
 
         // Waiting for the click event from user. Once done so, this will prompt AccountSignInActivity
         getStartedBtn.setOnClickListener {
-            findNavController().navigate(R.id.accountsignin)
+            findNavController().navigate(R.id.action_getStartedFragment_to_accountSignInFragment)
         }
 
         return view

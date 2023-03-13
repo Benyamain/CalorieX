@@ -13,7 +13,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView
 
-class DashboardFragment : Fragment() {
+class ChartsFragment : Fragment() {
 
     private lateinit var navigationView: BottomNavigationView
     private lateinit var navController: NavController
@@ -24,7 +24,7 @@ class DashboardFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_dashboard, container, false)
+        val view = inflater.inflate(R.layout.fragment_charts, container, false)
 
         navigationView = view.findViewById(R.id.bottom_navigation)
         navController = findNavController()
@@ -38,7 +38,7 @@ class DashboardFragment : Fragment() {
             when (menuItem.itemId) {
                 R.id.menu_diary -> {
                     // Navigate to destination1
-                    navController.navigate(R.id.dashboardFragment)
+                    navController.navigate(R.id.action_chartsFragment_to_dashboardFragment)
                     true
                 }
 
@@ -46,13 +46,13 @@ class DashboardFragment : Fragment() {
 
                 R.id.menu_charts -> {
                     // Navigate to destination2
-                    navController.navigate(R.id.action_dashboardFragment_to_chartsFragment)
+                    navController.navigate(R.id.chartsFragment)
                     true
                 }
 
                 R.id.menu_settings -> {
                     // Navigate to destination2
-                    navController.navigate(R.id.action_dashboardFragment_to_logoutFragment)
+                    navController.navigate(R.id.action_chartsFragment_to_settingsFragment)
                     true
                 }
                 // Add more destinations here...
@@ -74,6 +74,6 @@ class DashboardFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         // Set the selected item of bottom navigation view when the fragment is resumed
-        //navigationView.menu.findItem(navController.currentDestination.id).isChecked = true
+       // navigationView.menu.findItem(navController.currentDestination!!.id).isChecked = true
     }
 }

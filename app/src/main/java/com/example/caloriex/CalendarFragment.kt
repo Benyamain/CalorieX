@@ -1,6 +1,5 @@
 package com.example.caloriex
 
-import DashboardFragment
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -63,7 +62,7 @@ class CalendarFragment : Fragment() {
        // val destinationFragment = DashboardFragment()
        // destinationFragment.arguments = bundle
 
-        findNavController().navigate(R.id.dashboard)
+      //  findNavController().navigate(R.id.dashboard)
 
     }
 }
