@@ -5,6 +5,5 @@
         android:title=""
         android:iconTint="#A2A5AB"
         android:icon="@drawable/ic_calendar_foreground"
-        app:actionLayout="@layout/menu_item_calendar"
         app:showAsAction="always"/>
 </menu>

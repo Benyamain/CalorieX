@@ -5,9 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#2D2A3E"
-    tools:context=".CalendarActivity"
-    style="@style/DialogStyle">
+    android:background="#2D2A3E">
 
     <ImageView
         android:id="@+id/caloriex_logo"

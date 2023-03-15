@@ -10,6 +10,7 @@ import android.widget.CalendarView
 import android.widget.TextView
 import androidx.activity.addCallback
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 
@@ -21,7 +22,11 @@ class CalendarFragment : Fragment() {
     private lateinit var cancelTextView: TextView
 
     @RequiresApi(Build.VERSION_CODES.O)
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
 
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_calendar, container, false)
@@ -51,7 +56,10 @@ class CalendarFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-            requireActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
+            requireActivity().overridePendingTransition(
+                R.anim.slide_in_left,
+                R.anim.slide_out_right
+            )
         }
     }
 
@@ -59,10 +67,7 @@ class CalendarFragment : Fragment() {
         val bundle = Bundle()
         bundle.putString("date", newDate)
 
-       // val destinationFragment = DashboardFragment()
-       // destinationFragment.arguments = bundle
-
-      //  findNavController().navigate(R.id.dashboard)
+        findNavController().navigate(R.id.dashboardFragment, bundle)
 
     }
 }

@@ -110,6 +110,11 @@
         <action
             android:id="@+id/action_dashboardFragment_to_logoutFragment"
             app:destination="@id/logoutFragment" />
+        <action
+            android:id="@+id/action_dashboardFragment_to_calendarFragment"
+            app:destination="@id/calendarFragment"
+            app:enterAnim="@anim/nav_default_pop_enter_anim"
+            app:exitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
 
 
@@ -141,13 +146,8 @@
     <fragment
         android:id="@+id/calendarFragment"
         android:name="com.example.caloriex.CalendarFragment"
-        android:label="Get Started Fragment"
+        android:label="Calendar Fragment"
         tools:layout="@layout/fragment_calendar">
-        <action
-            android:id="@+id/action_getStartedFragment_to_accountSignInFragment"
-            app:destination="@id/accountSignInFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left" />
     </fragment>
 </navigation>
 

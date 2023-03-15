@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:background="#2D2A3E">
 
-        <include layout="@layout/toolbar" />
+        <include layout="@layout/top_navigation_view" />
 
     <!-- Today section -->
     <LinearLayout
