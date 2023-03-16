@@ -40,7 +40,7 @@ fun String.makeDateReadable(): String {
     val sb = StringBuilder()
 
     val monthDB = strArr[0].removeLastChar()
-    sb.append(strArr[1]).append(" ").append(monthDB.monthToMonthComplete().firstCharToUpper()).append(" ").append(strArr[2])
+    sb.append(monthDB.monthToMonthComplete().firstCharToUpper()).append(" ").append(strArr[1]).append(", " + strArr[2])
     return sb.toString()
 }
 

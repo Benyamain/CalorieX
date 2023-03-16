@@ -1,9 +1,12 @@
 package com.example.caloriex
 
+import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.*
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toolbar
 import androidx.activity.addCallback
@@ -24,6 +27,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView
 import com.google.android.material.navigation.NavigationView
 
+private const val TAG = "ANNOYING"
+
 class DashboardFragment : Fragment() {
 
     private lateinit var bottomNavigationView: BottomNavigationView
@@ -32,9 +37,10 @@ class DashboardFragment : Fragment() {
     private lateinit var proteinPieChart: PieChart
     private lateinit var carbsPieChart: PieChart
     private lateinit var fatPieChart: PieChart
-    private lateinit var topNavigationView: NavigationView
+    private lateinit var toolbar: androidx.appcompat.widget.Toolbar
     private lateinit var selectedDate: String
     private lateinit var calendarTv: TextView
+    private lateinit var imageIv: ImageView
 
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -51,26 +57,19 @@ class DashboardFragment : Fragment() {
         proteinPieChart = view.findViewById(R.id.pieChartProtein)
         carbsPieChart = view.findViewById(R.id.pieChartCarbs)
         fatPieChart = view.findViewById(R.id.pieChartFat)
-        topNavigationView = view.findViewById(R.id.top_navigation_view)
+        toolbar = view.findViewById(R.id.toolbar)
         calendarTv = view.findViewById(R.id.calendar_text_view)
+        imageIv = view.findViewById(R.id.calendar_image_view)
 
         navController = findNavController()
         bottomNavigationView.setupWithNavController(navController)
-        topNavigationView.setupWithNavController(navController)
+
+        imageIv.setOnClickListener {
+            navController.navigate(R.id.action_dashboardFragment_to_calendarFragment)
+        }
 
         // Customize the label visibility mode
         bottomNavigationView.labelVisibilityMode = NavigationBarView.LABEL_VISIBILITY_SELECTED
-
-        topNavigationView.setNavigationItemSelectedListener {
-            when (it.itemId) {
-                R.id.menu_calendar -> {
-                    navController.navigate(R.id.action_dashboardFragment_to_calendarFragment)
-                    true
-                }
-
-                else -> false
-            }
-        }
 
         // Customize the item selection behavior
         bottomNavigationView.setOnItemSelectedListener { menuItem ->
@@ -113,8 +112,6 @@ class DashboardFragment : Fragment() {
         setupPieChart(carbsPieChart, data)
         setupPieChart(fatPieChart, data)
 
-        //readDate()
-
         return view
     }
 
@@ -126,10 +123,15 @@ class DashboardFragment : Fragment() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onResume() {
         super.onResume()
-        // Set the selected item of bottom navigation view when the fragment is resumed
-        //navigationView.menu.findItem(navController.currentDestination.id).isChecked = true
+
+        // Read the date when the user navigates back to the DashboardFragment from the CalendarFragment
+        val bundle = arguments
+        if (bundle != null && bundle.containsKey("date")) {
+            readDate()
+        }
     }
 
     private fun setupPieChart(pieChart: PieChart, data: PieData) {
@@ -152,6 +154,8 @@ class DashboardFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     private fun readDate() {
         selectedDate = arguments?.getString("date").toString()
+
+        Log.d(TAG, "readDate: $selectedDate")
 
         val correctDateFormat = selectedDate
         calendarTv.text =  correctDateFormat.makeDateReadable()

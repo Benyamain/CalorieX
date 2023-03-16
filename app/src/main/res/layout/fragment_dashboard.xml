@@ -11,15 +11,6 @@
 
         <include layout="@layout/top_navigation_view" />
 
-    <!-- Today section -->
-    <LinearLayout
-        android:id="@+id/today_section"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-    </LinearLayout>
-
         <!--Ui component for our pie chart-->
         <com.github.mikephil.charting.charts.PieChart
             android:id="@+id/pieChartCaloricBudget"

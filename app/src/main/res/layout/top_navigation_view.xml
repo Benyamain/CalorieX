@@ -1,26 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.navigation.NavigationView
+<androidx.appcompat.widget.Toolbar
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/top_navigation_view"
+    android:id="@+id/toolbar"
     android:layout_width="match_parent"
-    android:layout_height="60dp"
-    android:background="#2D2A3E"
-    app:itemIconSize="44dp"
-    android:paddingStart="280dp"
-    app:itemIconTint="@color/menu_selector_icon"
-    app:menu="@menu/top_navigation_menu">
+    android:layout_height="?attr/actionBarSize"
+    android:background="#2D2A3E">
+
+    <ImageView
+        android:id="@+id/calendar_image_view"
+        android:layout_width="44dp"
+        android:clickable="true"
+        android:layout_height="44dp"
+        android:src="@drawable/ic_calendar_foreground"/>
 
     <TextView
         android:id="@+id/calendar_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/white"
-        android:text="Hello"
+        android:layout_gravity="center"
         android:fontFamily="sans-serif-condensed"
+        android:text="Hello"
+        android:textColor="@color/white"
         android:textSize="24sp"
-        android:textStyle="bold"
-        android:layout_gravity="start"/>
-
-</com.google.android.material.navigation.NavigationView>
+        android:textStyle="bold" />
+</androidx.appcompat.widget.Toolbar>
 
