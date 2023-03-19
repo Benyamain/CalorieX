@@ -15,7 +15,7 @@ fun getCurrentDayString(): String {
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
-fun constructDate(year: Int, month: Int, dayOfMonth: Int): String = "${getMonthString(month)}.-$dayOfMonth-$year"
+fun constructDate(year: Int, month: Int, dayOfMonth: Int): String = "${getMonthString(month)}-$dayOfMonth-$year"
 
 @RequiresApi(Build.VERSION_CODES.O)
 fun getMonthString(month: Int): String = when (month) {
@@ -39,7 +39,7 @@ fun String.makeDateReadable(): String {
     val strArr = this.split("-")
     val sb = StringBuilder()
 
-    val monthDB = strArr[0].removeLastChar()
+    val monthDB = strArr[0]
     sb.append(monthDB.monthToMonthComplete().firstCharToUpper()).append(" ").append(strArr[1]).append(", " + strArr[2])
     return sb.toString()
 }
@@ -76,5 +76,4 @@ enum class MonthComplete {
     DECEMBER
 }
 
-fun String.removeLastChar() = this.substring(0, this.length - 1)
 fun String.firstCharToUpper() = this[0].toUpperCase() + this.substring(1, this.length)

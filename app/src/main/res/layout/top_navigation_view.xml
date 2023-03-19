@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:fontFamily="sans-serif-condensed"
-        android:text="Hello"
+        android:text="Today"
         android:textColor="@color/white"
         android:textSize="24sp"
         android:textStyle="bold" />

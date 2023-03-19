@@ -106,7 +106,8 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/my_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="375dp"
+        android:background="@color/app_background"
+        android:layout_height="415dp"
         android:layout_below="@id/appBarLayout" />
 
     <include layout="@layout/bottom_navigation_view" />

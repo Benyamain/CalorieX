@@ -13,6 +13,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
@@ -108,12 +109,15 @@ class LogoutFragment : Fragment() {
         navigationView.setupWithNavController(navController)
 
         // Customize the label visibility mode
-        navigationView.labelVisibilityMode = NavigationBarView.LABEL_VISIBILITY_SELECTED
+        navigationView.labelVisibilityMode = NavigationBarView.LABEL_VISIBILITY_LABELED
+        navigationView.menu.findItem(R.id.menu_settings).isChecked = true
 
         // Customize the item selection behavior
         navigationView.setOnItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.menu_diary -> {
+                    navigationView.menu.findItem(R.id.menu_diary).setIcon(R.drawable.ic_diary_foreground)
+
                     // Navigate to destination1
                     navController.navigate(R.id.action_settingsFragment_to_dashboardFragment)
                     true
@@ -122,12 +126,16 @@ class LogoutFragment : Fragment() {
                 // Need one for menu_plus
 
                 R.id.menu_charts -> {
+                    navigationView.menu.findItem(R.id.menu_charts).setIcon(R.drawable.ic_charts_foreground)
+
                     // Navigate to destination2
                     navController.navigate(R.id.action_settingsFragment_to_chartsFragment)
                     true
                 }
 
                 R.id.menu_settings -> {
+                    navigationView.menu.findItem(R.id.menu_settings).setIcon(R.drawable.ic_settings_foreground)
+
                     // Navigate to destination2
                     navController.navigate(R.id.logoutFragment)
                     true
