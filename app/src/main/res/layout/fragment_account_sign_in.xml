@@ -9,9 +9,9 @@
         android:id="@+id/title_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Create an account"
+        android:text="Create an Account"
         android:textColor="@color/white"
-        android:textAllCaps="true"
+        android:textAllCaps="false"
         android:fontFamily="sans-serif-condensed"
         android:textSize="28sp"
 

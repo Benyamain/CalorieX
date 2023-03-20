@@ -1,0 +1,180 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/app_background">
+
+    <!-- Create Account Title -->
+    <TextView
+        android:id="@+id/macro_ratios_title_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Macronutrient Ratios"
+        android:textColor="@color/white"
+        android:textAllCaps="false"
+        android:fontFamily="sans-serif-condensed"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:layout_marginStart="40dp" />
+
+    <TextView
+        android:id="@+id/protein_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/macro_ratios_title_textview"
+        android:layout_marginStart="16dp"
+        android:fontFamily="sans-serif"
+        android:layout_alignParentStart="true"
+        android:layout_alignBaseline="@id/protein_edittext"
+        android:text="Protein"
+        android:textColor="@color/white"
+        android:textAlignment="center"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/net_carbs_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/protein_textview"
+        android:fontFamily="sans-serif"
+        android:layout_marginStart="16dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignBaseline="@id/net_carbs_edittext"
+        android:text="Net Carbs"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="16sp" />
+    <TextView
+        android:id="@+id/fat_textview"
+        android:layout_width="wrap_content"
+        android:fontFamily="sans-serif"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_alignBaseline="@id/fat_edittext"
+        android:layout_below="@id/net_carbs_textview"
+        android:layout_alignParentStart="true"
+        android:textColor="@color/white"
+        android:text="Fat"
+        android:textAlignment="center"
+        android:textSize="16sp" />
+
+    <EditText
+        android:id="@+id/protein_edittext"
+        android:layout_width="90dp"
+        android:layout_height="55dp"
+        android:background="@drawable/rounded_edit_text"
+        android:fontFamily="sans-serif"
+        android:hint="33"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="45dp"
+        android:layout_marginTop="60dp"
+        android:layout_below="@id/macro_ratios_title_textview"
+        android:inputType="number"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:textColor="@color/black"
+        android:textColorHint="#A2A5AB"
+        android:textSize="16sp" />
+
+    <EditText
+        android:id="@+id/net_carbs_edittext"
+        android:layout_width="90dp"
+        android:layout_height="55dp"
+        android:background="@drawable/rounded_edit_text"
+        android:fontFamily="sans-serif"
+        android:hint="42"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="45dp"
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/protein_edittext"
+        android:inputType="number"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:textColor="@color/black"
+        android:textColorHint="#A2A5AB"
+        android:textSize="16sp" />
+
+    <EditText
+        android:id="@+id/fat_edittext"
+        android:layout_width="90dp"
+        android:layout_height="55dp"
+        android:background="@drawable/rounded_edit_text"
+        android:fontFamily="sans-serif"
+        android:hint="25"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="45dp"
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/net_carbs_edittext"
+        android:inputType="number"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:textColor="@color/black"
+        android:textColorHint="#A2A5AB"
+        android:textSize="16sp" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="17dp"
+        android:layout_below="@id/protein_edittext"
+        android:layout_alignParentEnd="true"
+        android:layout_alignBottom="@id/net_carbs_edittext"
+        android:layout_alignBaseline="@id/net_carbs_edittext"
+        android:layout_marginTop="32dp"
+        android:textColor="#A2A5AB"
+        android:text="%"
+        android:textAlignment="center"
+        android:textSize="16sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="17dp"
+        android:layout_below="@id/macro_ratios_title_textview"
+        android:layout_alignParentEnd="true"
+        android:layout_alignBottom="@id/protein_edittext"
+        android:layout_alignBaseline="@id/protein_edittext"
+        android:layout_marginTop="84dp"
+        android:textColor="#A2A5AB"
+        android:text="%"
+        android:textAlignment="center"
+        android:textSize="16sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="17dp"
+        android:textColor="#A2A5AB"
+        android:text="%"
+        android:layout_below="@id/net_carbs_edittext"
+        android:layout_alignBottom="@id/fat_edittext"
+        android:layout_alignBaseline="@id/fat_edittext"
+        android:layout_marginTop="32dp"
+        android:layout_alignParentEnd="true"
+        android:textAlignment="center"
+        android:textSize="16sp" />
+
+
+    <!-- Sign Up Button -->
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/macro_ratios_continue_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Continue"
+        android:fontFamily="sans-serif"
+        android:textStyle="bold"
+        android:textAllCaps="false"
+        android:textSize="16sp"
+        android:textColor="@color/white"
+        android:background="@drawable/rounded_button"
+        android:layout_below="@id/fat_edittext"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="150dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp" />
+
+</RelativeLayout>

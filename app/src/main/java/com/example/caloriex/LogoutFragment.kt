@@ -7,6 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.appcompat.app.AlertDialog
@@ -32,12 +34,18 @@ class LogoutFragment : Fragment() {
     private lateinit var logoutBtn: Button
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var navController: NavController
-    private lateinit var navigationView: BottomNavigationView
+    private lateinit var toolbar: androidx.appcompat.widget.Toolbar
+    private lateinit var imageIv: ImageView
+    private lateinit var settingsTv: TextView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_logout, container, false)
         logoutBtn = view.findViewById(R.id.logout_button)
+        toolbar = view.findViewById(R.id.settings_toolbar)
         navController = findNavController()
+        imageIv = view.findViewById(R.id.left_arrow_image_view)
+        settingsTv = view.findViewById(R.id.settings_title_textview)
+        settingsTv.text = "Logout"
 
         val googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(BuildConfig.FIREBASE_ID_TOKEN)
@@ -94,6 +102,10 @@ class LogoutFragment : Fragment() {
             alertDialog.show()
         }
 
+        imageIv.setOnClickListener {
+            navController.navigate(R.id.action_logoutFragment_to_settingsFragment)
+        }
+
         return view
     }
 
@@ -102,54 +114,12 @@ class LogoutFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-            requireActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
-        }
-
-        navigationView = view.findViewById(R.id.bottom_navigation)
-        navigationView.setupWithNavController(navController)
-
-        // Customize the label visibility mode
-        navigationView.labelVisibilityMode = NavigationBarView.LABEL_VISIBILITY_LABELED
-        navigationView.menu.findItem(R.id.menu_settings).isChecked = true
-
-        // Customize the item selection behavior
-        navigationView.setOnItemSelectedListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.menu_diary -> {
-                    navigationView.menu.findItem(R.id.menu_diary).setIcon(R.drawable.ic_diary_foreground)
-
-                    // Navigate to destination1
-                    navController.navigate(R.id.action_settingsFragment_to_dashboardFragment)
-                    true
-                }
-
-                // Need one for menu_plus
-
-                R.id.menu_charts -> {
-                    navigationView.menu.findItem(R.id.menu_charts).setIcon(R.drawable.ic_charts_foreground)
-
-                    // Navigate to destination2
-                    navController.navigate(R.id.action_settingsFragment_to_chartsFragment)
-                    true
-                }
-
-                R.id.menu_settings -> {
-                    navigationView.menu.findItem(R.id.menu_settings).setIcon(R.drawable.ic_settings_foreground)
-
-                    // Navigate to destination2
-                    navController.navigate(R.id.logoutFragment)
-                    true
-                }
-                // Add more destinations here...
-                else -> false
-            }
+            // Do nothing
         }
     }
 
 
     override fun onResume() {
         super.onResume()
-        // Set the selected item of bottom navigation view when the fragment is resumed
-      //  navigationView.menu.findItem(findNavController().currentDestination!!.id).isChecked = true
     }
 }

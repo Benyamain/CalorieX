@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.Toolbar
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/settings_toolbar"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/actionBarSize"
+    android:background="#2D2A3E">
+
+    <ImageView
+        android:id="@+id/left_arrow_image_view"
+        android:layout_width="44dp"
+        android:clickable="true"
+        android:layout_height="44dp"
+        android:src="@drawable/ic_left_arrow_foreground"
+        android:focusable="true" />
+
+    <TextView
+        android:id="@+id/settings_title_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:fontFamily="sans-serif-condensed"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="28sp"
+        android:textStyle="bold" />
+</androidx.appcompat.widget.Toolbar>
+

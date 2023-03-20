@@ -65,14 +65,6 @@ class ChartsFragment : Fragment() {
 
                 // Need one for menu_plus
 
-                R.id.menu_charts -> {
-                    navigationView.menu.findItem(R.id.menu_charts).setIcon(R.drawable.ic_charts_foreground)
-
-                    // Navigate to destination2
-                    navController.navigate(R.id.chartsFragment)
-                    true
-                }
-
                 R.id.menu_settings -> {
                     navigationView.menu.findItem(R.id.menu_settings).setIcon(R.drawable.ic_settings_foreground)
 

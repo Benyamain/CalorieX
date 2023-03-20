@@ -63,8 +63,8 @@
         android:label="Energy Settings Fragment"
         tools:layout="@layout/fragment_energy_settings">
         <action
-            android:id="@+id/action_energySettingsFragment_to_messageMotivationFragment"
-            app:destination="@id/messageMotivationFragment"
+            android:id="@+id/action_energySettingsFragment_to_macroRatiosFragment"
+            app:destination="@id/macroRatiosFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left" />
     </fragment>
@@ -92,11 +92,10 @@
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left" />
         <action
-            android:id="@+id/action_settingsFragment_to_dashboardFragment"
-            app:destination="@id/dashboardFragment" />
-        <action
-            android:id="@+id/action_settingsFragment_to_chartsFragment"
-            app:destination="@id/chartsFragment" />
+            android:id="@+id/action_logoutFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right" />
     </fragment>
 
     <fragment
@@ -108,8 +107,8 @@
             android:id="@+id/action_dashboardFragment_to_chartsFragment"
             app:destination="@id/chartsFragment" />
         <action
-            android:id="@+id/action_dashboardFragment_to_logoutFragment"
-            app:destination="@id/logoutFragment" />
+            android:id="@+id/action_dashboardFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
         <action
             android:id="@+id/action_dashboardFragment_to_calendarFragment"
             app:destination="@id/calendarFragment"
@@ -128,7 +127,7 @@
             app:destination="@id/dashboardFragment" />
         <action
             android:id="@+id/action_chartsFragment_to_settingsFragment"
-            app:destination="@id/logoutFragment" />
+            app:destination="@id/settingsFragment" />
     </fragment>
 
     <fragment
@@ -148,6 +147,87 @@
         android:name="com.example.caloriex.CalendarFragment"
         android:label="Calendar Fragment"
         tools:layout="@layout/fragment_calendar">
+    </fragment>
+
+    <fragment
+        android:id="@+id/macroRatiosFragment"
+        android:name="com.example.caloriex.MacroRatiosFragment"
+        android:label="Macro Ratios Fragment"
+        tools:layout="@layout/fragment_macro_ratios">
+        <action
+            android:id="@+id/action_macroRatiosFragment_to_messageMotivationFragment"
+            app:destination="@id/messageMotivationFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.example.caloriex.SettingsFragment"
+        android:label="Settings Fragment"
+        tools:layout="@layout/fragment_settings">
+        <action
+            android:id="@+id/action_settingsFragment_to_dashboardFragment"
+            app:destination="@id/dashboardFragment" />
+        <action
+            android:id="@+id/action_settingsFragment_to_chartsFragment"
+            app:destination="@id/chartsFragment" />
+        <action
+            android:id="@+id/action_settingsFragment_to_logoutFragment"
+            app:destination="@id/logoutFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"/>
+        <action
+            android:id="@+id/action_settingsFragment_to_updateProfileDetailsFragment"
+            app:destination="@id/updateProfileDetailsFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"/>
+        <action
+            android:id="@+id/action_settingsFragment_to_updateEnergySettingsFragment"
+            app:destination="@id/updateEnergySettingsFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"/>
+        <action
+            android:id="@+id/action_settingsFragment_to_updateMacroRatiosFragment"
+            app:destination="@id/updateMacroRatiosFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/updateMacroRatiosFragment"
+        android:name="com.example.caloriex.UpdateMacroRatiosFragment"
+        android:label="Update Macro Ratios Fragment"
+        tools:layout="@layout/fragment_update_macro_ratios">
+        <action
+            android:id="@+id/action_updateMacroRatiosFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/updateEnergySettingsFragment"
+        android:name="com.example.caloriex.UpdateEnergySettingsFragment"
+        android:label="Update Energy Settings Fragment"
+        tools:layout="@layout/fragment_update_energy_settings">
+        <action
+            android:id="@+id/action_updateEnergySettingsFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/updateProfileDetailsFragment"
+        android:name="com.example.caloriex.UpdateProfileDetailsFragment"
+        android:label="Update Profile Details Fragment"
+        tools:layout="@layout/fragment_update_profile_details">
+        <action
+            android:id="@+id/action_updateProfileDetailsFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right" />
     </fragment>
 </navigation>
 

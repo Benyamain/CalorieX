@@ -15,7 +15,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Welcome!"
-        android:textAllCaps="true"
+        android:textAllCaps="false"
         android:fontFamily="sans-serif-condensed"
         android:textColor="@color/white"
         android:textSize="28sp"

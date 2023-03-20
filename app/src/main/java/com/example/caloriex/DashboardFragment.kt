@@ -80,15 +80,6 @@ class DashboardFragment : Fragment() {
         // Customize the item selection behavior
         bottomNavigationView.setOnItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
-                R.id.menu_diary -> {
-                    bottomNavigationView.menu.findItem(R.id.menu_diary)
-                        .setIcon(R.drawable.ic_diary_foreground)
-
-                    // Navigate to destination1
-                    navController.navigate(R.id.dashboardFragment)
-                    true
-                }
-
                 // Need one for menu_plus
 
                 R.id.menu_charts -> {
@@ -105,7 +96,7 @@ class DashboardFragment : Fragment() {
                         .setIcon(R.drawable.ic_settings_foreground)
 
                     // Navigate to destination2
-                    navController.navigate(R.id.action_dashboardFragment_to_logoutFragment)
+                    navController.navigate(R.id.action_dashboardFragment_to_settingsFragment)
                     true
                 }
                 // Add more destinations here...

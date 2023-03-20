@@ -33,9 +33,9 @@ class EnergySettingsFragment : Fragment() {
     private fun changeActivity(view: View) {
         continueBtn = view.findViewById(R.id.second_continue_button)
 
-        // Waiting for the click event from user. Once done so, this will prompt MessageMotivationActivity
+        // Waiting for the click event from user. Once done so, this will prompt MacroRatiosFragment
         continueBtn.setOnClickListener {
-            findNavController().navigate(R.id.action_energySettingsFragment_to_messageMotivationFragment)
+            findNavController().navigate(R.id.action_energySettingsFragment_to_macroRatiosFragment)
         }
 
         val activityLevelAutocompleteTextView =

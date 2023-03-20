@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:text="Login"
         android:textColor="@color/white"
-        android:textAllCaps="true"
+        android:textAllCaps="false"
         android:fontFamily="sans-serif-condensed"
         android:textSize="28sp"
         android:textStyle="bold"

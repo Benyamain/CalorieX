@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:text="Charts"
         android:textColor="@color/white"
-        android:textAllCaps="true"
+        android:textAllCaps="false"
         android:fontFamily="sans-serif-condensed"
         android:textSize="28sp"
         android:textStyle="bold"
@@ -31,28 +31,33 @@
             <androidx.cardview.widget.CardView
                 android:id="@+id/history_chart"
                 style="@style/CardViewUsual"
-                android:layout_width="match_parent"
+                android:layout_width="350dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
                 android:layout_height="wrap_content">
 
 
                 <com.github.mikephil.charting.charts.BarChart
                     android:id="@+id/barchart"
                     android:layout_width="match_parent"
-                    android:layout_height="300dp"
+                    android:layout_height="250dp"
                     android:background="#2D2A3E" />
 
             </androidx.cardview.widget.CardView>
 
-            <androidx.cardview.widget.CardView
-                style="@style/CardViewUsual"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/history_chart">
-
                     <RelativeLayout
                         android:layout_width="match_parent"
-                        android:background="#2D2A3E"
-                        android:layout_height="100dp">
+                        android:layout_height="100dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_below="@id/history_chart">
 
                         <TextView
                             android:id="@+id/title_month"
@@ -94,7 +99,7 @@
                             android:layout_marginEnd="10dp"
                             android:layout_toStartOf="@id/chart_of_tf"
                             android:fontFamily="sans-serif"
-                            android:hint="Select Month"
+                            android:hint="Select"
                             android:textColorHint="#A2A5AB">
 
                             <AutoCompleteTextView
@@ -132,11 +137,6 @@
                                 android:popupTheme="@android:style/ThemeOverlay.Material.Light" />
                         </com.google.android.material.textfield.TextInputLayout>
                     </RelativeLayout>
-
-
-            </androidx.cardview.widget.CardView>
-
-
         </RelativeLayout>
     </androidx.core.widget.NestedScrollView>
 
