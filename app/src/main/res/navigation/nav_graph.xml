@@ -229,5 +229,12 @@
             app:enterAnim="@anim/slide_in_left"
             app:exitAnim="@anim/slide_out_right" />
     </fragment>
+
+    <fragment
+        android:id="@+id/searchFoodFragment"
+        android:name="com.example.caloriex.SearchFoodFragment"
+        android:label="Search Food Fragment"
+        tools:layout="@layout/fragment_search_food">
+    </fragment>
 </navigation>
 

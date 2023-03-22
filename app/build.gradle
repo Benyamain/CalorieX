@@ -64,4 +64,8 @@ dependencies {
 
     // Charts
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+
+    // Material SearchView
+    implementation 'com.github.mancj:MaterialSearchBar:0.8.2'
+
 }

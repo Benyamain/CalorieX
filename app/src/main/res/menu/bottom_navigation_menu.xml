@@ -7,7 +7,7 @@
     <item
         android:id="@+id/menu_plus"
         android:icon="@drawable/ic_plus_foreground"
-        android:title="Add food" />
+        android:title="Add" />
     <item
         android:id="@+id/menu_charts"
         android:icon="@drawable/ic_charts_foreground"

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_snap_food"
+        android:icon="@drawable/ic_snap_food_foreground"
+        android:title="Snap food" />
+    <item
+        android:id="@+id/menu_add_food"
+        android:icon="@drawable/ic_add_food_foreground"
+        android:title="Add food" />
+    <item
+        android:id="@+id/menu_add_weight"
+        android:icon="@drawable/ic_add_weight_foreground"
+        android:title="Add weight" />
+</menu>
