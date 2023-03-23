@@ -111,19 +111,15 @@
             app:destination="@id/settingsFragment" />
         <action
             android:id="@+id/action_dashboardFragment_to_calendarFragment"
-            app:destination="@id/calendarFragment"
-            app:enterAnim="@anim/nav_default_pop_enter_anim"
-            app:exitAnim="@anim/nav_default_pop_exit_anim" />
+            app:destination="@id/calendarFragment" />
         <action
             android:id="@+id/action_dashboardFragment_to_searchFoodFragment"
             app:destination="@id/searchFoodFragment"
-            app:enterAnim="@anim/nav_default_pop_enter_anim"
-            app:exitAnim="@anim/nav_default_pop_exit_anim" />
+            app:enterAnim="@anim/fade_in_and_slide_up_fast" />
         <action
             android:id="@+id/action_dashboardFragment_to_addWeightFragment"
             app:destination="@id/addWeightFragment"
-            app:enterAnim="@anim/nav_default_pop_enter_anim"
-            app:exitAnim="@anim/nav_default_pop_exit_anim" />
+            app:enterAnim="@anim/fade_in_and_slide_up_fast" />
     </fragment>
 
 

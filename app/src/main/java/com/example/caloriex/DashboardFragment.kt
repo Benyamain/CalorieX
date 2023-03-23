@@ -1,6 +1,7 @@
 package com.example.caloriex
 
 import android.annotation.SuppressLint
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -11,6 +12,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.addCallback
 import androidx.annotation.RequiresApi
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
@@ -43,6 +45,7 @@ class DashboardFragment : Fragment() {
     private lateinit var calendarTv: TextView
     private lateinit var imageIv: ImageView
     private lateinit var parentLayout: View
+    private var appearBottomCounter = 0
 
     @SuppressLint("ClickableViewAccessibility")
     @RequiresApi(Build.VERSION_CODES.O)
@@ -70,6 +73,7 @@ class DashboardFragment : Fragment() {
 
         imageIv.setOnClickListener {
             navController.navigate(R.id.action_dashboardFragment_to_calendarFragment)
+            appearBottomCounter = 0
         }
 
         // Customize the label visibility mode
@@ -80,11 +84,36 @@ class DashboardFragment : Fragment() {
         // Customize the item selection behavior
         bottomNavigationView.setOnItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
+                R.id.menu_diary -> {
+                    bottomNavigationView.menu.findItem(R.id.menu_diary)
+                        .setIcon(R.drawable.ic_diary_foreground)
+
+                    if (appearBottomNavigationView.visibility == View.VISIBLE) {
+                        appearBottomNavigationView.startAnimation(
+                            AnimationUtils.loadAnimation(
+                                requireContext(),
+                                R.anim.slide_up_fast
+                            )
+                        )
+                        appearBottomNavigationView.visibility = View.INVISIBLE
+                        bottomNavigationView.itemIconTintList = AppCompatResources.getColorStateList(requireContext(), R.color.menu_selector_icon)
+                        appearBottomNavigationView.menu.findItem(R.id.menu_add_weight).isChecked = false
+                        appearBottomNavigationView.menu.findItem(R.id.menu_snap_food).isChecked = false
+                        appearBottomNavigationView.menu.findItem(R.id.menu_add_food).isChecked = false
+                        appearBottomNavigationView.menu.findItem(R.id.menu_not_visible).isChecked = false
+                        appearBottomCounter = 0
+                    }
+                    true
+                }
+
                 R.id.menu_plus -> {
                     bottomNavigationView.menu.findItem(R.id.menu_plus)
                         .setIcon(R.drawable.ic_plus_foreground)
 
-                    appearBottom()
+                    appearBottomCounter++
+                    if (appearBottomCounter == 1) {
+                        appearBottom()
+                    }
                     true
                 }
 
@@ -127,10 +156,27 @@ class DashboardFragment : Fragment() {
 
         parentLayout = view.findViewById(R.id.dashboard_recycler_view)
         parentLayout.setOnTouchListener { _, motionEvent ->
-            if (motionEvent.action == MotionEvent.ACTION_DOWN && !isPointInsideView(motionEvent.rawX, motionEvent.rawY, appearBottomNavigationView)) {
+            if (motionEvent.action == MotionEvent.ACTION_DOWN && !isPointInsideView(
+                    motionEvent.rawX,
+                    motionEvent.rawY,
+                    appearBottomNavigationView
+                ) && appearBottomNavigationView.visibility == View.VISIBLE
+            ) {
                 // Clicked outside appearBottomNavigationView
-                appearBottomNavigationView.startAnimation(AnimationUtils.loadAnimation(requireContext(), R.anim.slide_up_fast))
+                appearBottomNavigationView.startAnimation(
+                    AnimationUtils.loadAnimation(
+                        requireContext(),
+                        R.anim.slide_up_fast
+                    )
+                )
                 appearBottomNavigationView.visibility = View.INVISIBLE
+                appearBottomCounter = 0
+                bottomNavigationView.itemIconTintList = AppCompatResources.getColorStateList(requireContext(), R.color.menu_selector_icon)
+                bottomNavigationView.menu.findItem(R.id.menu_diary).isChecked = true
+                appearBottomNavigationView.menu.findItem(R.id.menu_add_weight).isChecked = false
+                appearBottomNavigationView.menu.findItem(R.id.menu_snap_food).isChecked = false
+                appearBottomNavigationView.menu.findItem(R.id.menu_add_food).isChecked = false
+                appearBottomNavigationView.menu.findItem(R.id.menu_not_visible).isChecked = true
                 true
             } else {
                 false
@@ -169,14 +215,25 @@ class DashboardFragment : Fragment() {
 
     private fun appearBottom() {
         appearBottomNavigationView.visibility = View.VISIBLE
-        appearBottomNavigationView.startAnimation(AnimationUtils.loadAnimation(requireContext(), R.anim.slide_down_slow))
+        appearBottomNavigationView.startAnimation(
+            AnimationUtils.loadAnimation(
+                requireContext(),
+                R.anim.slide_down_slow
+            )
+        )
         appearBottomNavigationView.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.menu_snap_food -> {
                     appearBottomNavigationView.menu.findItem(R.id.menu_snap_food)
                         .setIcon(R.drawable.ic_snap_food_foreground)
 
-                   // navController.navigate(R.id.action_dashboardFragment_to_chartsFragment)
+                    // navController.navigate(R.id.action_dashboardFragment_to_chartsFragment)
+                    appearBottomCounter = 0
+                    appearBottomNavigationView.menu.findItem(R.id.menu_snap_food).isChecked = true
+                    appearBottomNavigationView.menu.findItem(R.id.menu_add_food).isChecked = false
+                    appearBottomNavigationView.menu.findItem(R.id.menu_add_weight).isChecked = false
+                    appearBottomNavigationView.menu.findItem(R.id.menu_not_visible).isChecked = false
+                    bottomNavigationView.itemIconTintList = AppCompatResources.getColorStateList(requireContext(), R.color.gray)
                     true
                 }
 
@@ -185,6 +242,11 @@ class DashboardFragment : Fragment() {
                         .setIcon(R.drawable.ic_add_food_foreground)
 
                     navController.navigate(R.id.action_dashboardFragment_to_searchFoodFragment)
+                    appearBottomCounter = 0
+                    appearBottomNavigationView.menu.findItem(R.id.menu_add_food).isChecked = true
+                    appearBottomNavigationView.menu.findItem(R.id.menu_snap_food).isChecked = false
+                    appearBottomNavigationView.menu.findItem(R.id.menu_add_weight).isChecked = false
+                    appearBottomNavigationView.menu.findItem(R.id.menu_not_visible).isChecked = false
                     // Add the logic for NutritionInfoFragment once user clicks some food and wants the nutrition data for it
                     true
                 }
@@ -194,6 +256,11 @@ class DashboardFragment : Fragment() {
                         .setIcon(R.drawable.ic_add_weight_foreground)
 
                     navController.navigate(R.id.action_dashboardFragment_to_addWeightFragment)
+                    appearBottomCounter = 0
+                    appearBottomNavigationView.menu.findItem(R.id.menu_add_weight).isChecked = true
+                    appearBottomNavigationView.menu.findItem(R.id.menu_snap_food).isChecked = false
+                    appearBottomNavigationView.menu.findItem(R.id.menu_add_food).isChecked = false
+                    appearBottomNavigationView.menu.findItem(R.id.menu_not_visible).isChecked = false
                     true
                 }
                 // Add more destinations here...

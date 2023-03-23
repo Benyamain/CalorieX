@@ -9,7 +9,7 @@ import android.widget.TextView
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 
-class RecyclerViewAdapter(private val list: List<String>, private val navController: NavController) : RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>() {
+class RecyclerViewAdapter(private val list: List<ItemsViewModel>, private val navController: NavController) : RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -21,7 +21,10 @@ class RecyclerViewAdapter(private val list: List<String>, private val navControl
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
         val itemsViewModel = list[position]
-        holder.textView.text = itemsViewModel
+        holder.textView.text = itemsViewModel.text
+        // sets the image to the imageview from our itemHolder class
+        holder.leftImageView.setImageResource(itemsViewModel.leftImage)
+        holder.rightImageView.setImageResource(itemsViewModel.rightImage)
         holder.itemView.setOnClickListener {
             when (position) {
                 0 -> navController.navigate(R.id.action_settingsFragment_to_updateProfileDetailsFragment)

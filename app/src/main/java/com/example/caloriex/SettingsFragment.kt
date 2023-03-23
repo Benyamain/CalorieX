@@ -37,8 +37,16 @@ class SettingsFragment : Fragment() {
 
         val recyclerView = view.findViewById<RecyclerView>(R.id.settings_recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        val list = listOf("Profile Details", "Energy Settings", "Macronutrient Ratios", "Logout")
-        val adapter = RecyclerViewAdapter(list,navController)
+
+        // ArrayList of class ItemsViewModel
+        val data = ArrayList<ItemsViewModel>()
+
+        data.add(ItemsViewModel(R.drawable.ic_profile_details_foreground, "Profile Details", R.drawable.ic_right_arrow_foreground))
+        data.add(ItemsViewModel(R.drawable.ic_energy_settings_foreground, "Energy Settings", R.drawable.ic_right_arrow_foreground))
+        data.add(ItemsViewModel(R.drawable.ic_macronutrient_ratios_foreground, "Macronutrient Ratios", R.drawable.ic_right_arrow_foreground))
+        data.add(ItemsViewModel(R.drawable.ic_logout_foreground, "Logout", R.drawable.ic_right_arrow_foreground))
+
+        val adapter = RecyclerViewAdapter(data,navController)
         recyclerView.adapter = adapter
 
         // Customize the label visibility mode

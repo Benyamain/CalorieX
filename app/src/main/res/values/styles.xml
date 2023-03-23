@@ -25,4 +25,12 @@
         <item name="android:textColor">#A2A5AB</item>
     </style>
 
+    <style name="MyBottomNavigation" parent="@style/Widget.MaterialComponents.BottomNavigationView">
+        <item name="android:textAppearance">@style/MyBottomNavigation.TextAppearance</item>
+    </style>
+
+    <style name="MyBottomNavigation.TextAppearance" parent="@style/TextAppearance.MaterialComponents.Caption">
+        <item name="android:textStyle">normal</item>
+    </style>
+
 </resources>

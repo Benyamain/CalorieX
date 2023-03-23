@@ -33,7 +33,7 @@ class AddWeightFragment : Fragment() {
         addWeightTv.text = "Weight"
 
         imageIv.setOnClickListener {
-            navController.popBackStack()
+            navController.navigate(R.id.dashboardFragment)
         }
 
         saveBtn = view.findViewById(R.id.add_weight_save_button)
