@@ -4,16 +4,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/app_background"
-    android:gravity="center"
     android:orientation="vertical">
 
     <com.mancj.materialsearchbar.MaterialSearchBar
         android:id="@+id/material_search_bar"
-        android:layout_width="375dp"
+        android:layout_width="325dp"
         android:layout_gravity="center_horizontal"
         android:layout_height="wrap_content"
-        android:background="#2D2A3E"
-        android:layout_marginBottom="650dp"
+        android:layout_marginTop="20dp"
+        app:mt_searchIconTint="#A2A5AB"
+        app:mt_clearIconTint="#A2A5AB"
+        app:mt_backIconTint="#A2A5AB"
         app:mt_backIconDrawable="@drawable/ic_left_arrow_foreground"
         app:mt_clearIconDrawable="@drawable/ic_close_foreground"
         app:mt_hint="Search"
@@ -22,6 +23,7 @@
         app:mt_highlightedTextColor="@color/white"
         app:mt_maxSuggestionsCount="10"
         app:mt_placeholder="Search"
+        app:mt_placeholderColor="#A2A5AB"
         app:mt_roundedSearchBarEnabled="false"
         app:mt_searchBarColor="@color/white"
         app:mt_speechMode="false" />

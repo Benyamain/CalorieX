@@ -10,5 +10,5 @@
     app:itemTextColor="@color/white"
     android:layout_marginBottom="75dp"
     android:visibility="invisible"
-    app:itemIconTint="@color/menu_selector_icon"
+    app:itemIconTint="#A2A5AB"
     app:menu="@menu/appear_bottom_navigation_menu" />

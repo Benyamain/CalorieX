@@ -1,21 +1,19 @@
 package com.example.caloriex
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toolbar
 import androidx.activity.addCallback
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
-import androidx.navigation.NavDestination
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.github.mikephil.charting.animation.Easing
@@ -23,11 +21,8 @@ import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
-import com.google.android.material.appbar.AppBarLayout
-import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView
-import com.google.android.material.navigation.NavigationView
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -37,6 +32,7 @@ private const val TAG = "ANNOYING"
 class DashboardFragment : Fragment() {
 
     private lateinit var bottomNavigationView: BottomNavigationView
+    private lateinit var appearBottomNavigationView: BottomNavigationView
     private lateinit var navController: NavController
     private lateinit var caloriePieChart: PieChart
     private lateinit var proteinPieChart: PieChart
@@ -46,7 +42,9 @@ class DashboardFragment : Fragment() {
     private lateinit var selectedDate: String
     private lateinit var calendarTv: TextView
     private lateinit var imageIv: ImageView
+    private lateinit var parentLayout: View
 
+    @SuppressLint("ClickableViewAccessibility")
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -57,6 +55,7 @@ class DashboardFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_dashboard, container, false)
 
         bottomNavigationView = view.findViewById(R.id.bottom_navigation)
+        appearBottomNavigationView = view.findViewById(R.id.appear_bottom_navigation)
         caloriePieChart = view.findViewById(R.id.pieChartCaloricBudget)
         proteinPieChart = view.findViewById(R.id.pieChartProtein)
         carbsPieChart = view.findViewById(R.id.pieChartCarbs)
@@ -67,6 +66,7 @@ class DashboardFragment : Fragment() {
 
         navController = findNavController()
         bottomNavigationView.setupWithNavController(navController)
+        appearBottomNavigationView.setupWithNavController(navController)
 
         imageIv.setOnClickListener {
             navController.navigate(R.id.action_dashboardFragment_to_calendarFragment)
@@ -74,13 +74,19 @@ class DashboardFragment : Fragment() {
 
         // Customize the label visibility mode
         bottomNavigationView.labelVisibilityMode = NavigationBarView.LABEL_VISIBILITY_LABELED
+        appearBottomNavigationView.labelVisibilityMode = NavigationBarView.LABEL_VISIBILITY_LABELED
         bottomNavigationView.menu.findItem(R.id.menu_diary).isChecked = true
-
 
         // Customize the item selection behavior
         bottomNavigationView.setOnItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
-                // Need one for menu_plus
+                R.id.menu_plus -> {
+                    bottomNavigationView.menu.findItem(R.id.menu_plus)
+                        .setIcon(R.drawable.ic_plus_foreground)
+
+                    appearBottom()
+                    true
+                }
 
                 R.id.menu_charts -> {
                     bottomNavigationView.menu.findItem(R.id.menu_charts)
@@ -119,6 +125,18 @@ class DashboardFragment : Fragment() {
         setupPieChart(carbsPieChart, data)
         setupPieChart(fatPieChart, data)
 
+        parentLayout = view.findViewById(R.id.dashboard_recycler_view)
+        parentLayout.setOnTouchListener { _, motionEvent ->
+            if (motionEvent.action == MotionEvent.ACTION_DOWN && !isPointInsideView(motionEvent.rawX, motionEvent.rawY, appearBottomNavigationView)) {
+                // Clicked outside appearBottomNavigationView
+                appearBottomNavigationView.startAnimation(AnimationUtils.loadAnimation(requireContext(), R.anim.slide_up_fast))
+                appearBottomNavigationView.visibility = View.INVISIBLE
+                true
+            } else {
+                false
+            }
+        }
+
         return view
     }
 
@@ -138,6 +156,49 @@ class DashboardFragment : Fragment() {
         val bundle = arguments
         if ((bundle != null) && bundle.containsKey("date")) {
             readDate()
+        }
+    }
+
+    private fun isPointInsideView(x: Float, y: Float, view: View): Boolean {
+        val location = IntArray(2)
+        view.getLocationOnScreen(location)
+        val viewX = location[0]
+        val viewY = location[1]
+        return (x > viewX && x < viewX + view.width && y > viewY && y < viewY + view.height)
+    }
+
+    private fun appearBottom() {
+        appearBottomNavigationView.visibility = View.VISIBLE
+        appearBottomNavigationView.startAnimation(AnimationUtils.loadAnimation(requireContext(), R.anim.slide_down_slow))
+        appearBottomNavigationView.setOnItemSelectedListener {
+            when (it.itemId) {
+                R.id.menu_snap_food -> {
+                    appearBottomNavigationView.menu.findItem(R.id.menu_snap_food)
+                        .setIcon(R.drawable.ic_snap_food_foreground)
+
+                   // navController.navigate(R.id.action_dashboardFragment_to_chartsFragment)
+                    true
+                }
+
+                R.id.menu_add_food -> {
+                    appearBottomNavigationView.menu.findItem(R.id.menu_add_food)
+                        .setIcon(R.drawable.ic_add_food_foreground)
+
+                    navController.navigate(R.id.action_dashboardFragment_to_searchFoodFragment)
+                    // Add the logic for NutritionInfoFragment once user clicks some food and wants the nutrition data for it
+                    true
+                }
+
+                R.id.menu_add_weight -> {
+                    appearBottomNavigationView.menu.findItem(R.id.menu_add_weight)
+                        .setIcon(R.drawable.ic_add_weight_foreground)
+
+                    navController.navigate(R.id.action_dashboardFragment_to_addWeightFragment)
+                    true
+                }
+                // Add more destinations here...
+                else -> false
+            }
         }
     }
 

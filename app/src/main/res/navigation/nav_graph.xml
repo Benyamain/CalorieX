@@ -114,6 +114,16 @@
             app:destination="@id/calendarFragment"
             app:enterAnim="@anim/nav_default_pop_enter_anim"
             app:exitAnim="@anim/nav_default_pop_exit_anim" />
+        <action
+            android:id="@+id/action_dashboardFragment_to_searchFoodFragment"
+            app:destination="@id/searchFoodFragment"
+            app:enterAnim="@anim/nav_default_pop_enter_anim"
+            app:exitAnim="@anim/nav_default_pop_exit_anim" />
+        <action
+            android:id="@+id/action_dashboardFragment_to_addWeightFragment"
+            app:destination="@id/addWeightFragment"
+            app:enterAnim="@anim/nav_default_pop_enter_anim"
+            app:exitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
 
 
@@ -235,6 +245,20 @@
         android:name="com.example.caloriex.SearchFoodFragment"
         android:label="Search Food Fragment"
         tools:layout="@layout/fragment_search_food">
+    </fragment>
+
+    <fragment
+        android:id="@+id/addWeightFragment"
+        android:name="com.example.caloriex.AddWeightFragment"
+        android:label="Add Weight Fragment"
+        tools:layout="@layout/fragment_add_weight">
+    </fragment>
+
+    <fragment
+        android:id="@+id/nutritionInfoFragment"
+        android:name="com.example.caloriex.NutritionInfoFragment"
+        android:label="Nutrition Info Fragment"
+        tools:layout="@layout/fragment_nutrition_info">
     </fragment>
 </navigation>
 

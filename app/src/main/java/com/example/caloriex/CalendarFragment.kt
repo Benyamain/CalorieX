@@ -57,10 +57,7 @@ class CalendarFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-            requireActivity().overridePendingTransition(
-                R.anim.slide_in_left,
-                R.anim.slide_out_right
-            )
+            // Do nothing
         }
     }
 

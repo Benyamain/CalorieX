@@ -29,7 +29,7 @@
                     android:layout_alignParentStart="true"
                     android:layout_alignParentTop="true"
                     android:layout_alignParentEnd="true"
-                    app:cardBackgroundColor="@color/cardview_shadow_end_color"
+                    app:cardBackgroundColor="#2D2A3E"
                     app:cardCornerRadius="8dp">
 
                     <RelativeLayout
@@ -43,6 +43,8 @@
                             android:layout_height="wrap_content"
                             android:background="#2D2A3E">
 
+                            <include layout="@layout/appear_bottom_toolbar" />
+
                             <androidx.constraintlayout.widget.ConstraintLayout
                                 android:id="@+id/activity_detailed_rl2"
                                 android:layout_width="match_parent"
@@ -50,7 +52,7 @@
                                 android:layout_alignParentStart="true"
                                 android:layout_alignParentTop="true"
                                 android:layout_alignParentEnd="true"
-                                android:layout_marginTop="16dp">
+                                android:layout_marginTop="85dp">
 
                                 <RelativeLayout
                                     android:id="@+id/activity_detailed_info_kcal"
@@ -243,7 +245,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/detailed_cardview1"
-                    app:cardBackgroundColor="@color/cardview_shadow_end_color"
+                    app:cardBackgroundColor="#2D2A3E"
                     app:cardCornerRadius="8dp">
 
                     <RelativeLayout
@@ -510,28 +512,8 @@
 
                             <!-- Sign Up Button -->
                             <androidx.appcompat.widget.AppCompatButton
-                                android:id="@+id/cancel_button"
-                                android:layout_width="110dp"
-                                android:layout_height="wrap_content"
-                                android:background="@drawable/rounded_button"
-                                android:fontFamily="sans-serif"
-                                android:text="Cancel"
-                                android:textAllCaps="false"
-                                android:textColor="@color/white"
-                                android:textSize="16sp"
-                                android:textStyle="bold" />
-
-                            <!-- Space -->
-                            <View
-                                android:layout_width="50dp"
-                                android:layout_height="0dp"
-                                android:layout_weight="0.5"
-                                android:background="@android:color/transparent" />
-
-                            <!-- Sign Up Button -->
-                            <androidx.appcompat.widget.AppCompatButton
-                                android:id="@+id/save_button"
-                                android:layout_width="110dp"
+                                android:id="@+id/nutrition_info_save_button"
+                                android:layout_width="250dp"
                                 android:layout_height="wrap_content"
                                 android:background="@drawable/rounded_button"
                                 android:fontFamily="sans-serif"

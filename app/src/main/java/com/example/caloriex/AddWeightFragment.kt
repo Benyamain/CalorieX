@@ -12,36 +12,38 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 
-class NutritionInfoFragment : Fragment() {
+class AddWeightFragment : Fragment() {
 
-    private lateinit var saveBtn: Button
+    private lateinit var navController: NavController
     private lateinit var toolbar: androidx.appcompat.widget.Toolbar
     private lateinit var imageIv: ImageView
-    private lateinit var nutritionInfoTv: TextView
-    private lateinit var navController: NavController
+    private lateinit var addWeightTv: TextView
+    private lateinit var saveBtn: Button
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_nutrition_info, container, false)
+        val view = inflater.inflate(R.layout.fragment_add_weight, container, false)
         toolbar = view.findViewById(R.id.appear_bottom_toolbar)
         navController = findNavController()
         imageIv = view.findViewById(R.id.appear_bottom_toolbar_close_image_view)
-        nutritionInfoTv = view.findViewById(R.id.appear_bottom_toolbar_title_textview)
-        nutritionInfoTv.text = "@FoodName"
+        addWeightTv = view.findViewById(R.id.appear_bottom_toolbar_title_textview)
+        addWeightTv.text = "Weight"
 
         imageIv.setOnClickListener {
             navController.popBackStack()
         }
 
-        saveBtn = view.findViewById(R.id.nutrition_info_save_button)
+        saveBtn = view.findViewById(R.id.add_weight_save_button)
         saveBtn.setOnClickListener {
             intentToDashboard()
         }
 
         return view
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -52,10 +54,14 @@ class NutritionInfoFragment : Fragment() {
     }
 
     private fun intentToDashboard() {
-       // val bundle = Bundle()
-       // bundle.putString("date", newDate)
+        // val bundle = Bundle()
+        //  bundle.putString("date", newDate)
 
-       // findNavController().navigate(R.id.dashboardFragment, bundle)
+        navController.navigate(R.id.dashboardFragment)
 
+    }
+
+    override fun onResume() {
+        super.onResume()
     }
 }

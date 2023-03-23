@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.mancj.materialsearchbar.MaterialSearchBar
 
@@ -37,14 +38,12 @@ class SearchFoodFragment : Fragment(), MaterialSearchBar.OnSearchActionListener 
         super.onViewCreated(view, savedInstanceState)
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-            //navController.popBackStack()
-            // Add animation for slide up and down
+            navController.navigate(R.id.dashboardFragment)
         }
     }
 
     override fun onSearchStateChanged(enabled: Boolean) {
-        val s = if (enabled) "enabled" else "disabled"
-        Toast.makeText(requireContext(), "Search $s", Toast.LENGTH_SHORT).show()
+
     }
 
     override fun onSearchConfirmed(text: CharSequence?) {
