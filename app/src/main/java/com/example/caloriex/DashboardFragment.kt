@@ -1,6 +1,9 @@
 package com.example.caloriex
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Build
@@ -10,10 +13,14 @@ import android.view.*
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.addCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
@@ -30,6 +37,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 private const val TAG = "ANNOYING"
+private val PERMISSIONS_REQUIRED = arrayOf(Manifest.permission.CAMERA)
 
 class DashboardFragment : Fragment() {
 
@@ -46,6 +54,18 @@ class DashboardFragment : Fragment() {
     private lateinit var imageIv: ImageView
     private lateinit var parentLayout: View
     private var appearBottomCounter = 0
+
+    private val requestPermissionLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted: Boolean ->
+            if (isGranted) {
+                Toast.makeText(requireContext(), "Permission request granted", Toast.LENGTH_LONG).show()
+                navigateToCamera()
+            } else {
+                Toast.makeText(requireContext(), "Permission request denied", Toast.LENGTH_LONG).show()
+            }
+        }
 
     @SuppressLint("ClickableViewAccessibility")
     @RequiresApi(Build.VERSION_CODES.O)
@@ -227,7 +247,8 @@ class DashboardFragment : Fragment() {
                     appearBottomNavigationView.menu.findItem(R.id.menu_snap_food)
                         .setIcon(R.drawable.ic_snap_food_foreground)
 
-                    // navController.navigate(R.id.action_dashboardFragment_to_chartsFragment)
+                    requestCameraPermission()
+
                     appearBottomCounter = 0
                     appearBottomNavigationView.menu.findItem(R.id.menu_snap_food).isChecked = true
                     appearBottomNavigationView.menu.findItem(R.id.menu_add_food).isChecked = false
@@ -286,6 +307,12 @@ class DashboardFragment : Fragment() {
         pieChart.invalidate()
     }
 
+    private fun navigateToCamera() {
+        lifecycleScope.launchWhenStarted {
+           navController.navigate(R.id.action_permissionsFragment_to_cameraFragment)
+        }
+    }
+
     @SuppressLint("SetTextI18n", "SimpleDateFormat")
     @RequiresApi(Build.VERSION_CODES.O)
     private fun readDate() {
@@ -313,6 +340,25 @@ class DashboardFragment : Fragment() {
                 // For any other case, show the selected date
                 calendarTv.text = selectedDate.makeDateReadable()
             }
+        }
+    }
+
+    companion object {
+        /** Convenience method used to check if all permissions required by this app are granted */
+        fun hasPermissions(context: Context) = PERMISSIONS_REQUIRED.all {
+            ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
+        }
+    }
+
+    private fun requestCameraPermission() {
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            navigateToCamera()
+        } else {
+            requestPermissionLauncher.launch(Manifest.permission.CAMERA)
         }
     }
 }

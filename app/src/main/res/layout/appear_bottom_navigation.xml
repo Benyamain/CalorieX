@@ -8,7 +8,6 @@
     android:background="@drawable/appear_bottom_navigation_background"
     app:itemIconSize="44dp"
     app:itemTextColor="@color/white"
-    style="@style/MyBottomNavigation.TextAppearance"
     android:layout_marginBottom="75dp"
     android:visibility="invisible"
     app:itemIconTint="#A2A5AB"

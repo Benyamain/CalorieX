@@ -120,6 +120,10 @@
             android:id="@+id/action_dashboardFragment_to_addWeightFragment"
             app:destination="@id/addWeightFragment"
             app:enterAnim="@anim/fade_in_and_slide_up_fast" />
+        <action
+            android:id="@+id/action_permissionsFragment_to_cameraFragment"
+            app:destination="@id/cameraFragment"
+            app:enterAnim="@anim/fade_in_and_slide_up_fast"/>
     </fragment>
 
 
@@ -255,6 +259,19 @@
         android:name="com.example.caloriex.NutritionInfoFragment"
         android:label="Nutrition Info Fragment"
         tools:layout="@layout/fragment_nutrition_info">
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/cameraFragment"
+        android:name="com.example.caloriex.CameraFragment"
+        android:label="Camera Fragment"
+        tools:layout="@layout/fragment_camera"
+        app:popUpTo="@id/cameraFragment"
+        app:popUpToInclusive="true">
+        <action
+            android:id="@+id/action_cameraFragment_to_permissionsFragment"
+            app:destination="@id/dashboardFragment" />
     </fragment>
 </navigation>
 
