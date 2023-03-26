@@ -29,7 +29,7 @@ class NutritionInfoFragment : Fragment() {
         navController = findNavController()
         imageIv = view.findViewById(R.id.appear_bottom_toolbar_close_image_view)
         nutritionInfoTv = view.findViewById(R.id.appear_bottom_toolbar_title_textview)
-        nutritionInfoTv.text = "@FoodName"
+        nutritionInfoTv.text = "Food Name"
 
         imageIv.setOnClickListener {
             navController.popBackStack()
@@ -55,7 +55,7 @@ class NutritionInfoFragment : Fragment() {
        // val bundle = Bundle()
        // bundle.putString("date", newDate)
 
-       // findNavController().navigate(R.id.dashboardFragment, bundle)
+        navController.navigate(R.id.dashboardFragment)
 
     }
 }

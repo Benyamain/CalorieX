@@ -25,6 +25,8 @@ import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
@@ -52,7 +54,8 @@ class DashboardFragment : Fragment() {
     private lateinit var selectedDate: String
     private lateinit var calendarTv: TextView
     private lateinit var imageIv: ImageView
-    private lateinit var parentLayout: View
+    private lateinit var dashboardRecyclerView: RecyclerView
+    private lateinit var dashboardItemsAdapter: DashboardItemsAdapter
     private var appearBottomCounter = 0
 
     private val requestPermissionLauncher =
@@ -90,6 +93,20 @@ class DashboardFragment : Fragment() {
         navController = findNavController()
         bottomNavigationView.setupWithNavController(navController)
         appearBottomNavigationView.setupWithNavController(navController)
+
+        dashboardRecyclerView = view.findViewById(R.id.dashboard_recycler_view)
+        dashboardRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+
+        // ArrayList of class DashboardItems
+        val dashboardData = ArrayList<DashboardItems>()
+
+        // Testing purposes this is not actual way it will be done in the final version of the app
+        for (i in 1..20) {
+            dashboardData.add(DashboardItems(R.drawable.dark_logo, "Food Name $i", "999 g", "1450.2", "kcal"))
+        }
+
+        dashboardItemsAdapter = DashboardItemsAdapter(dashboardData,navController,appearBottomNavigationView)
+        dashboardRecyclerView.adapter = dashboardItemsAdapter
 
         imageIv.setOnClickListener {
             navController.navigate(R.id.action_dashboardFragment_to_calendarFragment)
@@ -134,6 +151,7 @@ class DashboardFragment : Fragment() {
                     if (appearBottomCounter == 1) {
                         appearBottom()
                     }
+
                     true
                 }
 
@@ -174,35 +192,6 @@ class DashboardFragment : Fragment() {
         setupPieChart(carbsPieChart, data)
         setupPieChart(fatPieChart, data)
 
-        parentLayout = view.findViewById(R.id.dashboard_recycler_view)
-        parentLayout.setOnTouchListener { _, motionEvent ->
-            if (motionEvent.action == MotionEvent.ACTION_DOWN && !isPointInsideView(
-                    motionEvent.rawX,
-                    motionEvent.rawY,
-                    appearBottomNavigationView
-                ) && appearBottomNavigationView.visibility == View.VISIBLE
-            ) {
-                // Clicked outside appearBottomNavigationView
-                appearBottomNavigationView.startAnimation(
-                    AnimationUtils.loadAnimation(
-                        requireContext(),
-                        R.anim.slide_up_fast
-                    )
-                )
-                appearBottomNavigationView.visibility = View.INVISIBLE
-                appearBottomCounter = 0
-                bottomNavigationView.itemIconTintList = AppCompatResources.getColorStateList(requireContext(), R.color.menu_selector_icon)
-                bottomNavigationView.menu.findItem(R.id.menu_diary).isChecked = true
-                appearBottomNavigationView.menu.findItem(R.id.menu_add_weight).isChecked = false
-                appearBottomNavigationView.menu.findItem(R.id.menu_snap_food).isChecked = false
-                appearBottomNavigationView.menu.findItem(R.id.menu_add_food).isChecked = false
-                appearBottomNavigationView.menu.findItem(R.id.menu_not_visible).isChecked = true
-                true
-            } else {
-                false
-            }
-        }
-
         return view
     }
 
@@ -223,14 +212,6 @@ class DashboardFragment : Fragment() {
         if ((bundle != null) && bundle.containsKey("date")) {
             readDate()
         }
-    }
-
-    private fun isPointInsideView(x: Float, y: Float, view: View): Boolean {
-        val location = IntArray(2)
-        view.getLocationOnScreen(location)
-        val viewX = location[0]
-        val viewY = location[1]
-        return (x > viewX && x < viewX + view.width && y > viewY && y < viewY + view.height)
     }
 
     private fun appearBottom() {

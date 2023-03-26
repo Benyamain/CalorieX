@@ -124,6 +124,10 @@
             android:id="@+id/action_permissionsFragment_to_cameraFragment"
             app:destination="@id/cameraFragment"
             app:enterAnim="@anim/fade_in_and_slide_up_fast"/>
+        <action
+            android:id="@+id/action_dashboardFragment_to_nutritionInfoFragment"
+            app:destination="@id/nutritionInfoFragment"
+            app:enterAnim="@anim/fade_in_and_slide_up_fast" />
     </fragment>
 
 
@@ -245,6 +249,11 @@
         android:name="com.example.caloriex.SearchFoodFragment"
         android:label="Search Food Fragment"
         tools:layout="@layout/fragment_search_food">
+        <action
+            android:id="@+id/action_searchFoodFragment_to_nutritionInfoFragment"
+            app:destination="@id/nutritionInfoFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left" />
     </fragment>
 
     <fragment

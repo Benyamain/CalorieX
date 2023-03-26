@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="250dp"
         tools:itemCount="4"
-        tools:listitem="@layout/list_item" />
+        tools:listitem="@layout/setting_list_item" />
 
     <TextView
         android:id="@+id/settings_title_textview"

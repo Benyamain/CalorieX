@@ -6,7 +6,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.activity.addCallback
 import androidx.annotation.RequiresApi
 import androidx.navigation.NavController
@@ -39,14 +38,14 @@ class SettingsFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         // ArrayList of class ItemsViewModel
-        val data = ArrayList<ItemsViewModel>()
+        val data = ArrayList<SettingItems>()
 
-        data.add(ItemsViewModel(R.drawable.ic_profile_details_foreground, "Profile Details", R.drawable.ic_right_arrow_foreground))
-        data.add(ItemsViewModel(R.drawable.ic_energy_settings_foreground, "Energy Settings", R.drawable.ic_right_arrow_foreground))
-        data.add(ItemsViewModel(R.drawable.ic_macronutrient_ratios_foreground, "Macronutrient Ratios", R.drawable.ic_right_arrow_foreground))
-        data.add(ItemsViewModel(R.drawable.ic_logout_foreground, "Logout", R.drawable.ic_right_arrow_foreground))
+        data.add(SettingItems(R.drawable.ic_profile_details_foreground, "Profile Details", R.drawable.ic_right_arrow_foreground))
+        data.add(SettingItems(R.drawable.ic_energy_settings_foreground, "Energy Settings", R.drawable.ic_right_arrow_foreground))
+        data.add(SettingItems(R.drawable.ic_macronutrient_ratios_foreground, "Macronutrient Ratios", R.drawable.ic_right_arrow_foreground))
+        data.add(SettingItems(R.drawable.ic_logout_foreground, "Logout", R.drawable.ic_right_arrow_foreground))
 
-        val adapter = RecyclerViewAdapter(data,navController)
+        val adapter = SettingsAdapter(data,navController)
         recyclerView.adapter = adapter
 
         // Customize the label visibility mode

@@ -1,6 +1,5 @@
 package com.example.caloriex
 
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,11 +8,11 @@ import android.widget.TextView
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 
-class RecyclerViewAdapter(private val list: List<ItemsViewModel>, private val navController: NavController) : RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>() {
+class SettingsAdapter(private val list: List<SettingItems>, private val navController: NavController) : RecyclerView.Adapter<SettingsAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.list_item, parent, false)
+            .inflate(R.layout.setting_list_item, parent, false)
 
         return ViewHolder(view)
     }
