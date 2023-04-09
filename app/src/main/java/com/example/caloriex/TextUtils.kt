@@ -3,6 +3,8 @@ package com.example.caloriex
 import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import java.text.SimpleDateFormat
 import java.time.Month
 import java.util.*
@@ -118,6 +120,24 @@ fun calculateMacronutrientRatios(bmr: Int, proteinRatio: Double, netCarbRatio: D
     val netCarbIntake = ((netCarbRatio / totalRatio) * bmr).toInt()
     val fatIntake = ((fatRatio / totalRatio) * bmr).toInt()
     return Triple(proteinIntake, netCarbIntake, fatIntake)
+}
+
+fun creatingProfile(age: Int, height: Double, weight: Double, sex: String) {
+    val profile = ProfileDetails(age, height, weight, sex)
+
+    //Firebase.database.reference.child("users").child(userId).setValue(profile)
+}
+
+fun energySettings(bmrName: String, activityLevel: String, weightGoal: Double) {
+    val energy = EnergySettings(bmrName, activityLevel, weightGoal)
+
+    //Firebase.database.reference.child("users").child(userId).setValue(energy)
+}
+
+fun macroRatios(protein: Double, netCarb: Double, fat: Double) {
+    val macros = MacroRatios(protein, netCarb, fat)
+
+    //Firebase.database.reference.child("users").child(userId).setValue(macros)
 }
 
 
