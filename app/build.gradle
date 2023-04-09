@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'com.google.gms.google-services'
+    id 'kotlin-parcelize'
 }
 
 android {
@@ -90,5 +91,13 @@ dependencies {
 
     // TensorFlow
     implementation 'org.tensorflow:tensorflow-lite-task-vision:0.3.1'
+
+    // Retrofit && OkHttp
+    implementation 'com.squareup.okhttp3:okhttp:4.9.3'
+    implementation 'com.squareup.retrofit2:converter-scalars:2.9.0'
+    implementation "com.squareup.retrofit2:retrofit:2.9.0"
+    implementation "com.squareup.retrofit2:converter-gson:2.9.0"
+    implementation "com.squareup.retrofit2:adapter-rxjava2:2.9.0"
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
 
 }
