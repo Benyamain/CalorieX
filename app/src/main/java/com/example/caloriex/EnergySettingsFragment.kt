@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Button
+import android.widget.EditText
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -15,6 +16,7 @@ import androidx.navigation.fragment.findNavController
 class EnergySettingsFragment : Fragment() {
 
     private lateinit var continueBtn: Button
+    private lateinit var weightGoalEt: EditText
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_energy_settings, container, false)
@@ -37,6 +39,8 @@ class EnergySettingsFragment : Fragment() {
         continueBtn.setOnClickListener {
             findNavController().navigate(R.id.action_energySettingsFragment_to_macroRatiosFragment)
         }
+
+        weightGoalEt = view.findViewById(R.id.weight_goal_edittext)
 
         val activityLevelAutocompleteTextView =
             view.findViewById<AutoCompleteTextView>(R.id.activity_level_autocomplete_textview)

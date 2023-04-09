@@ -77,3 +77,50 @@ enum class MonthComplete {
 }
 
 fun String.firstCharToUpper() = this[0].toUpperCase() + this.substring(1, this.length)
+
+fun calculateBMRMifflinStJeor(gender: String, weight: Double, height: Double, age: Int, activityLevel: String, weightGoal: Double?): Int {
+    val s = if (gender.equals("Female", ignoreCase = true)) 5 else -161
+    val bmr = (10 * weight) + (6.25 * height) - (5 * age) + s
+    val ratio = weightGoal?.div(weight) ?: 1.0
+    val adjustedBMR = bmr * ratio
+
+    // Adjust for activity level
+    when (activityLevel) {
+        "Sedentary" -> return (adjustedBMR * 1.2).toInt()
+        "Lightly Active" -> return (adjustedBMR * 1.375).toInt()
+        "Moderately Active" -> return (adjustedBMR * 1.55).toInt()
+        "Very Active" -> return (adjustedBMR * 1.725).toInt()
+        "Extremely Active" -> return (adjustedBMR * 1.9).toInt()
+        else -> return adjustedBMR.toInt()
+    }
+}
+
+fun calculateBMRHarrisBenedict(gender: String, weight: Double, height: Double, age: Int, activityLevel: String, weightGoal: Double?): Int {
+    val s = if (gender.equals("Male", ignoreCase = true)) 88.362 else 447.593
+    val bmr = s + (13.397 * weight) + (4.799 * height) - (5.677 * age)
+    val ratio = weightGoal?.div(weight) ?: 1.0
+    val adjustedBMR = bmr * ratio
+
+    // Adjust for activity level
+    when (activityLevel) {
+        "Sedentary" -> return (adjustedBMR * 1.2).toInt()
+        "Lightly Active" -> return (adjustedBMR * 1.375).toInt()
+        "Moderately Active" -> return (adjustedBMR * 1.55).toInt()
+        "Very Active" -> return (adjustedBMR * 1.725).toInt()
+        "Extremely Active" -> return (adjustedBMR * 1.9).toInt()
+        else -> return adjustedBMR.toInt()
+    }
+}
+
+fun calculateMacronutrientRatios(bmr: Int, proteinRatio: Double, netCarbRatio: Double, fatRatio: Double): Triple<Int, Int, Int> {
+    val totalRatio = proteinRatio + netCarbRatio + fatRatio
+    val proteinIntake = ((proteinRatio / totalRatio) * bmr).toInt()
+    val netCarbIntake = ((netCarbRatio / totalRatio) * bmr).toInt()
+    val fatIntake = ((fatRatio / totalRatio) * bmr).toInt()
+    return Triple(proteinIntake, netCarbIntake, fatIntake)
+}
+
+
+
+
+

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.addCallback
@@ -18,6 +19,9 @@ class UpdateMacroRatiosFragment : Fragment() {
     private lateinit var toolbar: androidx.appcompat.widget.Toolbar
     private lateinit var imageIv: ImageView
     private lateinit var settingsTv: TextView
+    private lateinit var proteinEt: EditText
+    private lateinit var netCarbsEt: EditText
+    private lateinit var fatsEt: EditText
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,6 +38,10 @@ class UpdateMacroRatiosFragment : Fragment() {
         imageIv.setOnClickListener {
             navController.navigate(R.id.action_updateMacroRatiosFragment_to_settingsFragment)
         }
+
+        proteinEt = view.findViewById(R.id.protein_edittext)
+        netCarbsEt = view.findViewById(R.id.net_carbs_edittext)
+        fatsEt = view.findViewById(R.id.fat_edittext)
 
         return view
     }

@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Button
+import android.widget.EditText
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -16,6 +17,9 @@ import androidx.navigation.fragment.findNavController
 class ProfileDetailsFragment : Fragment() {
 
     private lateinit var continueBtn: Button
+    private lateinit var ageEt: EditText
+    private lateinit var heightEt: EditText
+    private lateinit var weightEt: EditText
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -33,6 +37,10 @@ class ProfileDetailsFragment : Fragment() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             // Do nothing
         }
+
+        ageEt = view.findViewById(R.id.age_edittext)
+        heightEt = view.findViewById(R.id.height_edittext)
+        weightEt = view.findViewById(R.id.weight_edittext)
     }
 
     private fun changeActivity() {

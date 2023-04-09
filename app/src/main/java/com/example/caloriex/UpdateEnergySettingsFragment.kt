@@ -17,6 +17,7 @@ class UpdateEnergySettingsFragment : Fragment() {
     private lateinit var toolbar: androidx.appcompat.widget.Toolbar
     private lateinit var imageIv: ImageView
     private lateinit var settingsTv: TextView
+    private lateinit var weightGoalEt: EditText
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -29,6 +30,7 @@ class UpdateEnergySettingsFragment : Fragment() {
         imageIv = view.findViewById(R.id.left_arrow_image_view)
         settingsTv = view.findViewById(R.id.settings_title_textview)
         settingsTv.text = "Energy Settings"
+        weightGoalEt = view.findViewById(R.id.weight_goal_edittext)
 
         imageIv.setOnClickListener {
             navController.navigate(R.id.action_updateEnergySettingsFragment_to_settingsFragment)

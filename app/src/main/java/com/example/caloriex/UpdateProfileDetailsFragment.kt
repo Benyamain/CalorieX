@@ -6,11 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
@@ -22,6 +18,9 @@ class UpdateProfileDetailsFragment : Fragment() {
     private lateinit var toolbar: androidx.appcompat.widget.Toolbar
     private lateinit var imageIv: ImageView
     private lateinit var settingsTv: TextView
+    private lateinit var ageEt: EditText
+    private lateinit var heightEt: EditText
+    private lateinit var weightEt: EditText
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,6 +33,9 @@ class UpdateProfileDetailsFragment : Fragment() {
         imageIv = view.findViewById(R.id.left_arrow_image_view)
         settingsTv = view.findViewById(R.id.settings_title_textview)
         settingsTv.text = "Profile Details"
+        ageEt = view.findViewById(R.id.age_edittext)
+        heightEt = view.findViewById(R.id.height_edittext)
+        weightEt = view.findViewById(R.id.weight_edittext)
 
         imageIv.setOnClickListener {
             navController.navigate(R.id.action_updateProfileDetailsFragment_to_settingsFragment)
