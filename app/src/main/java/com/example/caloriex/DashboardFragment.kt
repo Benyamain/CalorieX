@@ -4,7 +4,6 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
-import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -22,7 +21,6 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
-import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -102,7 +100,7 @@ class DashboardFragment : Fragment() {
 
         // Testing purposes this is not actual way it will be done in the final version of the app
         for (i in 1..20) {
-            dashboardData.add(DashboardItems(R.drawable.dark_logo, "Food Name $i", "999 g", "1450.2", "kcal"))
+            dashboardData.add(DashboardItems(R.drawable.gray_logo, "Food Name $i", "999 g", "1450.2", "kcal"))
         }
 
         dashboardItemsAdapter = DashboardItemsAdapter(dashboardData,navController,appearBottomNavigationView)

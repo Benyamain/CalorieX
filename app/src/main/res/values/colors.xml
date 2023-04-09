@@ -10,4 +10,6 @@
     <color name="app_background">#272A3A</color>
     <color name="gold">#87B678</color>
     <color name="gray">#A2A5AB</color>
+    <color name="app_primary">#2D2A3E</color>
+    <color name="bounding_box_color">#FF6F00</color>
 </resources>
