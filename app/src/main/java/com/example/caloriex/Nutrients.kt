@@ -19,5 +19,17 @@ data class Nutrients(
     val FIBTG: Double? = null,
 
     @SerializedName("PROCNT")
-    val PROCNT: Double? = null
+    val PROCNT: Double? = null,
+
+    @SerializedName("FAPU")
+    val FAPU: Double? = null,
+
+    @SerializedName("FAMS")
+    val FAMS: Double? = null,
+
+    @SerializedName("FASAT")
+    val FASAT: Double? = null,
+
+    @SerializedName("SUGAR")
+    val SUGAR: Double? = null
 ) : Parcelable
