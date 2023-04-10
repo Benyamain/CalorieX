@@ -35,4 +35,5 @@
 
         <include layout="@layout/bottom_navigation_view" />
     </RelativeLayout>
+
 </RelativeLayout>

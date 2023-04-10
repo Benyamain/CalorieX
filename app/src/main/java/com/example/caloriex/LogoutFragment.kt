@@ -3,13 +3,11 @@ package com.example.caloriex
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.activity.addCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.view.ContextThemeWrapper
@@ -103,7 +101,10 @@ class LogoutFragment : Fragment() {
         }
 
         imageIv.setOnClickListener {
-            navController.navigate(R.id.action_logoutFragment_to_settingsFragment)
+            view.findViewById<ProgressBar>(R.id.logout_progress_circular).visibility = View.VISIBLE
+            Handler().postDelayed({
+                navController.navigate(R.id.action_logoutFragment_to_settingsFragment)
+            }, 1000)
         }
 
         return view

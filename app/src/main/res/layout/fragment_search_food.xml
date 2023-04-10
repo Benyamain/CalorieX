@@ -48,11 +48,21 @@
                     android:id="@+id/search_food_recycler_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    tools:itemCount="20"
+                    tools:itemCount="5"
                     tools:listitem="@layout/food_list_item" />
             </RelativeLayout>
 
         </androidx.core.widget.NestedScrollView>
+
+        <androidx.core.widget.ContentLoadingProgressBar
+            android:id="@+id/sf_progress_circular"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:visibility="invisible"
+            android:layout_gravity="center"
+            style="?android:attr/progressBarStyleLarge" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
 
 </LinearLayout>

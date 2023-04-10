@@ -1,13 +1,11 @@
 package com.example.caloriex
 
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
@@ -36,12 +34,15 @@ class UpdateMacroRatiosFragment : Fragment() {
         settingsTv.text = "Macronutrient Ratios"
 
         imageIv.setOnClickListener {
-            navController.navigate(R.id.action_updateMacroRatiosFragment_to_settingsFragment)
+            view.findViewById<ProgressBar>(R.id.um_progress_circular).visibility = View.VISIBLE
+            Handler().postDelayed({
+                navController.navigate(R.id.action_updateMacroRatiosFragment_to_settingsFragment)
+            }, 1000)
         }
 
-        proteinEt = view.findViewById(R.id.protein_edittext)
-        netCarbsEt = view.findViewById(R.id.net_carbs_edittext)
-        fatsEt = view.findViewById(R.id.fat_edittext)
+        proteinEt = view.findViewById(R.id.macro_ratios_protein_edittext)
+        netCarbsEt = view.findViewById(R.id.macro_ratios_net_carbs_edittext)
+        fatsEt = view.findViewById(R.id.macro_ratios_fat_edittext)
 
         return view
     }

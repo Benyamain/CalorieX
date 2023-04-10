@@ -28,4 +28,17 @@
         android:textColor="@color/white"
         android:textSize="16sp"
         android:textStyle="bold" />
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <androidx.core.widget.ContentLoadingProgressBar
+            android:id="@+id/logout_progress_circular"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:visibility="invisible"
+            android:layout_gravity="center"
+            style="?android:attr/progressBarStyleLarge" />
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </RelativeLayout>

@@ -2,6 +2,7 @@ package com.example.caloriex
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,10 +31,13 @@ class UpdateEnergySettingsFragment : Fragment() {
         imageIv = view.findViewById(R.id.left_arrow_image_view)
         settingsTv = view.findViewById(R.id.settings_title_textview)
         settingsTv.text = "Energy Settings"
-        weightGoalEt = view.findViewById(R.id.weight_goal_edittext)
+        weightGoalEt = view.findViewById(R.id.energy_settings_weight_goal_edittext)
 
         imageIv.setOnClickListener {
-            navController.navigate(R.id.action_updateEnergySettingsFragment_to_settingsFragment)
+            view.findViewById<ProgressBar>(R.id.ue_progress_circular).visibility = View.VISIBLE
+            Handler().postDelayed({
+                navController.navigate(R.id.action_updateEnergySettingsFragment_to_settingsFragment)
+            }, 1000)
         }
 
         return view

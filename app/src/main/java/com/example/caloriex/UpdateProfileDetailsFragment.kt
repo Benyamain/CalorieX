@@ -3,6 +3,7 @@ package com.example.caloriex
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +19,9 @@ class UpdateProfileDetailsFragment : Fragment() {
     private lateinit var toolbar: androidx.appcompat.widget.Toolbar
     private lateinit var imageIv: ImageView
     private lateinit var settingsTv: TextView
+    private lateinit var ageEt: EditText
+    private lateinit var heightEt: EditText
+    private lateinit var weightEt: EditText
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -29,10 +33,16 @@ class UpdateProfileDetailsFragment : Fragment() {
         navController = findNavController()
         imageIv = view.findViewById(R.id.left_arrow_image_view)
         settingsTv = view.findViewById(R.id.settings_title_textview)
+        ageEt = view.findViewById(R.id.profile_details_age_edittext)
+        heightEt = view.findViewById(R.id.profile_details_height_edittext)
+        weightEt = view.findViewById(R.id.profile_details_weight_edittext)
         settingsTv.text = "Profile Details"
 
         imageIv.setOnClickListener {
-            navController.navigate(R.id.action_updateProfileDetailsFragment_to_settingsFragment)
+            view.findViewById<ProgressBar>(R.id.up_progress_circular).visibility = View.VISIBLE
+            Handler().postDelayed({
+                navController.navigate(R.id.action_updateProfileDetailsFragment_to_settingsFragment)
+            }, 1000)
         }
 
         return view

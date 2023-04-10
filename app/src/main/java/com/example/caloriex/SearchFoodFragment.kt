@@ -3,10 +3,12 @@ package com.example.caloriex
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -44,7 +46,7 @@ class SearchFoodFragment : Fragment(), MaterialSearchBar.OnSearchActionListener 
         searchResultsRecyclerView = view.findViewById(R.id.search_food_recycler_view)
         searchResultsRecyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        searchResultsAdapter = FoodListAdapter(arrayListOf(),navController)
+        searchResultsAdapter = FoodListAdapter(arrayListOf(), navController)
         searchResultsRecyclerView.adapter = searchResultsAdapter
 
         foodVm.foodsData.observe(viewLifecycleOwner) { foodItems ->
@@ -80,6 +82,12 @@ class SearchFoodFragment : Fragment(), MaterialSearchBar.OnSearchActionListener 
             // Do something with search term
             foodVm.getData(it.toString())
         }
+
+        view?.findViewById<ProgressBar>(R.id.sf_progress_circular)?.visibility = View.VISIBLE
+        Handler().postDelayed({
+            view?.findViewById<ProgressBar>(R.id.sf_progress_circular)?.visibility = View.GONE
+        }, 1500)
+
     }
 
     override fun onButtonClicked(buttonCode: Int) {
