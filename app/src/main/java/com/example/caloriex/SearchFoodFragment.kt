@@ -1,12 +1,15 @@
 package com.example.caloriex
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -22,6 +25,7 @@ class SearchFoodFragment : Fragment(), MaterialSearchBar.OnSearchActionListener 
     private var lastSearches: MutableList<String> = mutableListOf()
     private val PREFS_NAME = "search_history"
     private val PREFS_KEY_SEARCHES = "searches"
+    private lateinit var foodVm: FoodViewModel
 
 
     override fun onCreateView(
@@ -35,23 +39,23 @@ class SearchFoodFragment : Fragment(), MaterialSearchBar.OnSearchActionListener 
         searchBar.setOnSearchActionListener(this)
         lastSearches = loadSearchSuggestionFromDisk().toMutableList()
         searchBar.lastSuggestions = lastSearches
+        foodVm = ViewModelProvider(this)[FoodViewModel::class.java]
 
         searchResultsRecyclerView = view.findViewById(R.id.search_food_recycler_view)
         searchResultsRecyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        // ArrayList of class FoodListItems
-        val data = ArrayList<FoodListItems>()
-
-        // Testing purposes this is not actual way it will be done in the final version of the app
-        for (i in 1..20) {
-            data.add(FoodListItems("Food Name $i"))
-        }
-
-        searchResultsAdapter = FoodListAdapter(data,navController)
+        searchResultsAdapter = FoodListAdapter(arrayListOf(),navController)
         searchResultsRecyclerView.adapter = searchResultsAdapter
+
+        foodVm.foodsData.observe(viewLifecycleOwner) { foodItems ->
+            searchResultsAdapter.foodsList.clear()
+            searchResultsAdapter.foodsList.addAll(foodItems)
+            searchResultsAdapter.notifyDataSetChanged()
+        }
 
         return view
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -74,6 +78,7 @@ class SearchFoodFragment : Fragment(), MaterialSearchBar.OnSearchActionListener 
             saveSearchSuggestionsToDisk(lastSearches)
 
             // Do something with search term
+            foodVm.getData(it.toString())
         }
     }
 

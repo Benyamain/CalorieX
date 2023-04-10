@@ -8,8 +8,11 @@ import android.widget.TextView
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 
+const val CALORIE = "TotalCalories"
+const val NAME = "FoodName"
+
 class FoodListAdapter(
-    private val list: List<FoodListItems>,
+    val foodsList: ArrayList<FoodApiModel>,
     private val navController: NavController
 ) : RecyclerView.Adapter<FoodListAdapter.ViewHolder>() {
 
@@ -22,15 +25,15 @@ class FoodListAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
-        val itemsViewModel = list[position]
-        holder.textView.text = itemsViewModel.foodText
+        val currentItem = foodsList[position].hints.firstOrNull()?.food
+        holder.textView.text = currentItem?.label.toString()
         holder.itemView.setOnClickListener {
             navController.navigate(R.id.action_searchFoodFragment_to_nutritionInfoFragment)
         }
     }
 
     override fun getItemCount(): Int {
-        return list.size
+        return foodsList.size
     }
 
     class ViewHolder(ItemView: View) : RecyclerView.ViewHolder(ItemView) {
