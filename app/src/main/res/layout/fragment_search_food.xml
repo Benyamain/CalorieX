@@ -62,7 +62,13 @@
             android:visibility="invisible"
             android:layout_gravity="center"
             style="?android:attr/progressBarStyleLarge" />
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
+        <ImageView
+            android:id="@+id/edamam_logo"
+            android:layout_width="wrap_content"
+            android:layout_height="90dp"
+            android:layout_gravity="bottom"
+            android:src="@drawable/edamam_badge"/>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 </LinearLayout>

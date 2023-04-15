@@ -33,6 +33,7 @@ class NutritionInfoFragment : Fragment() {
     private lateinit var detailedNutritionSugarValue: TextView
     private lateinit var detailedNutritionFiberValue: TextView
     private lateinit var amountEt: EditText
+    private var bundle: Bundle? = null
 
     @SuppressLint("SetTextI18n")
     override fun onCreateView(
@@ -70,8 +71,8 @@ class NutritionInfoFragment : Fragment() {
 
         // Read the date when the user navigates here
         // Condition below basically is a validation for all the attributes of that food such as its food content nutrition
-        val bundle = arguments
-        if ((bundle != null) && (bundle.containsKey("name"))) {
+        bundle = arguments
+        if ((bundle != null) && (bundle!!.containsKey("name"))) {
             val weightUnits = " g"
             val calorieUnits = " kcal"
             nutritionInfoTv.text = arguments?.getString("name").toString()
@@ -116,12 +117,9 @@ class NutritionInfoFragment : Fragment() {
     }
 
     private fun intentToDashboard() {
-        // val bundle = Bundle()
-        // bundle.putString("date", newDate)
-
         view?.findViewById<ProgressBar>(R.id.ni_progress_circular)?.visibility = View.VISIBLE
         Handler().postDelayed({
-            navController.navigate(R.id.dashboardFragment)
+            navController.navigate(R.id.dashboardFragment, bundle)
         }, 450)
 
     }

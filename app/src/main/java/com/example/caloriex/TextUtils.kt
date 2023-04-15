@@ -3,6 +3,7 @@ package com.example.caloriex
 import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import java.text.SimpleDateFormat
@@ -125,20 +126,35 @@ fun calculateMacronutrientRatios(bmr: Int, proteinRatio: Double, netCarbRatio: D
 fun creatingProfile(age: Int, height: Double, weight: Double, sex: String) {
     val profile = ProfileDetails(age, height, weight, sex)
 
-    //Firebase.database.reference.child("users").child(userId).setValue(profile)
+    if (userEmail != null) {
+        Firebase.database.reference.child("profileDetails").child(encodeEmail(userEmail)).setValue(profile)
+    }
 }
+
+fun encodeEmail(email: String): String {
+    return email.replace(".", ",").replace("@", "_")
+}
+
 
 fun energySettings(bmrName: String, activityLevel: String, weightGoal: Double) {
     val energy = EnergySettings(bmrName, activityLevel, weightGoal)
 
-    //Firebase.database.reference.child("users").child(userId).setValue(energy)
+    if (userEmail != null) {
+        Firebase.database.reference.child("energySettings").child(encodeEmail(userEmail)).setValue(energy)
+    }
 }
 
 fun macroRatios(protein: Double, netCarb: Double, fat: Double) {
     val macros = MacroRatios(protein, netCarb, fat)
 
-    //Firebase.database.reference.child("users").child(userId).setValue(macros)
+    if (userEmail != null) {
+        Firebase.database.reference.child("macroRatios").child(encodeEmail(userEmail)).setValue(macros)
+    }
 }
+
+val auth = FirebaseAuth.getInstance()
+val userEmail = auth.currentUser?.email
+
 
 
 

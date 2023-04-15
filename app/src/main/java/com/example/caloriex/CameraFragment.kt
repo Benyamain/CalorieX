@@ -124,7 +124,6 @@ class CameraFragment : Fragment() {
     // Declare and bind preview, capture and analysis use cases
     @SuppressLint("UnsafeOptInUsageError")
     private fun bindCameraUseCases() {
-
         // CameraProvider
         val cameraProvider =
             cameraProvider ?: throw IllegalStateException("Camera initialization failed.")

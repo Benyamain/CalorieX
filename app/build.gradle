@@ -65,6 +65,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:21.1.0'
     implementation 'com.google.firebase:firebase-auth-ktx'
     implementation 'com.google.android.gms:play-services-auth:20.4.1'
+    implementation 'com.google.firebase:firebase-database-ktx'
 
     // NavGraph
     implementation "androidx.navigation:navigation-fragment-ktx:2.5.3"
@@ -91,6 +92,7 @@ dependencies {
 
     // TensorFlow
     implementation 'org.tensorflow:tensorflow-lite-task-vision:0.3.1'
+    implementation 'org.tensorflow:tensorflow-lite:2.7.0'
 
     // Retrofit && OkHttp
     implementation 'com.squareup.okhttp3:okhttp:4.9.3'

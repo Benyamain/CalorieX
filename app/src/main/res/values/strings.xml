@@ -10,8 +10,8 @@
     </string-array>
 
     <string-array name="bmr_options">
-        <item>Mifflin St. Jeor</item>
-        <item>Harris-Benedict</item>
+        <item>Mifflin St Jeor</item>
+        <item>Harris Benedict</item>
     </string-array>
 
     <string-array name="sex_options">
