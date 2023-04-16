@@ -16,6 +16,11 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
 class EnergySettingsFragment : Fragment() {
@@ -26,7 +31,11 @@ class EnergySettingsFragment : Fragment() {
     private lateinit var bmrAutocompleteTextView: AutoCompleteTextView
     private lateinit var googleSignInClient: GoogleSignInClient
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         val view = inflater.inflate(R.layout.fragment_energy_settings, container, false)
         changeActivity(view)
         return view
@@ -53,19 +62,70 @@ class EnergySettingsFragment : Fragment() {
 
         // Waiting for the click event from user. Once done so, this will prompt MacroRatiosFragment
         continueBtn.setOnClickListener {
-            if (bmrAutocompleteTextView.text.toString().isNotEmpty() && activityLevelAutocompleteTextView.text.toString().isNotEmpty() && weightGoalEt.text.toString().isNotEmpty()) {
-            findNavController().navigate(R.id.action_energySettingsFragment_to_macroRatiosFragment)
-            energySettings(bmrAutocompleteTextView.text.toString(), activityLevelAutocompleteTextView.text.toString(), weightGoalEt.text.toString().toDouble())
-            Log.d("energySettings", "bmrAutocompleteTextView is: ${bmrAutocompleteTextView.text}")
-            Log.d("energySettings", "activityLevelAutocompleteTextView is: ${activityLevelAutocompleteTextView.text}")
-            Log.d("energySettings", "weightGoalEt is: ${weightGoalEt.text}")
-        } else {
-            Toast.makeText(
-                requireContext(),
-                "Fill out all the required fields!",
-                Toast.LENGTH_SHORT
-            ).show()
-        }
+            if (bmrAutocompleteTextView.text.toString()
+                    .isNotEmpty() && activityLevelAutocompleteTextView.text.toString()
+                    .isNotEmpty() && weightGoalEt.text.toString().isNotEmpty()
+            ) {
+                findNavController().navigate(R.id.action_energySettingsFragment_to_macroRatiosFragment)
+                energySettings(
+                    bmrAutocompleteTextView.text.toString(),
+                    activityLevelAutocompleteTextView.text.toString(),
+                    weightGoalEt.text.toString().toDouble()
+                )
+
+                userEmail?.let { encodeEmail(it) }?.let {
+                    Firebase.database.getReference("profileDetails")
+                        .child(it)
+                        .addListenerForSingleValueEvent(object : ValueEventListener {
+                            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                val profileDetails =
+                                    dataSnapshot.getValue(ProfileDetails::class.java)
+                                val age = profileDetails?.age ?: 0
+                                val height = profileDetails?.height ?: 0.0
+                                val weight = profileDetails?.weight ?: 0.0
+                                val sex = profileDetails?.sex ?: ""
+
+                                if (dataSnapshot.exists()) {
+                                    if (bmrAutocompleteTextView.text.toString() == "Harris Benedict") {
+                                        val hb = calculateBMRHarrisBenedict(
+                                            sex,
+                                            weight,
+                                            height,
+                                            age,
+                                            activityLevelAutocompleteTextView.text.toString(),
+                                            weightGoalEt.text.toString().toDouble()
+                                        )
+                                        Firebase.database.reference.child("bmrCalories")
+                                            .child(encodeEmail(userEmail)).setValue(hb)
+                                    } else {
+                                        val msj = calculateBMRMifflinStJeor(
+                                            sex,
+                                            weight,
+                                            height,
+                                            age,
+                                            activityLevelAutocompleteTextView.text.toString(),
+                                            weightGoalEt.text.toString().toDouble()
+                                        )
+                                        Firebase.database.reference.child("energyExpenditure")
+                                            .child(encodeEmail(userEmail)).setValue(msj)
+                                    }
+                                } else {
+                                    Log.d("dataSnapshot", "No data found")
+                                }
+                            }
+
+                            override fun onCancelled(databaseError: DatabaseError) {
+                                Log.d("databaseError", "$databaseError")
+                            }
+                        })
+                }
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    "Fill out all the required fields!",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
 
         weightGoalEt = view.findViewById(R.id.weight_goal_edittext)
@@ -74,7 +134,11 @@ class EnergySettingsFragment : Fragment() {
             view.findViewById(R.id.activity_level_autocomplete_textview)
         val activityLevelOptions = resources.getStringArray(R.array.activity_level_options)
 
-        var adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, activityLevelOptions)
+        var adapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_dropdown_item_1line,
+            activityLevelOptions
+        )
         activityLevelAutocompleteTextView.setAdapter(adapter)
 
         activityLevelAutocompleteTextView.setOnItemClickListener { parent, view, position, id ->
@@ -85,7 +149,8 @@ class EnergySettingsFragment : Fragment() {
             view.findViewById(R.id.bmr_autocomplete_textview)
         val bmrOptions = resources.getStringArray(R.array.bmr_options)
 
-        adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, bmrOptions)
+        adapter =
+            ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, bmrOptions)
         bmrAutocompleteTextView.setAdapter(adapter)
 
         bmrAutocompleteTextView.setOnItemClickListener { parent, view, position, id ->
@@ -97,7 +162,8 @@ class EnergySettingsFragment : Fragment() {
         super.onPause()
 
         // This makes sure that if user destroys the app and comes back to it, they have to go thru the sign up process all over again in order to ensure there is no input being missed
-        val sharedPreferences = requireActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+        val sharedPreferences =
+            requireActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
         editor.putBoolean("isLoggedIn", false)
         editor.apply()

@@ -82,36 +82,44 @@ enum class MonthComplete {
 fun String.firstCharToUpper() = this[0].toUpperCase() + this.substring(1, this.length)
 
 fun calculateBMRMifflinStJeor(gender: String, weight: Double, height: Double, age: Int, activityLevel: String, weightGoal: Double?): Int {
-    val s = if (gender.equals("Female", ignoreCase = true)) 5 else -161
-    val bmr = (10 * weight) + (6.25 * height) - (5 * age) + s
+    var bmr = 0.0
+    bmr = if (gender == "Male") {
+        88.362 + (13.397 * weight) + (4.799 * height) - (5.677 * age)
+    } else {
+        447.593 + (9.247 * weight) + (3.098 * height) - (4.330 * age)
+    }
     val ratio = weightGoal?.div(weight) ?: 1.0
     val adjustedBMR = bmr * ratio
 
     // Adjust for activity level
     when (activityLevel) {
         "Sedentary" -> return (adjustedBMR * 1.2).toInt()
-        "Lightly Active" -> return (adjustedBMR * 1.375).toInt()
-        "Moderately Active" -> return (adjustedBMR * 1.55).toInt()
-        "Very Active" -> return (adjustedBMR * 1.725).toInt()
-        "Extremely Active" -> return (adjustedBMR * 1.9).toInt()
-        else -> return adjustedBMR.toInt()
+        "Lightly Active" -> return CalorieAmount((adjustedBMR * 1.375).toInt()).calories
+        "Moderately Active" -> return CalorieAmount((adjustedBMR * 1.55).toInt()).calories
+        "Very Active" -> return CalorieAmount((adjustedBMR * 1.725).toInt()).calories
+        "Extremely Active" -> return CalorieAmount((adjustedBMR * 1.9).toInt()).calories
+        else -> return CalorieAmount(adjustedBMR.toInt()).calories
     }
 }
 
 fun calculateBMRHarrisBenedict(gender: String, weight: Double, height: Double, age: Int, activityLevel: String, weightGoal: Double?): Int {
-    val s = if (gender.equals("Male", ignoreCase = true)) 88.362 else 447.593
-    val bmr = s + (13.397 * weight) + (4.799 * height) - (5.677 * age)
+    var bmr = 0.0
+    bmr = if (gender == "Male") {
+        66.5 + (13.75 * weight) + (5.003 * height) - (6.75 * age)
+    } else {
+        655.1 + (9.563 * weight) + (1.850 * height) - (4.676 * age)
+    }
     val ratio = weightGoal?.div(weight) ?: 1.0
     val adjustedBMR = bmr * ratio
 
     // Adjust for activity level
     when (activityLevel) {
         "Sedentary" -> return (adjustedBMR * 1.2).toInt()
-        "Lightly Active" -> return (adjustedBMR * 1.375).toInt()
-        "Moderately Active" -> return (adjustedBMR * 1.55).toInt()
-        "Very Active" -> return (adjustedBMR * 1.725).toInt()
-        "Extremely Active" -> return (adjustedBMR * 1.9).toInt()
-        else -> return adjustedBMR.toInt()
+        "Lightly Active" -> return CalorieAmount((adjustedBMR * 1.375).toInt()).calories
+        "Moderately Active" -> return CalorieAmount((adjustedBMR * 1.55).toInt()).calories
+        "Very Active" -> return CalorieAmount((adjustedBMR * 1.725).toInt()).calories
+        "Extremely Active" -> return CalorieAmount((adjustedBMR * 1.9).toInt()).calories
+        else -> return CalorieAmount(adjustedBMR.toInt()).calories
     }
 }
 

@@ -63,8 +63,17 @@ class MacroRatiosFragment : Fragment() {
         // Waiting for the click event from user. Once done so, this will prompt MessageMotivationFragment
         continueBtn.setOnClickListener {
             if (proteinEt.text.toString().isNotEmpty() && netCarbsEt.text.toString().isNotEmpty() && fatsEt.text.toString().isNotEmpty()) {
-            findNavController().navigate(R.id.action_macroRatiosFragment_to_messageMotivationFragment)
-            macroRatios(proteinEt.text.toString().toDouble(), netCarbsEt.text.toString().toDouble(), fatsEt.text.toString().toDouble())
+                val total = proteinEt.text.toString().toDouble().plus(netCarbsEt.text.toString().toDouble()).plus(fatsEt.text.toString().toDouble())
+                if (total == 100.0) {
+                    findNavController().navigate(R.id.action_macroRatiosFragment_to_messageMotivationFragment)
+                    macroRatios(proteinEt.text.toString().toDouble(), netCarbsEt.text.toString().toDouble(), fatsEt.text.toString().toDouble())
+                } else {
+                    Toast.makeText(
+                        requireContext(),
+                        "Ratios must add up to 100!",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             Log.d("macroRatios", "proteinEt is: ${proteinEt.text}")
             Log.d("macroRatios", "netCarbsEt is: ${netCarbsEt.text}")
             Log.d("macroRatios", "fatsEt is: ${fatsEt.text}")
