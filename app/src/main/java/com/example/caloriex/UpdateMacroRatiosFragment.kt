@@ -2,6 +2,7 @@ package com.example.caloriex
 
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,11 @@ import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 
 class UpdateMacroRatiosFragment : Fragment() {
 
@@ -34,10 +40,64 @@ class UpdateMacroRatiosFragment : Fragment() {
         settingsTv.text = "Macronutrient Ratios"
 
         imageIv.setOnClickListener {
-            view.findViewById<ProgressBar>(R.id.um_progress_circular).visibility = View.VISIBLE
-            Handler().postDelayed({
-                navController.navigate(R.id.action_updateMacroRatiosFragment_to_settingsFragment)
-            }, 1000)
+            if (proteinEt.text.toString().isNotEmpty() && netCarbsEt.text.toString().isNotEmpty() && fatsEt.text.toString().isNotEmpty()) {
+                val total =
+                    proteinEt.text.toString().toDouble().plus(netCarbsEt.text.toString().toDouble())
+                        .plus(fatsEt.text.toString().toDouble())
+                if (total == 100.0) {
+                    view.findViewById<ProgressBar>(R.id.um_progress_circular).visibility =
+                        View.VISIBLE
+                    Handler().postDelayed({
+                        navController.navigate(R.id.action_updateMacroRatiosFragment_to_settingsFragment)
+                    }, 1000)
+
+                    userEmail?.let { encodeEmail(it) }?.let {
+                        Firebase.database.getReference("energyExpenditure")
+                            .child(it)
+                            .addListenerForSingleValueEvent(object : ValueEventListener {
+                                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                    if (dataSnapshot.exists()) {
+                                        val energyExp = if (dataSnapshot.value is Long) {
+                                            CalorieAmount(
+                                                dataSnapshot.getValue(Long::class.java)?.toInt()
+                                            )
+                                        } else {
+                                            dataSnapshot.getValue(CalorieAmount::class.java)
+                                        }
+                                        val calorie = energyExp?.calories ?: 0
+                                        val ratioCalories = calculateMacronutrientRatios(
+                                            calorie,
+                                            proteinEt.text.toString().toDouble(),
+                                            netCarbsEt.text.toString().toDouble(),
+                                            fatsEt.text.toString().toDouble()
+                                        )
+                                        Firebase.database.reference.child("macroRatioCalories")
+                                            .child(encodeEmail(userEmail)).setValue(ratioCalories)
+                                    }
+                                }
+
+                                override fun onCancelled(databaseError: DatabaseError) {
+                                    Log.d("databaseError", "$databaseError")
+                                }
+                            })
+                    }
+                } else {
+                    Toast.makeText(
+                        requireContext(),
+                        "Ratios must add up to 100!",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    "Fill out the required fields!",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+            Log.d("macroRatios", "proteinEt is: ${proteinEt.text}")
+            Log.d("macroRatios", "netCarbsEt is: ${netCarbsEt.text}")
+            Log.d("macroRatios", "fatsEt is: ${fatsEt.text}")
         }
 
         proteinEt = view.findViewById(R.id.macro_ratios_protein_edittext)
@@ -52,6 +112,25 @@ class UpdateMacroRatiosFragment : Fragment() {
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             // Do nothing
+        }
+
+        userEmail?.let { encodeEmail(it) }?.let {
+            Firebase.database.getReference("macroRatios")
+                .child(it)
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            val macros = dataSnapshot.getValue(MacroRatios::class.java)
+                            proteinEt.setText(macros?.proteinRatio.toString())
+                            netCarbsEt.setText(macros?.netCarbRatio.toString())
+                            fatsEt.setText(macros?.fatRatio.toString())
+                        }
+                    }
+
+                    override fun onCancelled(databaseError: DatabaseError) {
+                        Log.d("databaseError", "$databaseError")
+                    }
+                })
         }
     }
 
