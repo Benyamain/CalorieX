@@ -30,12 +30,12 @@ import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
-import com.google.android.gms.auth.api.Auth
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView
-import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import java.text.SimpleDateFormat
 import java.util.*
@@ -66,10 +66,12 @@ class DashboardFragment : Fragment() {
             ActivityResultContracts.RequestPermission()
         ) { isGranted: Boolean ->
             if (isGranted) {
-                Toast.makeText(requireContext(), "Permission request granted", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "Permission request granted", Toast.LENGTH_LONG)
+                    .show()
                 navigateToCamera()
             } else {
-                Toast.makeText(requireContext(), "Permission request denied", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "Permission request denied", Toast.LENGTH_LONG)
+                    .show()
             }
         }
 
@@ -105,10 +107,19 @@ class DashboardFragment : Fragment() {
 
         // Testing purposes this is not actual way it will be done in the final version of the app
         for (i in 1..20) {
-            dashboardData.add(DashboardItems(R.drawable.gray_logo, "Food Name $i", "999 g", "1450.2", "kcal"))
+            dashboardData.add(
+                DashboardItems(
+                    R.drawable.gray_logo,
+                    "Food Name $i",
+                    "999 g",
+                    "1450.2",
+                    "kcal"
+                )
+            )
         }
 
-        dashboardItemsAdapter = DashboardItemsAdapter(dashboardData,navController,appearBottomNavigationView)
+        dashboardItemsAdapter =
+            DashboardItemsAdapter(dashboardData, navController, appearBottomNavigationView)
         dashboardRecyclerView.adapter = dashboardItemsAdapter
 
         imageIv.setOnClickListener {
@@ -136,11 +147,19 @@ class DashboardFragment : Fragment() {
                             )
                         )
                         appearBottomNavigationView.visibility = View.INVISIBLE
-                        bottomNavigationView.itemIconTintList = AppCompatResources.getColorStateList(requireContext(), R.color.menu_selector_icon)
-                        appearBottomNavigationView.menu.findItem(R.id.menu_add_weight).isChecked = false
-                        appearBottomNavigationView.menu.findItem(R.id.menu_snap_food).isChecked = false
-                        appearBottomNavigationView.menu.findItem(R.id.menu_add_food).isChecked = false
-                        appearBottomNavigationView.menu.findItem(R.id.menu_not_visible).isChecked = false
+                        bottomNavigationView.itemIconTintList =
+                            AppCompatResources.getColorStateList(
+                                requireContext(),
+                                R.color.menu_selector_icon
+                            )
+                        appearBottomNavigationView.menu.findItem(R.id.menu_add_weight).isChecked =
+                            false
+                        appearBottomNavigationView.menu.findItem(R.id.menu_snap_food).isChecked =
+                            false
+                        appearBottomNavigationView.menu.findItem(R.id.menu_add_food).isChecked =
+                            false
+                        appearBottomNavigationView.menu.findItem(R.id.menu_not_visible).isChecked =
+                            false
                         appearBottomCounter = 0
                     }
                     true
@@ -180,6 +199,36 @@ class DashboardFragment : Fragment() {
             }
         }
 
+        getCalories { calories ->
+            val entries: ArrayList<PieEntry> = ArrayList()
+            entries.add(PieEntry(calories.toFloat()))
+            Log.d("getCalories", "$calories")
+
+            val dataSet = PieDataSet(entries, "Mobile OS")
+            dataSet.setDrawIcons(false)
+            dataSet.color = Color.rgb(135, 182, 120)
+
+            val data = PieData(dataSet)
+            data.setValueTextColor(Color.WHITE)
+
+            setupPieChart(caloriePieChart, data)
+        }
+
+        getMacros { macros ->
+            val entries: ArrayList<PieEntry> = ArrayList()
+            entries.add(PieEntry(macros.first.toFloat()))
+            Log.d("getProtein", "$macros")
+
+            val dataSet = PieDataSet(entries, "Protein")
+            dataSet.setDrawIcons(false)
+            dataSet.color = Color.rgb(135, 182, 120)
+
+            val data = PieData(dataSet)
+            data.setValueTextColor(Color.WHITE)
+
+            setupPieChart(proteinPieChart, data)
+        }
+
         val entries: ArrayList<PieEntry> = ArrayList()
         entries.add(PieEntry(70f))
 
@@ -190,13 +239,65 @@ class DashboardFragment : Fragment() {
         val data = PieData(dataSet)
         data.setValueTextColor(Color.WHITE)
 
-        setupPieChart(caloriePieChart, data)
-        setupPieChart(proteinPieChart, data)
         setupPieChart(carbsPieChart, data)
         setupPieChart(fatPieChart, data)
 
         return view
     }
+
+    private fun getCalories(callback: (Int) -> Unit) {
+        var calories = 0
+        userEmail?.let { encodeEmail(it) }?.let {
+            Firebase.database.getReference("energyExpenditure")
+                .child(it)
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            calories = if (dataSnapshot.value is Long) {
+                                CalorieAmount(
+                                    dataSnapshot.getValue(Long::class.java)?.toInt()
+                                ).calories ?: 0
+                            } else {
+                                dataSnapshot.getValue(CalorieAmount::class.java)?.calories ?: 0
+                            }
+                        }
+                        callback(calories)
+                    }
+
+                    override fun onCancelled(databaseError: DatabaseError) {
+                        Log.d("databaseError", "$databaseError")
+                    }
+                })
+        }
+    }
+
+    private fun getMacros(callback: (Triple<Int, Int, Int>) -> Unit) {
+        var protein = 0
+        var carbs = 0
+        var fat = 0
+        userEmail?.let { encodeEmail(it) }?.let {
+            Firebase.database.getReference("macroRatioCalories")
+                .child(it)
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        Log.d("CheckingAgain", "${dataSnapshot.getValue(MacroGrams::class.java)}")
+                        if (dataSnapshot.exists()) {
+                            protein = dataSnapshot.getValue(MacroGrams::class.java)?.proteinGrams ?: 0
+                            carbs = dataSnapshot.getValue(MacroGrams::class.java)?.carbGrams ?: 0
+                            fat = dataSnapshot.getValue(MacroGrams::class.java)?.fatGrams ?: 0
+                            Log.d("Running???", "$dataSnapshot")
+                        }
+                        callback(Triple(protein, carbs, fat))
+                        Log.d("Hmmmmmmmmmmmmmmmmmmmmmm", "${Triple(protein, carbs, fat)}")
+                    }
+
+                    override fun onCancelled(databaseError: DatabaseError) {
+                        Log.d("databaseError", "$databaseError")
+                    }
+                })
+        }
+    }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -237,8 +338,10 @@ class DashboardFragment : Fragment() {
                     appearBottomNavigationView.menu.findItem(R.id.menu_snap_food).isChecked = true
                     appearBottomNavigationView.menu.findItem(R.id.menu_add_food).isChecked = false
                     appearBottomNavigationView.menu.findItem(R.id.menu_add_weight).isChecked = false
-                    appearBottomNavigationView.menu.findItem(R.id.menu_not_visible).isChecked = false
-                    bottomNavigationView.itemIconTintList = AppCompatResources.getColorStateList(requireContext(), R.color.gray)
+                    appearBottomNavigationView.menu.findItem(R.id.menu_not_visible).isChecked =
+                        false
+                    bottomNavigationView.itemIconTintList =
+                        AppCompatResources.getColorStateList(requireContext(), R.color.gray)
                     true
                 }
 
@@ -251,7 +354,8 @@ class DashboardFragment : Fragment() {
                     appearBottomNavigationView.menu.findItem(R.id.menu_add_food).isChecked = true
                     appearBottomNavigationView.menu.findItem(R.id.menu_snap_food).isChecked = false
                     appearBottomNavigationView.menu.findItem(R.id.menu_add_weight).isChecked = false
-                    appearBottomNavigationView.menu.findItem(R.id.menu_not_visible).isChecked = false
+                    appearBottomNavigationView.menu.findItem(R.id.menu_not_visible).isChecked =
+                        false
                     // Add the logic for NutritionInfoFragment once user clicks some food and wants the nutrition data for it
                     true
                 }
@@ -265,7 +369,8 @@ class DashboardFragment : Fragment() {
                     appearBottomNavigationView.menu.findItem(R.id.menu_add_weight).isChecked = true
                     appearBottomNavigationView.menu.findItem(R.id.menu_snap_food).isChecked = false
                     appearBottomNavigationView.menu.findItem(R.id.menu_add_food).isChecked = false
-                    appearBottomNavigationView.menu.findItem(R.id.menu_not_visible).isChecked = false
+                    appearBottomNavigationView.menu.findItem(R.id.menu_not_visible).isChecked =
+                        false
                     true
                 }
                 // Add more destinations here...
@@ -293,7 +398,7 @@ class DashboardFragment : Fragment() {
 
     private fun navigateToCamera() {
         lifecycleScope.launchWhenStarted {
-           navController.navigate(R.id.action_permissionsFragment_to_cameraFragment)
+            navController.navigate(R.id.action_permissionsFragment_to_cameraFragment)
         }
     }
 
@@ -350,7 +455,8 @@ class DashboardFragment : Fragment() {
         super.onPause()
 
         // This makes sure that if user destroys the app and comes back to it, they have to go thru the sign up process all over again in order to ensure there is no input being missed
-        val sharedPreferences = requireActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+        val sharedPreferences =
+            requireActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
         editor.putBoolean("isLoggedIn", true)
         editor.apply()

@@ -132,7 +132,20 @@ fun calculateMacronutrientRatios(expenditure: Int, proteinRatio: Double, netCarb
         Firebase.database.reference.child("macroRatios").child(encodeEmail(userEmail)).setValue(ratio)
     }
 
+    calculateMacronutrientGrams(Triple(ratioCalories.proteinRatio?.toInt(), ratioCalories.netCarbRatio?.toInt(), ratioCalories.fatRatio?.toInt()) as Triple<Int, Int, Int>)
+
     return Triple(ratioCalories.proteinRatio?.toInt(), ratioCalories.netCarbRatio?.toInt(), ratioCalories.fatRatio?.toInt())
+}
+
+fun calculateMacronutrientGrams(macroGrams: Triple<Int, Int, Int>): Triple<Int?, Int?, Int?> {
+    val ratioGrams = MacroGrams(macroGrams.first.div(4), macroGrams.second.div(4), macroGrams.third.div(9)
+    )
+
+    if (userEmail != null) {
+        Firebase.database.reference.child("macroGrams").child(encodeEmail(userEmail)).setValue(ratioGrams)
+    }
+
+    return Triple(ratioGrams.proteinGrams, ratioGrams.carbGrams, ratioGrams.fatGrams)
 }
 
 fun creatingProfile(age: Int, height: Double, weight: Double, sex: String) {
