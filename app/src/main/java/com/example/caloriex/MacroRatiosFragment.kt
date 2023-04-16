@@ -17,6 +17,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
 class MacroRatiosFragment : Fragment() {
@@ -66,7 +70,29 @@ class MacroRatiosFragment : Fragment() {
                 val total = proteinEt.text.toString().toDouble().plus(netCarbsEt.text.toString().toDouble()).plus(fatsEt.text.toString().toDouble())
                 if (total == 100.0) {
                     findNavController().navigate(R.id.action_macroRatiosFragment_to_messageMotivationFragment)
-                    macroRatios(proteinEt.text.toString().toDouble(), netCarbsEt.text.toString().toDouble(), fatsEt.text.toString().toDouble())
+                    userEmail?.let { encodeEmail(it) }?.let {
+                        Firebase.database.getReference("energyExpenditure")
+                            .child(it)
+                            .addListenerForSingleValueEvent(object : ValueEventListener {
+                                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                    if (dataSnapshot.exists()) {
+                                        val energyExp = if (dataSnapshot.value is Long) {
+                                            CalorieAmount(dataSnapshot.getValue(Long::class.java)?.toInt())
+                                        } else {
+                                            dataSnapshot.getValue(CalorieAmount::class.java)
+                                        }
+                                        val calorie = energyExp?.calories ?: 0
+                                        val ratioCalories = calculateMacronutrientRatios(calorie, proteinEt.text.toString().toDouble(), netCarbsEt.text.toString().toDouble(), fatsEt.text.toString().toDouble())
+                                        Firebase.database.reference.child("macroRatioCalories")
+                                            .child(encodeEmail(userEmail)).setValue(ratioCalories)
+                                    }
+                                }
+
+                                override fun onCancelled(databaseError: DatabaseError) {
+                                    Log.d("databaseError", "$databaseError")
+                                }
+                            })
+                    }
                 } else {
                     Toast.makeText(
                         requireContext(),
@@ -74,16 +100,16 @@ class MacroRatiosFragment : Fragment() {
                         Toast.LENGTH_SHORT
                     ).show()
                 }
-            Log.d("macroRatios", "proteinEt is: ${proteinEt.text}")
-            Log.d("macroRatios", "netCarbsEt is: ${netCarbsEt.text}")
-            Log.d("macroRatios", "fatsEt is: ${fatsEt.text}")
-        } else {
-            Toast.makeText(
-                requireContext(),
-                "Fill out all the required fields!",
-                Toast.LENGTH_SHORT
-            ).show()
-        }
+                Log.d("macroRatios", "proteinEt is: ${proteinEt.text}")
+                Log.d("macroRatios", "netCarbsEt is: ${netCarbsEt.text}")
+                Log.d("macroRatios", "fatsEt is: ${fatsEt.text}")
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    "Fill out all the required fields!",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
     }
 

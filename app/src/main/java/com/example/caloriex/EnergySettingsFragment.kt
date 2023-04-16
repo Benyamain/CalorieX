@@ -95,7 +95,7 @@ class EnergySettingsFragment : Fragment() {
                                             activityLevelAutocompleteTextView.text.toString(),
                                             weightGoalEt.text.toString().toDouble()
                                         )
-                                        Firebase.database.reference.child("bmrCalories")
+                                        Firebase.database.reference.child("energyExpenditure")
                                             .child(encodeEmail(userEmail)).setValue(hb)
                                     } else {
                                         val msj = calculateBMRMifflinStJeor(

@@ -81,7 +81,7 @@ enum class MonthComplete {
 
 fun String.firstCharToUpper() = this[0].toUpperCase() + this.substring(1, this.length)
 
-fun calculateBMRMifflinStJeor(gender: String, weight: Double, height: Double, age: Int, activityLevel: String, weightGoal: Double?): Int {
+fun calculateBMRMifflinStJeor(gender: String, weight: Double, height: Double, age: Int, activityLevel: String, weightGoal: Double?): Int? {
     var bmr = 0.0
     bmr = if (gender == "Male") {
         88.362 + (13.397 * weight) + (4.799 * height) - (5.677 * age)
@@ -102,7 +102,7 @@ fun calculateBMRMifflinStJeor(gender: String, weight: Double, height: Double, ag
     }
 }
 
-fun calculateBMRHarrisBenedict(gender: String, weight: Double, height: Double, age: Int, activityLevel: String, weightGoal: Double?): Int {
+fun calculateBMRHarrisBenedict(gender: String, weight: Double, height: Double, age: Int, activityLevel: String, weightGoal: Double?): Int? {
     var bmr = 0.0
     bmr = if (gender == "Male") {
         66.5 + (13.75 * weight) + (5.003 * height) - (6.75 * age)
@@ -123,12 +123,16 @@ fun calculateBMRHarrisBenedict(gender: String, weight: Double, height: Double, a
     }
 }
 
-fun calculateMacronutrientRatios(bmr: Int, proteinRatio: Double, netCarbRatio: Double, fatRatio: Double): Triple<Int, Int, Int> {
+fun calculateMacronutrientRatios(expenditure: Int, proteinRatio: Double, netCarbRatio: Double, fatRatio: Double): Triple<Int?, Int?, Int?> {
     val totalRatio = proteinRatio + netCarbRatio + fatRatio
-    val proteinIntake = ((proteinRatio / totalRatio) * bmr).toInt()
-    val netCarbIntake = ((netCarbRatio / totalRatio) * bmr).toInt()
-    val fatIntake = ((fatRatio / totalRatio) * bmr).toInt()
-    return Triple(proteinIntake, netCarbIntake, fatIntake)
+    val ratioCalories = MacroRatios(((proteinRatio / totalRatio) * expenditure), ((netCarbRatio / totalRatio) * expenditure), ((fatRatio / totalRatio) * expenditure))
+    val ratio = MacroRatios(proteinRatio, netCarbRatio, fatRatio)
+
+    if (userEmail != null) {
+        Firebase.database.reference.child("macroRatios").child(encodeEmail(userEmail)).setValue(ratio)
+    }
+
+    return Triple(ratioCalories.proteinRatio?.toInt(), ratioCalories.netCarbRatio?.toInt(), ratioCalories.fatRatio?.toInt())
 }
 
 fun creatingProfile(age: Int, height: Double, weight: Double, sex: String) {
@@ -149,14 +153,6 @@ fun energySettings(bmrName: String, activityLevel: String, weightGoal: Double) {
 
     if (userEmail != null) {
         Firebase.database.reference.child("energySettings").child(encodeEmail(userEmail)).setValue(energy)
-    }
-}
-
-fun macroRatios(protein: Double, netCarb: Double, fat: Double) {
-    val macros = MacroRatios(protein, netCarb, fat)
-
-    if (userEmail != null) {
-        Firebase.database.reference.child("macroRatios").child(encodeEmail(userEmail)).setValue(macros)
     }
 }
 
