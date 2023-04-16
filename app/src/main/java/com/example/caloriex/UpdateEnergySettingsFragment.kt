@@ -3,6 +3,7 @@ package com.example.caloriex
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +12,11 @@ import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 
 class UpdateEnergySettingsFragment : Fragment() {
 
@@ -19,6 +25,9 @@ class UpdateEnergySettingsFragment : Fragment() {
     private lateinit var imageIv: ImageView
     private lateinit var settingsTv: TextView
     private lateinit var weightGoalEt: EditText
+    private lateinit var activityLevelAutocompleteTextView: AutoCompleteTextView
+    private lateinit var bmrAutocompleteTextView: AutoCompleteTextView
+    private lateinit var progressBar: ProgressBar
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -27,17 +36,78 @@ class UpdateEnergySettingsFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_update_energy_settings, container, false)
         toolbar = view.findViewById(R.id.settings_toolbar)
+        progressBar = view.findViewById(R.id.ue_progress_circular)
         navController = findNavController()
         imageIv = view.findViewById(R.id.left_arrow_image_view)
         settingsTv = view.findViewById(R.id.settings_title_textview)
         settingsTv.text = "Energy Settings"
         weightGoalEt = view.findViewById(R.id.energy_settings_weight_goal_edittext)
 
+        changeActivity(view)
+
         imageIv.setOnClickListener {
-            view.findViewById<ProgressBar>(R.id.ue_progress_circular).visibility = View.VISIBLE
-            Handler().postDelayed({
-                navController.navigate(R.id.action_updateEnergySettingsFragment_to_settingsFragment)
-            }, 1000)
+            if (bmrAutocompleteTextView.text.toString()
+                    .isNotEmpty() && activityLevelAutocompleteTextView.text.toString()
+                    .isNotEmpty() && weightGoalEt.text.toString().isNotEmpty()
+            ) {
+                progressBar.visibility = View.VISIBLE
+                Handler().postDelayed({
+                    navController.navigate(R.id.action_updateEnergySettingsFragment_to_settingsFragment)
+                }, 1000)
+
+                userEmail?.let { encodeEmail(it) }?.let {
+                    Firebase.database.getReference("profileDetails")
+                        .child(it)
+                        .addListenerForSingleValueEvent(object : ValueEventListener {
+                            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                val profileDetails =
+                                    dataSnapshot.getValue(ProfileDetails::class.java)
+                                val age = profileDetails?.age ?: 0
+                                val height = profileDetails?.height ?: 0.0
+                                val weight = profileDetails?.weight ?: 0.0
+                                val sex = profileDetails?.sex ?: ""
+
+                                if (dataSnapshot.exists()) {
+                                    if (bmrAutocompleteTextView.text.toString() == "Harris Benedict") {
+                                        val hb = calculateBMRHarrisBenedict(
+                                            sex,
+                                            weight,
+                                            height,
+                                            age,
+                                            activityLevelAutocompleteTextView.text.toString(),
+                                            weightGoalEt.text.toString().toDouble()
+                                        )
+                                        Firebase.database.reference.child("energyExpenditure")
+                                            .child(encodeEmail(userEmail)).setValue(hb)
+                                    } else {
+                                        val msj = calculateBMRMifflinStJeor(
+                                            sex,
+                                            weight,
+                                            height,
+                                            age,
+                                            activityLevelAutocompleteTextView.text.toString(),
+                                            weightGoalEt.text.toString().toDouble()
+                                        )
+                                        Firebase.database.reference.child("energyExpenditure")
+                                            .child(encodeEmail(userEmail)).setValue(msj)
+                                    }
+                                } else {
+                                    Log.d("dataSnapshot", "No data found")
+                                }
+                            }
+
+                            override fun onCancelled(databaseError: DatabaseError) {
+                                Log.d("databaseError", "$databaseError")
+                            }
+                        })
+                }
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    "Fill out all the required fields!",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
 
         return view
@@ -46,16 +116,37 @@ class UpdateEnergySettingsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        changeActivity(view)
-
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             // Do nothing
+        }
+
+        progressBar.visibility = View.VISIBLE
+
+        userEmail?.let { encodeEmail(it) }?.let {
+            Firebase.database.getReference("energySettings")
+                .child(it)
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            val energySettings = dataSnapshot.getValue(EnergySettings::class.java)
+                            activityLevelAutocompleteTextView.setText(energySettings?.activityLevel)
+                            bmrAutocompleteTextView.setText(energySettings?.bmrName)
+                            weightGoalEt.setText(energySettings?.weightGoal.toString())
+                        }
+                        progressBar.visibility = View.GONE
+                    }
+
+                    override fun onCancelled(databaseError: DatabaseError) {
+                        Log.d("databaseError", "$databaseError")
+                        progressBar.visibility = View.GONE
+                    }
+                })
         }
     }
 
     private fun changeActivity(view: View) {
-        val activityLevelAutocompleteTextView =
-            view.findViewById<AutoCompleteTextView>(R.id.energy_settings_activity_level_autocomplete_textview)
+        activityLevelAutocompleteTextView =
+            view.findViewById(R.id.energy_settings_activity_level_autocomplete_textview)
         val activityLevelOptions = resources.getStringArray(R.array.activity_level_options)
 
         var adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, activityLevelOptions)
@@ -65,8 +156,8 @@ class UpdateEnergySettingsFragment : Fragment() {
             activityLevelAutocompleteTextView.setSelection(position)
         }
 
-        val bmrAutocompleteTextView =
-            view.findViewById<AutoCompleteTextView>(R.id.energy_settings_bmr_autocomplete_textview)
+        bmrAutocompleteTextView =
+            view.findViewById(R.id.energy_settings_bmr_autocomplete_textview)
         val bmrOptions = resources.getStringArray(R.array.bmr_options)
 
         adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, bmrOptions)

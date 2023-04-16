@@ -26,6 +26,7 @@ class UpdateMacroRatiosFragment : Fragment() {
     private lateinit var proteinEt: EditText
     private lateinit var netCarbsEt: EditText
     private lateinit var fatsEt: EditText
+    private lateinit var progressBar: ProgressBar
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,6 +38,7 @@ class UpdateMacroRatiosFragment : Fragment() {
         navController = findNavController()
         imageIv = view.findViewById(R.id.left_arrow_image_view)
         settingsTv = view.findViewById(R.id.settings_title_textview)
+        progressBar = view.findViewById(R.id.um_progress_circular)
         settingsTv.text = "Macronutrient Ratios"
 
         imageIv.setOnClickListener {
@@ -45,7 +47,7 @@ class UpdateMacroRatiosFragment : Fragment() {
                     proteinEt.text.toString().toDouble().plus(netCarbsEt.text.toString().toDouble())
                         .plus(fatsEt.text.toString().toDouble())
                 if (total == 100.0) {
-                    view.findViewById<ProgressBar>(R.id.um_progress_circular).visibility =
+                    progressBar.visibility =
                         View.VISIBLE
                     Handler().postDelayed({
                         navController.navigate(R.id.action_updateMacroRatiosFragment_to_settingsFragment)
@@ -114,6 +116,8 @@ class UpdateMacroRatiosFragment : Fragment() {
             // Do nothing
         }
 
+        progressBar.visibility = View.VISIBLE
+
         userEmail?.let { encodeEmail(it) }?.let {
             Firebase.database.getReference("macroRatios")
                 .child(it)
@@ -125,10 +129,12 @@ class UpdateMacroRatiosFragment : Fragment() {
                             netCarbsEt.setText(macros?.netCarbRatio.toString())
                             fatsEt.setText(macros?.fatRatio.toString())
                         }
+                        progressBar.visibility = View.GONE
                     }
 
                     override fun onCancelled(databaseError: DatabaseError) {
                         Log.d("databaseError", "$databaseError")
+                        progressBar.visibility = View.GONE
                     }
                 })
         }

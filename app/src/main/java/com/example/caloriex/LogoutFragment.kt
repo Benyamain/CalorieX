@@ -80,13 +80,17 @@ class LogoutFragment : Fragment() {
 
             // Set the positive button with yes name Lambda OnClickListener method is use of DialogInterface interface.
             builder.setPositiveButton("Yes") { dialog, which ->
-                Toast.makeText(
-                    requireContext(),
-                    "Successfully signed out!",
-                    Toast.LENGTH_SHORT
-                ).show()
 
-                navController.navigate(R.id.action_logoutFragment_to_getStartedFragment)
+                view.findViewById<ProgressBar>(R.id.logout_progress_circular).visibility = View.VISIBLE
+                Handler().postDelayed({
+                    Toast.makeText(
+                        requireContext(),
+                        "Successfully signed out!",
+                        Toast.LENGTH_SHORT
+                    ).show()
+
+                    navController.navigate(R.id.action_logoutFragment_to_getStartedFragment)
+                }, 1000)
             }
 
             // Set the Negative button with No name Lambda OnClickListener method is use of DialogInterface interface.
@@ -101,10 +105,7 @@ class LogoutFragment : Fragment() {
         }
 
         imageIv.setOnClickListener {
-            view.findViewById<ProgressBar>(R.id.logout_progress_circular).visibility = View.VISIBLE
-            Handler().postDelayed({
-                navController.navigate(R.id.action_logoutFragment_to_settingsFragment)
-            }, 1000)
+            navController.navigate(R.id.action_logoutFragment_to_settingsFragment)
         }
 
         return view

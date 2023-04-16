@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,11 @@ import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 
 class UpdateProfileDetailsFragment : Fragment() {
 
@@ -22,6 +28,8 @@ class UpdateProfileDetailsFragment : Fragment() {
     private lateinit var ageEt: EditText
     private lateinit var heightEt: EditText
     private lateinit var weightEt: EditText
+    private lateinit var progressBar: ProgressBar
+    private lateinit var sexOptionsAutocompleteTextView: AutoCompleteTextView
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,13 +44,23 @@ class UpdateProfileDetailsFragment : Fragment() {
         ageEt = view.findViewById(R.id.profile_details_age_edittext)
         heightEt = view.findViewById(R.id.profile_details_height_edittext)
         weightEt = view.findViewById(R.id.profile_details_weight_edittext)
+        progressBar = view.findViewById(R.id.up_progress_circular)
         settingsTv.text = "Profile Details"
 
         imageIv.setOnClickListener {
-            view.findViewById<ProgressBar>(R.id.up_progress_circular).visibility = View.VISIBLE
-            Handler().postDelayed({
-                navController.navigate(R.id.action_updateProfileDetailsFragment_to_settingsFragment)
-            }, 1000)
+            if (ageEt.text.toString().isNotEmpty() && heightEt.text.toString().isNotEmpty() && weightEt.text.toString().isNotEmpty() && sexOptionsAutocompleteTextView.text.toString().isNotEmpty()) {
+                progressBar.visibility = View.VISIBLE
+                Handler().postDelayed({
+                    navController.navigate(R.id.action_updateProfileDetailsFragment_to_settingsFragment)
+                }, 1000)
+                creatingProfile(ageEt.text.toString().toInt(), heightEt.text.toString().toDouble(), weightEt.text.toString().toDouble(), sexOptionsAutocompleteTextView.text.toString())
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    "Fill out all the required fields!",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
 
         return view
@@ -56,10 +74,34 @@ class UpdateProfileDetailsFragment : Fragment() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             // Do nothing
         }
+
+        progressBar.visibility = View.VISIBLE
+
+        userEmail?.let { encodeEmail(it) }?.let {
+            Firebase.database.getReference("profileDetails")
+                .child(it)
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            val profileDetails = dataSnapshot.getValue(ProfileDetails::class.java)
+                            ageEt.setText(profileDetails?.age.toString())
+                            weightEt.setText(profileDetails?.weight.toString())
+                            heightEt.setText(profileDetails?.height.toString())
+                            sexOptionsAutocompleteTextView.setText(profileDetails?.sex.toString())
+                        }
+                        progressBar.visibility = View.GONE
+                    }
+
+                    override fun onCancelled(databaseError: DatabaseError) {
+                        Log.d("databaseError", "$databaseError")
+                        progressBar.visibility = View.GONE
+                    }
+                })
+        }
     }
 
     private fun changeActivity() {
-        val sexOptionsAutocompleteTextView =
+        sexOptionsAutocompleteTextView =
             view?.findViewById<AutoCompleteTextView>(R.id.profile_details_sex_spinner_box_dropdown)!!
         val sexOptions = resources.getStringArray(R.array.sex_options)
 
