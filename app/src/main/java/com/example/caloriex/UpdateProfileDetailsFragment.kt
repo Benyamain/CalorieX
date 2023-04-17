@@ -197,15 +197,23 @@ class UpdateProfileDetailsFragment : Fragment() {
     }
 
     private fun changeActivity() {
-        sexOptionsAutocompleteTextView =
-            view?.findViewById<AutoCompleteTextView>(R.id.profile_details_sex_spinner_box_dropdown)!!
-        val sexOptions = resources.getStringArray(R.array.sex_options)
+        sexOptionsAutocompleteTextView = view?.findViewById(R.id.profile_details_sex_spinner_box_dropdown) as AutoCompleteTextView
 
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, sexOptions)
-        sexOptionsAutocompleteTextView.setAdapter(adapter)
+        if (sexOptionsAutocompleteTextView != null) {
+            val sexOptions = resources.getStringArray(R.array.sex_options)
 
-        sexOptionsAutocompleteTextView.setOnItemClickListener { parent, view, position, id ->
-            sexOptionsAutocompleteTextView.setSelection(position)
+            val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, sexOptions)
+            sexOptionsAutocompleteTextView.setAdapter(adapter)
+
+            sexOptionsAutocompleteTextView.setOnItemClickListener { parent, view, position, id ->
+                sexOptionsAutocompleteTextView.setSelection(position)
+            }
+        } else {
+            Toast.makeText(
+                requireContext(),
+                "Please wait for a few seconds before selecting your sex!",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 

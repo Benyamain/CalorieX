@@ -201,6 +201,63 @@ class DashboardFragment : Fragment() {
             }
         }
 
+        return view
+    }
+
+    private fun getCalories(callback: (Int) -> Unit) {
+        var calories = 0
+        userEmail?.let { encodeEmail(it) }?.let {
+            Firebase.database.getReference("energyExpenditure")
+                .child(it)
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            calories = if (dataSnapshot.value is Long) {
+                                CalorieAmount(
+                                    dataSnapshot.getValue(Long::class.java)?.toInt()
+                                ).calories ?: 0
+                            } else {
+                                dataSnapshot.getValue(CalorieAmount::class.java)?.calories ?: 0
+                            }
+                        }
+                        callback(calories)
+                    }
+
+                    override fun onCancelled(databaseError: DatabaseError) {
+                        Log.d("databaseError", "$databaseError")
+                    }
+                })
+        }
+    }
+
+    private fun getMacros(callback: (Triple<Int, Int, Int>) -> Unit) {
+        var protein = 0
+        var carbs = 0
+        var fat = 0
+        userEmail?.let { encodeEmail(it) }?.let {
+            Firebase.database.getReference("macroGrams")
+                .child(it)
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        Log.d("CheckingAgain", "${dataSnapshot.getValue(MacroGrams::class.java)}")
+                        if (dataSnapshot.exists()) {
+                            protein = dataSnapshot.getValue(MacroGrams::class.java)?.proteinGrams ?: 0
+                            carbs = dataSnapshot.getValue(MacroGrams::class.java)?.carbGrams ?: 0
+                            fat = dataSnapshot.getValue(MacroGrams::class.java)?.fatGrams ?: 0
+                            Log.d("Running???", "$dataSnapshot")
+                        }
+                        callback(Triple(protein, carbs, fat))
+                        Log.d("Hmmmmmmmmmmmmmmmmmmmmmm", "${Triple(protein, carbs, fat)}")
+                    }
+
+                    override fun onCancelled(databaseError: DatabaseError) {
+                        Log.d("databaseError", "$databaseError")
+                    }
+                })
+        }
+    }
+
+    private fun updateCharts() {
         getCalories { calories ->
             val entries: ArrayList<PieEntry> = ArrayList()
             entries.add(PieEntry(calories.toFloat()))
@@ -271,61 +328,6 @@ class DashboardFragment : Fragment() {
             setupPieChart(carbsPieChart, cData)
             setupPieChart(fatPieChart, fData)
         }
-
-        return view
-    }
-
-    private fun getCalories(callback: (Int) -> Unit) {
-        var calories = 0
-        userEmail?.let { encodeEmail(it) }?.let {
-            Firebase.database.getReference("energyExpenditure")
-                .child(it)
-                .addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            calories = if (dataSnapshot.value is Long) {
-                                CalorieAmount(
-                                    dataSnapshot.getValue(Long::class.java)?.toInt()
-                                ).calories ?: 0
-                            } else {
-                                dataSnapshot.getValue(CalorieAmount::class.java)?.calories ?: 0
-                            }
-                        }
-                        callback(calories)
-                    }
-
-                    override fun onCancelled(databaseError: DatabaseError) {
-                        Log.d("databaseError", "$databaseError")
-                    }
-                })
-        }
-    }
-
-    private fun getMacros(callback: (Triple<Int, Int, Int>) -> Unit) {
-        var protein = 0
-        var carbs = 0
-        var fat = 0
-        userEmail?.let { encodeEmail(it) }?.let {
-            Firebase.database.getReference("macroGrams")
-                .child(it)
-                .addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        Log.d("CheckingAgain", "${dataSnapshot.getValue(MacroGrams::class.java)}")
-                        if (dataSnapshot.exists()) {
-                            protein = dataSnapshot.getValue(MacroGrams::class.java)?.proteinGrams ?: 0
-                            carbs = dataSnapshot.getValue(MacroGrams::class.java)?.carbGrams ?: 0
-                            fat = dataSnapshot.getValue(MacroGrams::class.java)?.fatGrams ?: 0
-                            Log.d("Running???", "$dataSnapshot")
-                        }
-                        callback(Triple(protein, carbs, fat))
-                        Log.d("Hmmmmmmmmmmmmmmmmmmmmmm", "${Triple(protein, carbs, fat)}")
-                    }
-
-                    override fun onCancelled(databaseError: DatabaseError) {
-                        Log.d("databaseError", "$databaseError")
-                    }
-                })
-        }
     }
 
 
@@ -335,11 +337,15 @@ class DashboardFragment : Fragment() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             // Do nothing
         }
+
+        updateCharts()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onResume() {
         super.onResume()
+
+        updateCharts()
 
         // Read the date when the user navigates back to the DashboardFragment from the CalendarFragment
         val bundle = arguments

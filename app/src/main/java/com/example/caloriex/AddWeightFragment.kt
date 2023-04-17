@@ -1,6 +1,7 @@
 package com.example.caloriex
 
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
@@ -27,6 +29,7 @@ class AddWeightFragment : Fragment() {
     private lateinit var addWeightTv: TextView
     private lateinit var saveBtn: Button
     private lateinit var weightEt: EditText
+    private lateinit var progressBar: ProgressBar
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,6 +41,7 @@ class AddWeightFragment : Fragment() {
         navController = findNavController()
         imageIv = view.findViewById(R.id.appear_bottom_toolbar_close_image_view)
         addWeightTv = view.findViewById(R.id.appear_bottom_toolbar_title_textview)
+        progressBar = view.findViewById(R.id.progress_circular)
         addWeightTv.text = "Weight"
         weightEt = view.findViewById(R.id.add_weight_amount_edittext)
 
@@ -47,6 +51,8 @@ class AddWeightFragment : Fragment() {
 
         saveBtn = view.findViewById(R.id.add_weight_save_button)
         saveBtn.setOnClickListener {
+            progressBar.visibility = View.VISIBLE
+
             userEmail?.let { encodeEmail(it) }?.let { a ->
                 Firebase.database.getReference("profileDetails")
                     .child(a)
@@ -56,9 +62,9 @@ class AddWeightFragment : Fragment() {
                                 val profileDetails = dataSnapshot.getValue(ProfileDetails::class.java)
                                 creatingProfile(profileDetails?.age ?: 0,profileDetails?.height ?: 0.0, weightEt.text.toString().toDouble(), profileDetails?.sex ?: "")
 
-                                userEmail?.let { encodeEmail(it) }?.let {
+                                userEmail?.let { encodeEmail(it) }?.let { t ->
                                     Firebase.database.getReference("energySettings")
-                                        .child(it)
+                                        .child(t)
                                         .addListenerForSingleValueEvent(object : ValueEventListener {
                                             override fun onDataChange(dataSnapshot: DataSnapshot) {
                                                 if (dataSnapshot.exists()) {
@@ -86,6 +92,53 @@ class AddWeightFragment : Fragment() {
                                                         Firebase.database.reference.child("energyExpenditure")
                                                             .child(encodeEmail(userEmail)).setValue(msj)
                                                     }
+
+                                                    userEmail?.let { encodeEmail(it) }?.let { t ->
+                                                        Firebase.database.getReference("macroRatios")
+                                                            .child(t)
+                                                            .addListenerForSingleValueEvent(object : ValueEventListener {
+                                                                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                                                    if (dataSnapshot.exists()) {
+                                                                        val macroRatios = dataSnapshot.getValue(MacroRatios::class.java)
+
+                                                                        userEmail?.let { encodeEmail(it) }?.let { t ->
+                                                                            Firebase.database.getReference("energyExpenditure")
+                                                                                .child(t)
+                                                                                .addListenerForSingleValueEvent(object : ValueEventListener {
+                                                                                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                                                                        if (dataSnapshot.exists()) {
+                                                                                            val energyExp = if (dataSnapshot.value is Long) {
+                                                                                                CalorieAmount(
+                                                                                                    dataSnapshot.getValue(Long::class.java)?.toInt()
+                                                                                                )
+                                                                                            } else {
+                                                                                                dataSnapshot.getValue(CalorieAmount::class.java)
+                                                                                            }
+                                                                                            val calorie = energyExp?.calories ?: 0
+                                                                                            val ratioCalories = calculateMacronutrientRatios(
+                                                                                                calorie,
+                                                                                                macroRatios?.proteinRatio ?: 0.0,
+                                                                                                macroRatios?.netCarbRatio ?: 0.0,
+                                                                                                macroRatios?.fatRatio ?: 0.0
+                                                                                            )
+                                                                                            Firebase.database.reference.child("macroRatioCalories")
+                                                                                                .child(encodeEmail(userEmail)).setValue(ratioCalories)
+                                                                                        }
+                                                                                    }
+
+                                                                                    override fun onCancelled(databaseError: DatabaseError) {
+                                                                                        Log.d("databaseError", "$databaseError")
+                                                                                    }
+                                                                                })
+                                                                        }
+                                                                    }
+                                                                }
+
+                                                                override fun onCancelled(databaseError: DatabaseError) {
+                                                                    Log.d("databaseError", "$databaseError")
+                                                                }
+                                                            })
+                                                    }
                                                 } else {
                                                     Log.d("dataSnapshot", "No data found")
                                                 }
@@ -105,7 +158,10 @@ class AddWeightFragment : Fragment() {
                     })
             }
 
-            navController.navigate(R.id.dashboardFragment)
+            Handler().postDelayed({
+                progressBar.visibility = View.GONE
+                navController.navigate(R.id.dashboardFragment)
+            }, 300)
         }
 
         return view
