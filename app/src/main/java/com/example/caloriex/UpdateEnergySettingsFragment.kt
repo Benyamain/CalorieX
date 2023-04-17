@@ -55,6 +55,12 @@ class UpdateEnergySettingsFragment : Fragment() {
                     navController.navigate(R.id.action_updateEnergySettingsFragment_to_settingsFragment)
                 }, 1000)
 
+                energySettings(
+                    bmrAutocompleteTextView.text.toString(),
+                    activityLevelAutocompleteTextView.text.toString(),
+                    weightGoalEt.text.toString().toDouble()
+                )
+
                 userEmail?.let { encodeEmail(it) }?.let {
                     Firebase.database.getReference("profileDetails")
                         .child(it)
@@ -132,6 +138,7 @@ class UpdateEnergySettingsFragment : Fragment() {
                             activityLevelAutocompleteTextView.setText(energySettings?.activityLevel)
                             bmrAutocompleteTextView.setText(energySettings?.bmrName)
                             weightGoalEt.setText(energySettings?.weightGoal.toString())
+                            changeActivity(view)
                         }
                         progressBar.visibility = View.GONE
                     }

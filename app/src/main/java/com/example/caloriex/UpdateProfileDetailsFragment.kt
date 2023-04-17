@@ -75,11 +75,15 @@ class UpdateProfileDetailsFragment : Fragment() {
             // Do nothing
         }
 
+        loadData()
+    }
+
+    private fun loadData() {
         progressBar.visibility = View.VISIBLE
 
-        userEmail?.let { encodeEmail(it) }?.let {
+        userEmail?.let { encodeEmail(it) }?.let { a ->
             Firebase.database.getReference("profileDetails")
-                .child(it)
+                .child(a)
                 .addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         if (dataSnapshot.exists()) {
@@ -88,6 +92,51 @@ class UpdateProfileDetailsFragment : Fragment() {
                             weightEt.setText(profileDetails?.weight.toString())
                             heightEt.setText(profileDetails?.height.toString())
                             sexOptionsAutocompleteTextView.setText(profileDetails?.sex.toString())
+                            creatingProfile(ageEt.text.toString().toInt(), heightEt.text.toString().toDouble(), weightEt.text.toString().toDouble(), sexOptionsAutocompleteTextView.text.toString())
+
+                            userEmail?.let { encodeEmail(it) }?.let {
+                                Firebase.database.getReference("energySettings")
+                                    .child(it)
+                                    .addListenerForSingleValueEvent(object : ValueEventListener {
+                                        override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                            if (dataSnapshot.exists()) {
+                                                val energy = dataSnapshot.getValue(EnergySettings::class.java)
+                                                if (energy?.bmrName.toString() == "Harris Benedict") {
+                                                    val hb = calculateBMRHarrisBenedict(
+                                                        profileDetails?.sex ?: "",
+                                                        profileDetails?.weight ?: 0.0,
+                                                        profileDetails?.height ?: 0.0,
+                                                        profileDetails?.age ?: 0,
+                                                        energy?.activityLevel.toString(),
+                                                        energy?.weightGoal.toString().toDouble()
+                                                    )
+                                                    Firebase.database.reference.child("energyExpenditure")
+                                                        .child(encodeEmail(userEmail)).setValue(hb)
+                                                } else {
+                                                    val msj = calculateBMRMifflinStJeor(
+                                                        profileDetails?.sex ?: "",
+                                                        profileDetails?.weight ?: 0.0,
+                                                        profileDetails?.height ?: 0.0,
+                                                        profileDetails?.age ?: 0,
+                                                        energy?.activityLevel.toString(),
+                                                        energy?.weightGoal.toString().toDouble()
+                                                    )
+                                                    Firebase.database.reference.child("energyExpenditure")
+                                                        .child(encodeEmail(userEmail)).setValue(msj)
+                                                }
+                                            } else {
+                                                Log.d("dataSnapshot", "No data found")
+                                            }
+                                            progressBar.visibility = View.GONE
+                                        }
+
+                                        override fun onCancelled(databaseError: DatabaseError) {
+                                            Log.d("databaseError", "$databaseError")
+                                            progressBar.visibility = View.GONE
+                                        }
+                                    })
+                            }
+                            changeActivity()
                         }
                         progressBar.visibility = View.GONE
                     }
@@ -115,5 +164,10 @@ class UpdateProfileDetailsFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        loadData()
     }
 }
