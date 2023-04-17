@@ -30,6 +30,8 @@ import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
+import com.github.mikephil.charting.formatter.PercentFormatter
+import com.github.mikephil.charting.formatter.ValueFormatter
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView
 import com.google.firebase.database.DataSnapshot
@@ -209,38 +211,66 @@ class DashboardFragment : Fragment() {
             dataSet.color = Color.rgb(135, 182, 120)
 
             val data = PieData(dataSet)
+            data.setValueFormatter(object : ValueFormatter() {
+                override fun getFormattedValue(value: Float): String {
+                    return "${value.toInt()} kcal"
+                }
+            })
+
             data.setValueTextColor(Color.WHITE)
 
             setupPieChart(caloriePieChart, data)
         }
 
         getMacros { macros ->
-            val entries: ArrayList<PieEntry> = ArrayList()
-            entries.add(PieEntry(macros.first.toFloat()))
-            Log.d("getProtein", "$macros")
+            val proteinEntries: ArrayList<PieEntry> = ArrayList()
+            val carbsEntries: ArrayList<PieEntry> = ArrayList()
+            val fatEntries: ArrayList<PieEntry> = ArrayList()
 
-            val dataSet = PieDataSet(entries, "Protein")
-            dataSet.setDrawIcons(false)
-            dataSet.color = Color.rgb(135, 182, 120)
+            proteinEntries.add(PieEntry(macros.first.toFloat()))
+            carbsEntries.add(PieEntry(macros.second.toFloat()))
+            fatEntries.add(PieEntry(macros.third.toFloat()))
+            Log.d("getProtein", "${macros.first}")
 
-            val data = PieData(dataSet)
-            data.setValueTextColor(Color.WHITE)
+            val proteinData = PieDataSet(proteinEntries, "Protein")
+            val carbsData = PieDataSet(carbsEntries, "Carbs")
+            val fatsData = PieDataSet(fatEntries, "Fat")
 
-            setupPieChart(proteinPieChart, data)
+            proteinData.setDrawIcons(false)
+            carbsData.setDrawIcons(false)
+            proteinData.setDrawIcons(false)
+
+            proteinData.color = Color.rgb(135, 182, 120)
+            carbsData.color = Color.rgb(135, 182, 120)
+            fatsData.color = Color.rgb(135, 182, 120)
+
+            val pData = PieData(proteinData)
+            pData.setValueFormatter(object : ValueFormatter() {
+                override fun getFormattedValue(value: Float): String {
+                    return "${value.toInt()} g"
+                }
+            })
+            val cData = PieData(carbsData)
+            cData.setValueFormatter(object : ValueFormatter() {
+                override fun getFormattedValue(value: Float): String {
+                    return "${value.toInt()} g"
+                }
+            })
+            val fData = PieData(fatsData)
+            fData.setValueFormatter(object : ValueFormatter() {
+                override fun getFormattedValue(value: Float): String {
+                    return "${value.toInt()} g"
+                }
+            })
+
+            pData.setValueTextColor(Color.WHITE)
+            cData.setValueTextColor(Color.WHITE)
+            fData.setValueTextColor(Color.WHITE)
+
+            setupPieChart(proteinPieChart, pData)
+            setupPieChart(carbsPieChart, cData)
+            setupPieChart(fatPieChart, fData)
         }
-
-        val entries: ArrayList<PieEntry> = ArrayList()
-        entries.add(PieEntry(70f))
-
-        val dataSet = PieDataSet(entries, "Mobile OS")
-        dataSet.setDrawIcons(false)
-        dataSet.color = Color.rgb(135, 182, 120)
-
-        val data = PieData(dataSet)
-        data.setValueTextColor(Color.WHITE)
-
-        setupPieChart(carbsPieChart, data)
-        setupPieChart(fatPieChart, data)
 
         return view
     }
@@ -276,7 +306,7 @@ class DashboardFragment : Fragment() {
         var carbs = 0
         var fat = 0
         userEmail?.let { encodeEmail(it) }?.let {
-            Firebase.database.getReference("macroRatioCalories")
+            Firebase.database.getReference("macroGrams")
                 .child(it)
                 .addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -380,7 +410,7 @@ class DashboardFragment : Fragment() {
     }
 
     private fun setupPieChart(pieChart: PieChart, data: PieData) {
-        pieChart.setUsePercentValues(true)
+        pieChart.setUsePercentValues(false)
         pieChart.description.isEnabled = false
         pieChart.dragDecelerationFrictionCoef = 0.95f
         pieChart.setDrawCenterText(true)
@@ -391,6 +421,7 @@ class DashboardFragment : Fragment() {
         pieChart.isHighlightPerTapEnabled = true
         pieChart.animateY(1400, Easing.EaseInOutQuad)
         pieChart.legend.isEnabled = false
+        data.setValueTextSize(10f)
         pieChart.data = data
         pieChart.highlightValues(null)
         pieChart.invalidate()
