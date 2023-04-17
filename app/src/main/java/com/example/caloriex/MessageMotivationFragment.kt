@@ -3,18 +3,21 @@ package com.example.caloriex
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.launch
 
 class MessageMotivationFragment : Fragment() {
 
@@ -35,7 +38,11 @@ class MessageMotivationFragment : Fragment() {
 
         // Waiting for the click event from user. Once done so, this will prompt DashboardActivity
         definitelyBtn.setOnClickListener {
-            findNavController().navigate(R.id.action_messageMotivationFragment_to_dashboardFragment)
+            lifecycleScope.launch {
+                Handler().postDelayed({
+                    findNavController().navigate(R.id.action_messageMotivationFragment_to_dashboardFragment)
+                }, 1500)
+            }
         }
     }
 

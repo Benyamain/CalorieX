@@ -24,7 +24,9 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import kotlinx.coroutines.launch
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -115,7 +117,9 @@ class CameraFragment : Fragment() {
                 cameraProvider = cameraProviderFuture.get()
 
                 // Build and bind the camera use cases
-                bindCameraUseCases()
+                lifecycleScope.launch {
+                    bindCameraUseCases()
+                }
             },
             ContextCompat.getMainExecutor(requireContext())
         )

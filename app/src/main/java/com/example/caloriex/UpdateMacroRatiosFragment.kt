@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.database.DataSnapshot
@@ -16,6 +17,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.launch
 
 class UpdateMacroRatiosFragment : Fragment() {
 
@@ -42,64 +44,67 @@ class UpdateMacroRatiosFragment : Fragment() {
         settingsTv.text = "Macronutrient Ratios"
 
         imageIv.setOnClickListener {
-            if (proteinEt.text.toString().isNotEmpty() && netCarbsEt.text.toString().isNotEmpty() && fatsEt.text.toString().isNotEmpty()) {
-                val total =
-                    proteinEt.text.toString().toDouble().plus(netCarbsEt.text.toString().toDouble())
-                        .plus(fatsEt.text.toString().toDouble())
-                if (total == 100.0) {
-                    progressBar.visibility =
-                        View.VISIBLE
-                    Handler().postDelayed({
-                        navController.navigate(R.id.action_updateMacroRatiosFragment_to_settingsFragment)
-                    }, 1000)
+            lifecycleScope.launch {
+                if (proteinEt.text.toString().isNotEmpty() && netCarbsEt.text.toString().isNotEmpty() && fatsEt.text.toString().isNotEmpty()) {
+                    val total =
+                        proteinEt.text.toString().toDouble().plus(netCarbsEt.text.toString().toDouble())
+                            .plus(fatsEt.text.toString().toDouble())
+                    if (total == 100.0) {
+                        progressBar.visibility =
+                            View.VISIBLE
+                        Handler().postDelayed({
+                            navController.navigate(R.id.action_updateMacroRatiosFragment_to_settingsFragment)
+                        }, 1000)
 
-                    userEmail?.let { encodeEmail(it) }?.let {
-                        Firebase.database.getReference("energyExpenditure")
-                            .child(it)
-                            .addListenerForSingleValueEvent(object : ValueEventListener {
-                                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                                    if (dataSnapshot.exists()) {
-                                        val energyExp = if (dataSnapshot.value is Long) {
-                                            CalorieAmount(
-                                                dataSnapshot.getValue(Long::class.java)?.toInt()
+                        userEmail?.let { encodeEmail(it) }?.let {
+                            Firebase.database.getReference("energyExpenditure")
+                                .child(it)
+                                .addListenerForSingleValueEvent(object : ValueEventListener {
+                                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                        if (dataSnapshot.exists()) {
+                                            val energyExp = if (dataSnapshot.value is Long) {
+                                                CalorieAmount(
+                                                    dataSnapshot.getValue(Long::class.java)?.toInt()
+                                                )
+                                            } else {
+                                                dataSnapshot.getValue(CalorieAmount::class.java)
+                                            }
+                                            val calorie = energyExp?.calories ?: 0
+                                            val ratioCalories = calculateMacronutrientRatios(
+                                                calorie,
+                                                proteinEt.text.toString().toDouble(),
+                                                netCarbsEt.text.toString().toDouble(),
+                                                fatsEt.text.toString().toDouble()
                                             )
-                                        } else {
-                                            dataSnapshot.getValue(CalorieAmount::class.java)
+                                            Firebase.database.reference.child("macroRatioCalories")
+                                                .child(encodeEmail(userEmail)).setValue(ratioCalories)
                                         }
-                                        val calorie = energyExp?.calories ?: 0
-                                        val ratioCalories = calculateMacronutrientRatios(
-                                            calorie,
-                                            proteinEt.text.toString().toDouble(),
-                                            netCarbsEt.text.toString().toDouble(),
-                                            fatsEt.text.toString().toDouble()
-                                        )
-                                        Firebase.database.reference.child("macroRatioCalories")
-                                            .child(encodeEmail(userEmail)).setValue(ratioCalories)
                                     }
-                                }
 
-                                override fun onCancelled(databaseError: DatabaseError) {
-                                    Log.d("databaseError", "$databaseError")
-                                }
-                            })
+                                    override fun onCancelled(databaseError: DatabaseError) {
+                                        Log.d("databaseError", "$databaseError")
+                                    }
+                                })
+                        }
+                    } else {
+                        Toast.makeText(
+                            requireContext(),
+                            "Ratios must add up to 100!",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 } else {
                     Toast.makeText(
                         requireContext(),
-                        "Ratios must add up to 100!",
+                        "Fill out the required fields!",
                         Toast.LENGTH_SHORT
                     ).show()
                 }
-            } else {
-                Toast.makeText(
-                    requireContext(),
-                    "Fill out the required fields!",
-                    Toast.LENGTH_SHORT
-                ).show()
+                Log.d("macroRatios", "proteinEt is: ${proteinEt.text}")
+                Log.d("macroRatios", "netCarbsEt is: ${netCarbsEt.text}")
+                Log.d("macroRatios", "fatsEt is: ${fatsEt.text}")
             }
-            Log.d("macroRatios", "proteinEt is: ${proteinEt.text}")
-            Log.d("macroRatios", "netCarbsEt is: ${netCarbsEt.text}")
-            Log.d("macroRatios", "fatsEt is: ${fatsEt.text}")
+
         }
 
         proteinEt = view.findViewById(R.id.macro_ratios_protein_edittext)
@@ -116,27 +121,29 @@ class UpdateMacroRatiosFragment : Fragment() {
             // Do nothing
         }
 
-        progressBar.visibility = View.VISIBLE
+        lifecycleScope.launch {
+            progressBar.visibility = View.VISIBLE
 
-        userEmail?.let { encodeEmail(it) }?.let {
-            Firebase.database.getReference("macroRatios")
-                .child(it)
-                .addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            val macros = dataSnapshot.getValue(MacroRatios::class.java)
-                            proteinEt.setText(macros?.proteinRatio.toString())
-                            netCarbsEt.setText(macros?.netCarbRatio.toString())
-                            fatsEt.setText(macros?.fatRatio.toString())
+            userEmail?.let { encodeEmail(it) }?.let {
+                Firebase.database.getReference("macroRatios")
+                    .child(it)
+                    .addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onDataChange(dataSnapshot: DataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                val macros = dataSnapshot.getValue(MacroRatios::class.java)
+                                proteinEt.setText(macros?.proteinRatio.toString())
+                                netCarbsEt.setText(macros?.netCarbRatio.toString())
+                                fatsEt.setText(macros?.fatRatio.toString())
+                            }
+                            progressBar.visibility = View.GONE
                         }
-                        progressBar.visibility = View.GONE
-                    }
 
-                    override fun onCancelled(databaseError: DatabaseError) {
-                        Log.d("databaseError", "$databaseError")
-                        progressBar.visibility = View.GONE
-                    }
-                })
+                        override fun onCancelled(databaseError: DatabaseError) {
+                            Log.d("databaseError", "$databaseError")
+                            progressBar.visibility = View.GONE
+                        }
+                    })
+            }
         }
     }
 

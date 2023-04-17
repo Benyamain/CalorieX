@@ -13,7 +13,9 @@ import androidx.activity.addCallback
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import kotlinx.coroutines.launch
 
 class CalendarFragment : Fragment() {
 
@@ -37,7 +39,9 @@ class CalendarFragment : Fragment() {
         cancelTextView = view.findViewById(R.id.cancel_textview)
 
         calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
-            selectedDate = constructDate(year, month + 1, dayOfMonth)
+            lifecycleScope.launch {
+                selectedDate = constructDate(year, month + 1, dayOfMonth)
+            }
         }
 
         // No new date just go back to dashboard

@@ -9,8 +9,10 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
+import kotlinx.coroutines.launch
 
 class NutritionInfoFragment : Fragment() {
 
@@ -66,43 +68,47 @@ class NutritionInfoFragment : Fragment() {
 
         saveBtn = view.findViewById(R.id.nutrition_info_save_button)
         saveBtn.setOnClickListener {
-            intentToDashboard()
+            lifecycleScope.launch {
+                intentToDashboard()
+            }
         }
 
         // Read the date when the user navigates here
         // Condition below basically is a validation for all the attributes of that food such as its food content nutrition
         bundle = arguments
         if ((bundle != null) && (bundle!!.containsKey("name"))) {
-            val weightUnits = " g"
-            val calorieUnits = " kcal"
-            nutritionInfoTv.text = arguments?.getString("name").toString()
-            detailedProteinsValue.text = arguments?.getString("protein")?.toString()
-                ?.let { if (it == "null") "0" else it } + weightUnits
-            detailedKcalValue.text = arguments?.getString("calorie")?.toString()
-                ?.let { if (it == "null") "0" else it } + calorieUnits
-            detailedCarbsValue.text = arguments?.getString("carbs")?.toString()
-                ?.let { if (it == "null") "0" else it } + weightUnits
-            detailedFatsValue.text = arguments?.getString("fat")?.toString()
-                ?.let { if (it == "null") "0" else it } + weightUnits
-            detailedNutritionCaloriesValue.text = arguments?.getString("calorie")?.toString()
-                ?.let { if (it == "null") "0" else it } + calorieUnits
-            detailedNutritionProteinValue.text = arguments?.getString("protein")?.toString()
-                ?.let { if (it == "null") "0" else it } + weightUnits
-            detailedNutritionFatsValue.text = arguments?.getString("fat")?.toString()
-                ?.let { if (it == "null") "0" else it } + weightUnits
-            detailedNutritionCarbsValue.text = arguments?.getString("carbs")?.toString()
-                ?.let { if (it == "null") "0" else it } + weightUnits
-            detailedNutritionSValue.text = arguments?.getString("satfat")?.toString()
-                ?.let { if (it == "null") "0" else it } + weightUnits
-            detailedNutritionPolyValue.text = arguments?.getString("polyfat")?.toString()
-                ?.let { if (it == "null") "0" else it } + weightUnits
-            detailedNutritionMonoValue.text = arguments?.getString("monofat")?.toString()
-                ?.let { if (it == "null") "0" else it } + weightUnits
-            detailedNutritionSugarValue.text = arguments?.getString("sugar")?.toString()
-                ?.let { if (it == "null") "0" else it } + weightUnits
-            detailedNutritionFiberValue.text = arguments?.getString("fiber")?.toString()
-                ?.let { if (it == "null") "0" else it } + weightUnits
-            amountEt.setText("")
+            lifecycleScope.launch {
+                val weightUnits = " g"
+                val calorieUnits = " kcal"
+                nutritionInfoTv.text = arguments?.getString("name").toString()
+                detailedProteinsValue.text = arguments?.getString("protein")?.toString()
+                    ?.let { if (it == "null") "0" else it } + weightUnits
+                detailedKcalValue.text = arguments?.getString("calorie")?.toString()
+                    ?.let { if (it == "null") "0" else it } + calorieUnits
+                detailedCarbsValue.text = arguments?.getString("carbs")?.toString()
+                    ?.let { if (it == "null") "0" else it } + weightUnits
+                detailedFatsValue.text = arguments?.getString("fat")?.toString()
+                    ?.let { if (it == "null") "0" else it } + weightUnits
+                detailedNutritionCaloriesValue.text = arguments?.getString("calorie")?.toString()
+                    ?.let { if (it == "null") "0" else it } + calorieUnits
+                detailedNutritionProteinValue.text = arguments?.getString("protein")?.toString()
+                    ?.let { if (it == "null") "0" else it } + weightUnits
+                detailedNutritionFatsValue.text = arguments?.getString("fat")?.toString()
+                    ?.let { if (it == "null") "0" else it } + weightUnits
+                detailedNutritionCarbsValue.text = arguments?.getString("carbs")?.toString()
+                    ?.let { if (it == "null") "0" else it } + weightUnits
+                detailedNutritionSValue.text = arguments?.getString("satfat")?.toString()
+                    ?.let { if (it == "null") "0" else it } + weightUnits
+                detailedNutritionPolyValue.text = arguments?.getString("polyfat")?.toString()
+                    ?.let { if (it == "null") "0" else it } + weightUnits
+                detailedNutritionMonoValue.text = arguments?.getString("monofat")?.toString()
+                    ?.let { if (it == "null") "0" else it } + weightUnits
+                detailedNutritionSugarValue.text = arguments?.getString("sugar")?.toString()
+                    ?.let { if (it == "null") "0" else it } + weightUnits
+                detailedNutritionFiberValue.text = arguments?.getString("fiber")?.toString()
+                    ?.let { if (it == "null") "0" else it } + weightUnits
+                amountEt.setText("")
+            }
         }
 
         return view

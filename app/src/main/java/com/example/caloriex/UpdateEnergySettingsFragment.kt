@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.database.DataSnapshot
@@ -17,6 +18,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.launch
 
 class UpdateEnergySettingsFragment : Fragment() {
 
@@ -43,123 +45,127 @@ class UpdateEnergySettingsFragment : Fragment() {
         settingsTv.text = "Energy Settings"
         weightGoalEt = view.findViewById(R.id.energy_settings_weight_goal_edittext)
 
-        changeActivity(view)
+        lifecycleScope.launch {
+            changeActivity(view)
+        }
 
         imageIv.setOnClickListener {
-            if (bmrAutocompleteTextView.text.toString()
-                    .isNotEmpty() && activityLevelAutocompleteTextView.text.toString()
-                    .isNotEmpty() && weightGoalEt.text.toString().isNotEmpty()
-            ) {
-                progressBar.visibility = View.VISIBLE
-                Handler().postDelayed({
-                    navController.navigate(R.id.action_updateEnergySettingsFragment_to_settingsFragment)
-                }, 1000)
+            lifecycleScope.launch {
+                if (bmrAutocompleteTextView.text.toString()
+                        .isNotEmpty() && activityLevelAutocompleteTextView.text.toString()
+                        .isNotEmpty() && weightGoalEt.text.toString().isNotEmpty()
+                ) {
+                    progressBar.visibility = View.VISIBLE
+                    Handler().postDelayed({
+                        navController.navigate(R.id.action_updateEnergySettingsFragment_to_settingsFragment)
+                    }, 1000)
 
-                energySettings(
-                    bmrAutocompleteTextView.text.toString(),
-                    activityLevelAutocompleteTextView.text.toString(),
-                    weightGoalEt.text.toString().toDouble()
-                )
+                    energySettings(
+                        bmrAutocompleteTextView.text.toString(),
+                        activityLevelAutocompleteTextView.text.toString(),
+                        weightGoalEt.text.toString().toDouble()
+                    )
 
-                userEmail?.let { encodeEmail(it) }?.let { t ->
-                    Firebase.database.getReference("profileDetails")
-                        .child(t)
-                        .addListenerForSingleValueEvent(object : ValueEventListener {
-                            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                                val profileDetails =
-                                    dataSnapshot.getValue(ProfileDetails::class.java)
-                                val age = profileDetails?.age ?: 0
-                                val height = profileDetails?.height ?: 0.0
-                                val weight = profileDetails?.weight ?: 0.0
-                                val sex = profileDetails?.sex ?: ""
+                    userEmail?.let { encodeEmail(it) }?.let { t ->
+                        Firebase.database.getReference("profileDetails")
+                            .child(t)
+                            .addListenerForSingleValueEvent(object : ValueEventListener {
+                                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                    val profileDetails =
+                                        dataSnapshot.getValue(ProfileDetails::class.java)
+                                    val age = profileDetails?.age ?: 0
+                                    val height = profileDetails?.height ?: 0.0
+                                    val weight = profileDetails?.weight ?: 0.0
+                                    val sex = profileDetails?.sex ?: ""
 
-                                if (dataSnapshot.exists()) {
-                                    if (bmrAutocompleteTextView.text.toString() == "Harris Benedict") {
-                                        val hb = calculateBMRHarrisBenedict(
-                                            sex,
-                                            weight,
-                                            height,
-                                            age,
-                                            activityLevelAutocompleteTextView.text.toString(),
-                                            weightGoalEt.text.toString().toDouble()
-                                        )
-                                        Firebase.database.reference.child("energyExpenditure")
-                                            .child(encodeEmail(userEmail)).setValue(hb)
-                                    } else {
-                                        val msj = calculateBMRMifflinStJeor(
-                                            sex,
-                                            weight,
-                                            height,
-                                            age,
-                                            activityLevelAutocompleteTextView.text.toString(),
-                                            weightGoalEt.text.toString().toDouble()
-                                        )
-                                        Firebase.database.reference.child("energyExpenditure")
-                                            .child(encodeEmail(userEmail)).setValue(msj)
-                                    }
+                                    if (dataSnapshot.exists()) {
+                                        if (bmrAutocompleteTextView.text.toString() == "Harris Benedict") {
+                                            val hb = calculateBMRHarrisBenedict(
+                                                sex,
+                                                weight,
+                                                height,
+                                                age,
+                                                activityLevelAutocompleteTextView.text.toString(),
+                                                weightGoalEt.text.toString().toDouble()
+                                            )
+                                            Firebase.database.reference.child("energyExpenditure")
+                                                .child(encodeEmail(userEmail)).setValue(hb)
+                                        } else {
+                                            val msj = calculateBMRMifflinStJeor(
+                                                sex,
+                                                weight,
+                                                height,
+                                                age,
+                                                activityLevelAutocompleteTextView.text.toString(),
+                                                weightGoalEt.text.toString().toDouble()
+                                            )
+                                            Firebase.database.reference.child("energyExpenditure")
+                                                .child(encodeEmail(userEmail)).setValue(msj)
+                                        }
 
-                                    userEmail?.let { encodeEmail(it) }?.let { t ->
-                                        Firebase.database.getReference("macroRatios")
-                                            .child(t)
-                                            .addListenerForSingleValueEvent(object : ValueEventListener {
-                                                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                                                    if (dataSnapshot.exists()) {
-                                                        val macroRatios = dataSnapshot.getValue(MacroRatios::class.java)
+                                        userEmail?.let { encodeEmail(it) }?.let { t ->
+                                            Firebase.database.getReference("macroRatios")
+                                                .child(t)
+                                                .addListenerForSingleValueEvent(object : ValueEventListener {
+                                                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                                        if (dataSnapshot.exists()) {
+                                                            val macroRatios = dataSnapshot.getValue(MacroRatios::class.java)
 
-                                                        userEmail?.let { encodeEmail(it) }?.let { t ->
-                                                            Firebase.database.getReference("energyExpenditure")
-                                                                .child(t)
-                                                                .addListenerForSingleValueEvent(object : ValueEventListener {
-                                                                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                                                                        if (dataSnapshot.exists()) {
-                                                                            val energyExp = if (dataSnapshot.value is Long) {
-                                                                                CalorieAmount(
-                                                                                    dataSnapshot.getValue(Long::class.java)?.toInt()
+                                                            userEmail?.let { encodeEmail(it) }?.let { t ->
+                                                                Firebase.database.getReference("energyExpenditure")
+                                                                    .child(t)
+                                                                    .addListenerForSingleValueEvent(object : ValueEventListener {
+                                                                        override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                                                            if (dataSnapshot.exists()) {
+                                                                                val energyExp = if (dataSnapshot.value is Long) {
+                                                                                    CalorieAmount(
+                                                                                        dataSnapshot.getValue(Long::class.java)?.toInt()
+                                                                                    )
+                                                                                } else {
+                                                                                    dataSnapshot.getValue(CalorieAmount::class.java)
+                                                                                }
+                                                                                val calorie = energyExp?.calories ?: 0
+                                                                                val ratioCalories = calculateMacronutrientRatios(
+                                                                                    calorie,
+                                                                                    macroRatios?.proteinRatio ?: 0.0,
+                                                                                    macroRatios?.netCarbRatio ?: 0.0,
+                                                                                    macroRatios?.fatRatio ?: 0.0
                                                                                 )
-                                                                            } else {
-                                                                                dataSnapshot.getValue(CalorieAmount::class.java)
+                                                                                Firebase.database.reference.child("macroRatioCalories")
+                                                                                    .child(encodeEmail(userEmail)).setValue(ratioCalories)
                                                                             }
-                                                                            val calorie = energyExp?.calories ?: 0
-                                                                            val ratioCalories = calculateMacronutrientRatios(
-                                                                                calorie,
-                                                                                macroRatios?.proteinRatio ?: 0.0,
-                                                                                macroRatios?.netCarbRatio ?: 0.0,
-                                                                                macroRatios?.fatRatio ?: 0.0
-                                                                            )
-                                                                            Firebase.database.reference.child("macroRatioCalories")
-                                                                                .child(encodeEmail(userEmail)).setValue(ratioCalories)
                                                                         }
-                                                                    }
 
-                                                                    override fun onCancelled(databaseError: DatabaseError) {
-                                                                        Log.d("databaseError", "$databaseError")
-                                                                    }
-                                                                })
+                                                                        override fun onCancelled(databaseError: DatabaseError) {
+                                                                            Log.d("databaseError", "$databaseError")
+                                                                        }
+                                                                    })
+                                                            }
                                                         }
                                                     }
-                                                }
 
-                                                override fun onCancelled(databaseError: DatabaseError) {
-                                                    Log.d("databaseError", "$databaseError")
-                                                }
-                                            })
+                                                    override fun onCancelled(databaseError: DatabaseError) {
+                                                        Log.d("databaseError", "$databaseError")
+                                                    }
+                                                })
+                                        }
+                                    } else {
+                                        Log.d("dataSnapshot", "No data found")
                                     }
-                                } else {
-                                    Log.d("dataSnapshot", "No data found")
                                 }
-                            }
 
-                            override fun onCancelled(databaseError: DatabaseError) {
-                                Log.d("databaseError", "$databaseError")
-                            }
-                        })
+                                override fun onCancelled(databaseError: DatabaseError) {
+                                    Log.d("databaseError", "$databaseError")
+                                }
+                            })
+                    }
+                } else {
+                    Toast.makeText(
+                        requireContext(),
+                        "Fill out all the required fields!",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
-            } else {
-                Toast.makeText(
-                    requireContext(),
-                    "Fill out all the required fields!",
-                    Toast.LENGTH_SHORT
-                ).show()
             }
         }
 
@@ -173,28 +179,30 @@ class UpdateEnergySettingsFragment : Fragment() {
             // Do nothing
         }
 
-        progressBar.visibility = View.VISIBLE
+        lifecycleScope.launch {
+            progressBar.visibility = View.VISIBLE
 
-        userEmail?.let { encodeEmail(it) }?.let {
-            Firebase.database.getReference("energySettings")
-                .child(it)
-                .addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            val energySettings = dataSnapshot.getValue(EnergySettings::class.java)
-                            activityLevelAutocompleteTextView.setText(energySettings?.activityLevel)
-                            bmrAutocompleteTextView.setText(energySettings?.bmrName)
-                            weightGoalEt.setText(energySettings?.weightGoal.toString())
-                            changeActivity(view)
+            userEmail?.let { encodeEmail(it) }?.let {
+                Firebase.database.getReference("energySettings")
+                    .child(it)
+                    .addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onDataChange(dataSnapshot: DataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                val energySettings = dataSnapshot.getValue(EnergySettings::class.java)
+                                activityLevelAutocompleteTextView.setText(energySettings?.activityLevel)
+                                bmrAutocompleteTextView.setText(energySettings?.bmrName)
+                                weightGoalEt.setText(energySettings?.weightGoal.toString())
+                                changeActivity(view)
+                            }
+                            progressBar.visibility = View.GONE
                         }
-                        progressBar.visibility = View.GONE
-                    }
 
-                    override fun onCancelled(databaseError: DatabaseError) {
-                        Log.d("databaseError", "$databaseError")
-                        progressBar.visibility = View.GONE
-                    }
-                })
+                        override fun onCancelled(databaseError: DatabaseError) {
+                            Log.d("databaseError", "$databaseError")
+                            progressBar.visibility = View.GONE
+                        }
+                    })
+            }
         }
     }
 

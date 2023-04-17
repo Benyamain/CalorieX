@@ -12,6 +12,7 @@ import androidx.activity.addCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.fragment.findNavController
@@ -26,6 +27,7 @@ import com.google.android.material.navigation.NavigationBarView
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.launch
 
 class LogoutFragment : Fragment() {
 
@@ -54,54 +56,56 @@ class LogoutFragment : Fragment() {
         googleSignInClient = GoogleSignIn.getClient(requireContext(), googleSignInOptions)
 
         logoutBtn.setOnClickListener {
-            Firebase.auth.signOut()
-            Auth.GoogleSignInApi.signOut(googleSignInClient.asGoogleApiClient());
-            GoogleSignIn.getClient(
-                requireContext(),
-                GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).build()
-            ).signOut()
+            lifecycleScope.launch {
+                Firebase.auth.signOut()
+                Auth.GoogleSignInApi.signOut(googleSignInClient.asGoogleApiClient());
+                GoogleSignIn.getClient(
+                    requireContext(),
+                    GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).build()
+                ).signOut()
 
-            val sharedPreferences = requireActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
-            val editor = sharedPreferences.edit()
-            editor.putBoolean("isLoggedIn", false)
-            editor.apply()
+                val sharedPreferences = requireActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+                val editor = sharedPreferences.edit()
+                editor.putBoolean("isLoggedIn", false)
+                editor.apply()
 
-            val ctw = ContextThemeWrapper(requireContext(), R.style.CustomAlertDialogTheme)
-            val builder = AlertDialog.Builder(ctw)
+                val ctw = ContextThemeWrapper(requireContext(), R.style.CustomAlertDialogTheme)
+                val builder = AlertDialog.Builder(ctw)
 
-            // Set the message show for the Alert time
-            builder.setMessage("Are you sure you want to logout?")
+                // Set the message show for the Alert time
+                builder.setMessage("Are you sure you want to logout?")
 
-            // Set Alert Title
-            builder.setTitle("Logout")
+                // Set Alert Title
+                builder.setTitle("Logout")
 
-            // Set Cancelable false for when the user clicks on the outside the Dialog Box then it will remain show
-            builder.setCancelable(false)
+                // Set Cancelable false for when the user clicks on the outside the Dialog Box then it will remain show
+                builder.setCancelable(false)
 
-            // Set the positive button with yes name Lambda OnClickListener method is use of DialogInterface interface.
-            builder.setPositiveButton("Yes") { dialog, which ->
+                // Set the positive button with yes name Lambda OnClickListener method is use of DialogInterface interface.
+                builder.setPositiveButton("Yes") { dialog, which ->
 
-                view.findViewById<ProgressBar>(R.id.logout_progress_circular).visibility = View.VISIBLE
-                Handler().postDelayed({
-                    Toast.makeText(
-                        requireContext(),
-                        "Successfully signed out!",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    view.findViewById<ProgressBar>(R.id.logout_progress_circular).visibility = View.VISIBLE
+                    Handler().postDelayed({
+                        Toast.makeText(
+                            requireContext(),
+                            "Successfully signed out!",
+                            Toast.LENGTH_SHORT
+                        ).show()
 
-                    navController.navigate(R.id.action_logoutFragment_to_getStartedFragment)
-                }, 1000)
+                        navController.navigate(R.id.action_logoutFragment_to_getStartedFragment)
+                    }, 1000)
+                }
+
+                // Set the Negative button with No name Lambda OnClickListener method is use of DialogInterface interface.
+                builder.setNegativeButton("No") { dialog, which ->
+                    dialog.cancel()
+                }
+
+                // Create the Alert dialog
+                val alertDialog = builder.create()
+                // Show the Alert Dialog box
+                alertDialog.show()
             }
-
-            // Set the Negative button with No name Lambda OnClickListener method is use of DialogInterface interface.
-            builder.setNegativeButton("No") { dialog, which ->
-                dialog.cancel()
-            }
-
-            // Create the Alert dialog
-            val alertDialog = builder.create()
-            // Show the Alert Dialog box
-            alertDialog.show()
         }
 
         imageIv.setOnClickListener {

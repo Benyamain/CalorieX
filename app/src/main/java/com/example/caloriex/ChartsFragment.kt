@@ -12,6 +12,7 @@ import android.widget.AutoCompleteTextView
 import androidx.activity.addCallback
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.fragment.findNavController
@@ -23,6 +24,7 @@ import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView
+import kotlinx.coroutines.launch
 
 class ChartsFragment : Fragment() {
 
@@ -43,7 +45,10 @@ class ChartsFragment : Fragment() {
         historyBarChart = view.findViewById(R.id.barchart)
         navController = findNavController()
         navigationView.setupWithNavController(navController)
-        prefilledTextField(view)
+
+        lifecycleScope.launch {
+            prefilledTextField(view)
+        }
 
         // Customize the label visibility mode
         navigationView.labelVisibilityMode = NavigationBarView.LABEL_VISIBILITY_LABELED
@@ -77,17 +82,19 @@ class ChartsFragment : Fragment() {
             }
         }
 
-        val entries: ArrayList<BarEntry> = ArrayList()
-        entries.add(BarEntry(70f, 70f))
+        lifecycleScope.launch {
+            val entries: ArrayList<BarEntry> = ArrayList()
+            entries.add(BarEntry(70f, 70f))
 
-        val dataSet = BarDataSet(entries, "Mobile OS")
-        dataSet.setDrawIcons(false)
-        dataSet.color = Color.rgb(135,182,120)
+            val dataSet = BarDataSet(entries, "Mobile OS")
+            dataSet.setDrawIcons(false)
+            dataSet.color = Color.rgb(135,182,120)
 
-        val data = BarData(dataSet)
-        data.setValueTextColor(Color.WHITE)
+            val data = BarData(dataSet)
+            data.setValueTextColor(Color.WHITE)
 
-        setupBarChart(historyBarChart, data)
+            setupBarChart(historyBarChart, data)
+        }
 
         return view
     }
