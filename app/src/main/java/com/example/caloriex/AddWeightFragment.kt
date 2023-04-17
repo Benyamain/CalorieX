@@ -47,7 +47,65 @@ class AddWeightFragment : Fragment() {
 
         saveBtn = view.findViewById(R.id.add_weight_save_button)
         saveBtn.setOnClickListener {
-            intentToDashboard()
+            userEmail?.let { encodeEmail(it) }?.let { a ->
+                Firebase.database.getReference("profileDetails")
+                    .child(a)
+                    .addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onDataChange(dataSnapshot: DataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                val profileDetails = dataSnapshot.getValue(ProfileDetails::class.java)
+                                creatingProfile(profileDetails?.age ?: 0,profileDetails?.height ?: 0.0, weightEt.text.toString().toDouble(), profileDetails?.sex ?: "")
+
+                                userEmail?.let { encodeEmail(it) }?.let {
+                                    Firebase.database.getReference("energySettings")
+                                        .child(it)
+                                        .addListenerForSingleValueEvent(object : ValueEventListener {
+                                            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                                if (dataSnapshot.exists()) {
+                                                    val energy = dataSnapshot.getValue(EnergySettings::class.java)
+                                                    if (energy?.bmrName.toString() == "Harris Benedict") {
+                                                        val hb = calculateBMRHarrisBenedict(
+                                                            profileDetails?.sex ?: "",
+                                                            weightEt.text.toString().toDouble(),
+                                                            profileDetails?.height ?: 0.0,
+                                                            profileDetails?.age ?: 0,
+                                                            energy?.activityLevel.toString(),
+                                                            energy?.weightGoal.toString().toDouble()
+                                                        )
+                                                        Firebase.database.reference.child("energyExpenditure")
+                                                            .child(encodeEmail(userEmail)).setValue(hb)
+                                                    } else {
+                                                        val msj = calculateBMRMifflinStJeor(
+                                                            profileDetails?.sex ?: "",
+                                                            weightEt.text.toString().toDouble(),
+                                                            profileDetails?.height ?: 0.0,
+                                                            profileDetails?.age ?: 0,
+                                                            energy?.activityLevel.toString(),
+                                                            energy?.weightGoal.toString().toDouble()
+                                                        )
+                                                        Firebase.database.reference.child("energyExpenditure")
+                                                            .child(encodeEmail(userEmail)).setValue(msj)
+                                                    }
+                                                } else {
+                                                    Log.d("dataSnapshot", "No data found")
+                                                }
+                                            }
+
+                                            override fun onCancelled(databaseError: DatabaseError) {
+                                                Log.d("databaseError", "$databaseError")
+                                            }
+                                        })
+                                }
+                            }
+                        }
+
+                        override fun onCancelled(databaseError: DatabaseError) {
+                            Log.d("databaseError", "$databaseError")
+                        }
+                    })
+            }
+
+            navController.navigate(R.id.dashboardFragment)
         }
 
         return view
@@ -76,14 +134,6 @@ class AddWeightFragment : Fragment() {
                     }
                 })
         }
-    }
-
-    private fun intentToDashboard() {
-        // val bundle = Bundle()
-        //  bundle.putString("date", newDate)
-
-        navController.navigate(R.id.dashboardFragment)
-
     }
 
     override fun onResume() {
