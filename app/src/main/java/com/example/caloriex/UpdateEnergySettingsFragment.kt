@@ -61,9 +61,9 @@ class UpdateEnergySettingsFragment : Fragment() {
                     weightGoalEt.text.toString().toDouble()
                 )
 
-                userEmail?.let { encodeEmail(it) }?.let {
+                userEmail?.let { encodeEmail(it) }?.let { t ->
                     Firebase.database.getReference("profileDetails")
-                        .child(it)
+                        .child(t)
                         .addListenerForSingleValueEvent(object : ValueEventListener {
                             override fun onDataChange(dataSnapshot: DataSnapshot) {
                                 val profileDetails =
@@ -96,6 +96,53 @@ class UpdateEnergySettingsFragment : Fragment() {
                                         )
                                         Firebase.database.reference.child("energyExpenditure")
                                             .child(encodeEmail(userEmail)).setValue(msj)
+                                    }
+
+                                    userEmail?.let { encodeEmail(it) }?.let { t ->
+                                        Firebase.database.getReference("macroRatios")
+                                            .child(t)
+                                            .addListenerForSingleValueEvent(object : ValueEventListener {
+                                                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                                    if (dataSnapshot.exists()) {
+                                                        val macroRatios = dataSnapshot.getValue(MacroRatios::class.java)
+
+                                                        userEmail?.let { encodeEmail(it) }?.let { t ->
+                                                            Firebase.database.getReference("energyExpenditure")
+                                                                .child(t)
+                                                                .addListenerForSingleValueEvent(object : ValueEventListener {
+                                                                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                                                        if (dataSnapshot.exists()) {
+                                                                            val energyExp = if (dataSnapshot.value is Long) {
+                                                                                CalorieAmount(
+                                                                                    dataSnapshot.getValue(Long::class.java)?.toInt()
+                                                                                )
+                                                                            } else {
+                                                                                dataSnapshot.getValue(CalorieAmount::class.java)
+                                                                            }
+                                                                            val calorie = energyExp?.calories ?: 0
+                                                                            val ratioCalories = calculateMacronutrientRatios(
+                                                                                calorie,
+                                                                                macroRatios?.proteinRatio ?: 0.0,
+                                                                                macroRatios?.netCarbRatio ?: 0.0,
+                                                                                macroRatios?.fatRatio ?: 0.0
+                                                                            )
+                                                                            Firebase.database.reference.child("macroRatioCalories")
+                                                                                .child(encodeEmail(userEmail)).setValue(ratioCalories)
+                                                                        }
+                                                                    }
+
+                                                                    override fun onCancelled(databaseError: DatabaseError) {
+                                                                        Log.d("databaseError", "$databaseError")
+                                                                    }
+                                                                })
+                                                        }
+                                                    }
+                                                }
+
+                                                override fun onCancelled(databaseError: DatabaseError) {
+                                                    Log.d("databaseError", "$databaseError")
+                                                }
+                                            })
                                     }
                                 } else {
                                     Log.d("dataSnapshot", "No data found")
