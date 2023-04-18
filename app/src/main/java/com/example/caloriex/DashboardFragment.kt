@@ -105,25 +105,33 @@ class DashboardFragment : Fragment() {
         dashboardRecyclerView = view.findViewById(R.id.dashboard_recycler_view)
         dashboardRecyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        // ArrayList of class DashboardItems
         val dashboardData = ArrayList<DashboardItems>()
+        userEmail?.let { encodeEmail(it) }?.let { s ->
+            Firebase.database.reference.child("foodSelection").child(s).addListenerForSingleValueEvent(object :
+                ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        val foodItem = dataSnapshot.getValue(FoodItem::class.java)
 
-        // Testing purposes this is not actual way it will be done in the final version of the app
-        for (i in 1..20) {
-            dashboardData.add(
-                DashboardItems(
-                    R.drawable.gray_logo,
-                    "Food Name $i",
-                    "999 g",
-                    "1450.2",
-                    "kcal"
-                )
-            )
+                            val dashboardItem = DashboardItems(
+                                foodItem?.image ?: "",
+                                foodItem?.name ?: "",
+                                "999 g",
+                                "${foodItem?.calorie} kcal" ?: "")
+                            dashboardData.add(dashboardItem)
+                        }
+                    // Create the DashboardItemsAdapter with the dashboardData list
+                    val dashboardItemsAdapter =
+                        DashboardItemsAdapter(dashboardData, navController, appearBottomNavigationView)
+                    dashboardRecyclerView.adapter = dashboardItemsAdapter
+                    }
+
+                override fun onCancelled(databaseError: DatabaseError) {
+                    // Handle any errors here
+                }
+            })
         }
 
-        dashboardItemsAdapter =
-            DashboardItemsAdapter(dashboardData, navController, appearBottomNavigationView)
-        dashboardRecyclerView.adapter = dashboardItemsAdapter
 
         imageIv.setOnClickListener {
             navController.navigate(R.id.action_dashboardFragment_to_calendarFragment)

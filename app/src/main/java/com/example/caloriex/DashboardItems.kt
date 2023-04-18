@@ -1,5 +1,5 @@
 package com.example.caloriex
 
-data class DashboardItems(val leftImage: Int, val centerText: String, val belowText: String, val rightText: String, val belowRightText: String) {
+data class DashboardItems(val leftImage: String, val centerText: String, val belowText: String, val rightText: String) {
 
 }

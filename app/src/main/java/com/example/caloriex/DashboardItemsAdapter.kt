@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.squareup.picasso.Picasso
 
 class DashboardItemsAdapter(
     private val list: List<DashboardItems>,
@@ -28,10 +29,7 @@ class DashboardItemsAdapter(
         holder.centerTextView.text = itemsViewModel.centerText
         holder.rightTextView.text = itemsViewModel.rightText
         holder.belowTextView.text = itemsViewModel.belowText
-        holder.belowRightTextView.text = itemsViewModel.belowRightText
-        // sets the image to the imageview from our itemHolder class
-        holder.leftImageView.setImageResource(itemsViewModel.leftImage)
-
+        Picasso.get().load(itemsViewModel?.leftImage).into(holder.leftImageView)
         holder.itemView.setOnClickListener {
             if (appearBottomNavigationView.visibility != View.VISIBLE) {
                 navController.navigate(R.id.action_dashboardFragment_to_nutritionInfoFragment)
@@ -47,7 +45,6 @@ class DashboardItemsAdapter(
         val centerTextView: TextView = itemView.findViewById(R.id.dashboard_center_text_view)
         val belowTextView: TextView = itemView.findViewById(R.id.dashboard_below_text_view)
         val rightTextView: TextView = itemView.findViewById(R.id.dashboard_right_text_view)
-        val belowRightTextView: TextView = itemView.findViewById(R.id.dashboard_below_right_text_view)
         val leftImageView: ImageView = itemView.findViewById(R.id.dashboard_left_image_view)
     }
 }
