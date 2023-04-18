@@ -46,6 +46,13 @@ class CalendarFragment : Fragment() {
             lifecycleScope.launch {
                 withContext(Dispatchers.IO) {
                     selectedDate = constructDate(year, month + 1, dayOfMonth)
+
+                    Log.d("selectedDate", "$selectedDate")
+
+                    if (userEmail != null) {
+                        val date = CalendarDate(date = selectedDate)
+                        Firebase.database.reference.child("calendarDate").child(encodeEmail(userEmail)).setValue(date)
+                    }
                 }
             }
         }
@@ -57,7 +64,7 @@ class CalendarFragment : Fragment() {
 
         // Sends the new date
         okTextView.setOnClickListener {
-            intentToDashboard(selectedDate)
+            findNavController().navigate(R.id.dashboardFragment)
         }
 
         return view
@@ -69,13 +76,5 @@ class CalendarFragment : Fragment() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             // Do nothing
         }
-    }
-
-    private fun intentToDashboard(newDate: String) {
-        val bundle = Bundle()
-        bundle.putString("date", newDate)
-
-        findNavController().navigate(R.id.dashboardFragment, bundle)
-
     }
 }

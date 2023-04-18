@@ -15,17 +15,6 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Picasso
 
-const val CALORIE = "calorie"
-const val NAME = "name"
-const val SUGAR = "sugar"
-const val CARBS = "carbs"
-const val PROTEIN = "protein"
-const val MONOFAT = "monofat"
-const val POLYFAT = "polyfat"
-const val FIBER = "fiber"
-const val SATFAT = "satfat"
-const val FAT = "fat"
-
 class FoodListAdapter(
     val foodsList: ArrayList<FoodApiModel>,
     private val navController: NavController

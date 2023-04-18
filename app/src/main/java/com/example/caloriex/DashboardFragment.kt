@@ -59,11 +59,9 @@ class DashboardFragment : Fragment() {
     private lateinit var carbsPieChart: PieChart
     private lateinit var fatPieChart: PieChart
     private lateinit var toolbar: androidx.appcompat.widget.Toolbar
-    private lateinit var selectedDate: String
     private lateinit var calendarTv: TextView
     private lateinit var imageIv: ImageView
     private lateinit var dashboardRecyclerView: RecyclerView
-    private lateinit var dashboardItemsAdapter: DashboardItemsAdapter
     private var appearBottomCounter = 0
 
     private val requestPermissionLauncher =
@@ -118,29 +116,36 @@ class DashboardFragment : Fragment() {
                         }
 
                         userEmail?.let { encodeEmail(it) }?.let { s ->
-                            Firebase.database.reference.child("foodSelection").child(s).child(key).addListenerForSingleValueEvent(object :
-                                ValueEventListener {
-                                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                                    if (dataSnapshot.exists()) {
-                                        val foodItem = dataSnapshot.getValue(FoodItem::class.java)
+                            Firebase.database.reference.child("foodSelection").child(s).child(key)
+                                .addListenerForSingleValueEvent(object :
+                                    ValueEventListener {
+                                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                        if (dataSnapshot.exists()) {
+                                            val foodItem =
+                                                dataSnapshot.getValue(FoodItem::class.java)
 
-                                        val dashboardItem = DashboardItems(
-                                            foodItem?.image ?: "",
-                                            foodItem?.name ?: "",
-                                            "999 g",
-                                            "${foodItem?.calorie} kcal" ?: "")
-                                        dashboardData.add(dashboardItem)
+                                            val dashboardItem = DashboardItems(
+                                                foodItem?.image ?: "",
+                                                foodItem?.name ?: "",
+                                                "999 g",
+                                                "${foodItem?.calorie} kcal" ?: ""
+                                            )
+                                            dashboardData.add(dashboardItem)
+                                        }
+                                        // Create the DashboardItemsAdapter with the dashboardData list
+                                        val dashboardItemsAdapter =
+                                            DashboardItemsAdapter(
+                                                dashboardData,
+                                                navController,
+                                                appearBottomNavigationView
+                                            )
+                                        dashboardRecyclerView.adapter = dashboardItemsAdapter
                                     }
-                                    // Create the DashboardItemsAdapter with the dashboardData list
-                                    val dashboardItemsAdapter =
-                                        DashboardItemsAdapter(dashboardData, navController, appearBottomNavigationView)
-                                    dashboardRecyclerView.adapter = dashboardItemsAdapter
-                                }
 
-                                override fun onCancelled(databaseError: DatabaseError) {
-                                    // Handle any errors here
-                                }
-                            })
+                                    override fun onCancelled(databaseError: DatabaseError) {
+                                        // Handle any errors here
+                                    }
+                                })
                         }
                     }
 
@@ -273,7 +278,8 @@ class DashboardFragment : Fragment() {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         Log.d("CheckingAgain", "${dataSnapshot.getValue(MacroGrams::class.java)}")
                         if (dataSnapshot.exists()) {
-                            protein = dataSnapshot.getValue(MacroGrams::class.java)?.proteinGrams ?: 0
+                            protein =
+                                dataSnapshot.getValue(MacroGrams::class.java)?.proteinGrams ?: 0
                             carbs = dataSnapshot.getValue(MacroGrams::class.java)?.carbGrams ?: 0
                             fat = dataSnapshot.getValue(MacroGrams::class.java)?.fatGrams ?: 0
                             Log.d("Running???", "$dataSnapshot")
@@ -388,12 +394,9 @@ class DashboardFragment : Fragment() {
         }
 
         // Read the date when the user navigates back to the DashboardFragment from the CalendarFragment
-        val bundle = arguments
-        if ((bundle != null) && bundle.containsKey("date")) {
-            lifecycleScope.launch {
-                withContext(Dispatchers.IO) {
-                    readDate()
-                }
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                readDate()
             }
         }
     }
@@ -486,30 +489,43 @@ class DashboardFragment : Fragment() {
     @SuppressLint("SetTextI18n", "SimpleDateFormat")
     @RequiresApi(Build.VERSION_CODES.O)
     private fun readDate() {
-        selectedDate = arguments?.getString("date").toString()
+        userEmail?.let { encodeEmail(it) }?.let {
+            var date = ""
+            Firebase.database.getReference("calendarDate")
+                .child(it)
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            date = dataSnapshot.getValue(CalendarDate::class.java)?.date ?: ""
 
-        Log.d(TAG, "readDate: $selectedDate")
+                            val today = getCurrentDayString()
 
-        val today = getCurrentDayString()
+                            // Use Calendar class to manipulate the dates
+                            val cal = Calendar.getInstance()
+                            cal.time = SimpleDateFormat("MMM-dd-yyyy").parse(date) as Date
+                            val selectedDay = cal.get(Calendar.DAY_OF_YEAR)
+                            cal.time = SimpleDateFormat("MMM-dd-yyyy").parse(today) as Date
+                            val currentDay = cal.get(Calendar.DAY_OF_YEAR)
 
-        // Use Calendar class to manipulate the dates
-        val cal = Calendar.getInstance()
-        cal.time = SimpleDateFormat("MMM-dd-yyyy").parse(selectedDate) as Date
-        val selectedDay = cal.get(Calendar.DAY_OF_YEAR)
-        cal.time = SimpleDateFormat("MMM-dd-yyyy").parse(today) as Date
-        val currentDay = cal.get(Calendar.DAY_OF_YEAR)
+                            // Calculate the difference in days between selected date and current date
 
-        // Calculate the difference in days between selected date and current date
+                            // Show "Yesterday" or "Tomorrow" if the difference is +/- 1
+                            when (selectedDay - currentDay) {
+                                -1 -> calendarTv.text = "Yesterday"
+                                0 -> calendarTv.text = "Today"
+                                1 -> calendarTv.text = "Tomorrow"
+                                else -> {
+                                    // For any other case, show the selected date
+                                    calendarTv.text = date.makeDateReadable()
+                                }
+                            }
+                        }
+                    }
 
-        // Show "Yesterday" or "Tomorrow" if the difference is +/- 1
-        when (selectedDay - currentDay) {
-            -1 -> calendarTv.text = "Yesterday"
-            0 -> calendarTv.text = "Today"
-            1 -> calendarTv.text = "Tomorrow"
-            else -> {
-                // For any other case, show the selected date
-                calendarTv.text = selectedDate.makeDateReadable()
-            }
+                    override fun onCancelled(databaseError: DatabaseError) {
+                        Log.d("databaseError", "$databaseError")
+                    }
+                })
         }
     }
 
