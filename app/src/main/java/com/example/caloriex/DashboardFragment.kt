@@ -106,32 +106,47 @@ class DashboardFragment : Fragment() {
         dashboardRecyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         val dashboardData = ArrayList<DashboardItems>()
-        userEmail?.let { encodeEmail(it) }?.let { s ->
-            Firebase.database.reference.child("foodSelection").child(s).addListenerForSingleValueEvent(object :
-                ValueEventListener {
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    if (dataSnapshot.exists()) {
-                        val foodItem = dataSnapshot.getValue(FoodItem::class.java)
-
-                            val dashboardItem = DashboardItems(
-                                foodItem?.image ?: "",
-                                foodItem?.name ?: "",
-                                "999 g",
-                                "${foodItem?.calorie} kcal" ?: "")
-                            dashboardData.add(dashboardItem)
+        userEmail?.let { encodeEmail(it) }?.let { emailEncoded ->
+            var key = ""
+            Firebase.database.reference.child("foodSelectionKeys").child(emailEncoded)
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            key = dataSnapshot.getValue(FoodItemKey::class.java)?.key ?: ""
                         }
-                    // Create the DashboardItemsAdapter with the dashboardData list
-                    val dashboardItemsAdapter =
-                        DashboardItemsAdapter(dashboardData, navController, appearBottomNavigationView)
-                    dashboardRecyclerView.adapter = dashboardItemsAdapter
+
+                        userEmail?.let { encodeEmail(it) }?.let { s ->
+                            Firebase.database.reference.child("foodSelection").child(s).child(key).addListenerForSingleValueEvent(object :
+                                ValueEventListener {
+                                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                    if (dataSnapshot.exists()) {
+                                        val foodItem = dataSnapshot.getValue(FoodItem::class.java)
+
+                                        val dashboardItem = DashboardItems(
+                                            foodItem?.image ?: "",
+                                            foodItem?.name ?: "",
+                                            "999 g",
+                                            "${foodItem?.calorie} kcal" ?: "")
+                                        dashboardData.add(dashboardItem)
+                                    }
+                                    // Create the DashboardItemsAdapter with the dashboardData list
+                                    val dashboardItemsAdapter =
+                                        DashboardItemsAdapter(dashboardData, navController, appearBottomNavigationView)
+                                    dashboardRecyclerView.adapter = dashboardItemsAdapter
+                                }
+
+                                override fun onCancelled(databaseError: DatabaseError) {
+                                    // Handle any errors here
+                                }
+                            })
+                        }
                     }
 
-                override fun onCancelled(databaseError: DatabaseError) {
-                    // Handle any errors here
-                }
-            })
+                    override fun onCancelled(databaseError: DatabaseError) {
+                        // Handle database error
+                    }
+                })
         }
-
 
         imageIv.setOnClickListener {
             navController.navigate(R.id.action_dashboardFragment_to_calendarFragment)

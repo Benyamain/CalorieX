@@ -3,6 +3,7 @@ package com.example.caloriex
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
+import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -40,7 +42,6 @@ class NutritionInfoFragment : Fragment() {
     private lateinit var detailedNutritionSugarValue: TextView
     private lateinit var detailedNutritionFiberValue: TextView
     private lateinit var amountEt: EditText
-    private var bundle: Bundle? = null
 
     @SuppressLint("SetTextI18n")
     override fun onCreateView(
@@ -78,44 +79,70 @@ class NutritionInfoFragment : Fragment() {
             }
         }
 
-        // Read the date when the user navigates here
-        // Condition below basically is a validation for all the attributes of that food such as its food content nutrition
-        userEmail?.let { encodeEmail(it) }?.let { s ->
-            Firebase.database.reference.child("foodSelection").child(s).addListenerForSingleValueEvent(object :
-                ValueEventListener {
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    if (dataSnapshot.exists()) {
-                        val foodItem = dataSnapshot.getValue(FoodItem::class.java)
+        userEmail?.let { encodeEmail(it) }?.let { emailEncoded ->
+            var key = ""
+            Firebase.database.reference.child("foodSelectionKeys").child(emailEncoded)
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            key = dataSnapshot.getValue(FoodItemKey::class.java)?.key ?: ""
+                        }
 
-                        // Now you can access the values in the `foodItem` object
-                        lifecycleScope.launch {
-                            val weightUnits = " g"
-                            val calorieUnits = " kcal"
-                            nutritionInfoTv.text = foodItem?.name ?: ""
-                            detailedProteinsValue.text = foodItem?.protein?.let { if (it == "null") "0" else it } + weightUnits
-                            detailedKcalValue.text = foodItem?.calorie?.let { if (it == "null") "0" else it } + calorieUnits
-                            detailedCarbsValue.text = foodItem?.carbs?.let { if (it == "null") "0" else it } + weightUnits
-                            detailedFatsValue.text = foodItem?.fat?.let { if (it == "null") "0" else it } + weightUnits
-                            detailedNutritionCaloriesValue.text = foodItem?.calorie?.let { if (it == "null") "0" else it } + calorieUnits
-                            detailedNutritionProteinValue.text = foodItem?.protein?.let { if (it == "null") "0" else it } + weightUnits
-                            detailedNutritionFatsValue.text = foodItem?.fat?.let { if (it == "null") "0" else it } + weightUnits
-                            detailedNutritionCarbsValue.text = foodItem?.carbs?.let { if (it == "null") "0" else it } + weightUnits
-                            detailedNutritionSValue.text = foodItem?.satfat?.let { if (it == "null") "0" else it } + weightUnits
-                            detailedNutritionPolyValue.text = foodItem?.polyfat?.let { if (it == "null") "0" else it } + weightUnits
-                            detailedNutritionMonoValue.text = foodItem?.monofat?.let { if (it == "null") "0" else it } + weightUnits
-                            detailedNutritionSugarValue.text = foodItem?.sugar?.let { if (it == "null") "0" else it } + weightUnits
-                            detailedNutritionFiberValue.text = foodItem?.fiber?.let { if (it == "null") "0" else it } + weightUnits
-                            amountEt.setText("")
+                        userEmail?.let { encodeEmail(it) }?.let { emailEncoded ->
+                            Firebase.database.reference.child("foodSelection").child(emailEncoded).child(key)
+                                .addListenerForSingleValueEvent(object : ValueEventListener {
+                                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                        if (dataSnapshot.exists()) {
+                                            val foodItem = dataSnapshot.getValue(FoodItem::class.java)
+
+                                            // Now you can access the values in the `foodItem` object
+                                            lifecycleScope.launch {
+                                                val weightUnits = " g"
+                                                val calorieUnits = " kcal"
+                                                nutritionInfoTv.text = foodItem?.name ?: ""
+                                                detailedProteinsValue.text =
+                                                    foodItem?.protein?.let { if (it == "null") "0" else it } + weightUnits
+                                                detailedKcalValue.text =
+                                                    foodItem?.calorie?.let { if (it == "null") "0" else it } + calorieUnits
+                                                detailedCarbsValue.text =
+                                                    foodItem?.carbs?.let { if (it == "null") "0" else it } + weightUnits
+                                                detailedFatsValue.text =
+                                                    foodItem?.fat?.let { if (it == "null") "0" else it } + weightUnits
+                                                detailedNutritionCaloriesValue.text =
+                                                    foodItem?.calorie?.let { if (it == "null") "0" else it } + calorieUnits
+                                                detailedNutritionProteinValue.text =
+                                                    foodItem?.protein?.let { if (it == "null") "0" else it } + weightUnits
+                                                detailedNutritionFatsValue.text =
+                                                    foodItem?.fat?.let { if (it == "null") "0" else it } + weightUnits
+                                                detailedNutritionCarbsValue.text =
+                                                    foodItem?.carbs?.let { if (it == "null") "0" else it } + weightUnits
+                                                detailedNutritionSValue.text =
+                                                    foodItem?.satfat?.let { if (it == "null") "0" else it } + weightUnits
+                                                detailedNutritionPolyValue.text =
+                                                    foodItem?.polyfat?.let { if (it == "null") "0" else it } + weightUnits
+                                                detailedNutritionMonoValue.text =
+                                                    foodItem?.monofat?.let { if (it == "null") "0" else it } + weightUnits
+                                                detailedNutritionSugarValue.text =
+                                                    foodItem?.sugar?.let { if (it == "null") "0" else it } + weightUnits
+                                                detailedNutritionFiberValue.text =
+                                                    foodItem?.fiber?.let { if (it == "null") "0" else it } + weightUnits
+                                                amountEt.setText("")
+                                            }
+                                        }
+                                    }
+
+                                    override fun onCancelled(databaseError: DatabaseError) {
+                                        // Handle database error
+                                    }
+                                })
                         }
                     }
-                }
 
-                override fun onCancelled(databaseError: DatabaseError) {
-                    // Handle any errors here
-                }
-            })
+                    override fun onCancelled(databaseError: DatabaseError) {
+                        // Handle database error
+                    }
+                })
         }
-
 
         return view
     }
@@ -131,7 +158,7 @@ class NutritionInfoFragment : Fragment() {
     private fun intentToDashboard() {
         view?.findViewById<ProgressBar>(R.id.ni_progress_circular)?.visibility = View.VISIBLE
         Handler().postDelayed({
-            navController.navigate(R.id.dashboardFragment, bundle)
+            navController.navigate(R.id.dashboardFragment)
         }, 450)
 
     }

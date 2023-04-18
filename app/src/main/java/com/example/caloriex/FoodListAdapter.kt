@@ -60,7 +60,10 @@ class FoodListAdapter(
                 )
 
                 if (userEmail != null) {
-                    Firebase.database.reference.child("foodSelection").child(encodeEmail(userEmail)).setValue(foodItem)
+                    val key = Firebase.database.reference.child("foodSelection").child(encodeEmail(userEmail)).push().key?: ""
+                    Firebase.database.reference.child("foodSelection").child(encodeEmail(userEmail)).child(key).setValue(foodItem)
+                    val foodItemKey = FoodItemKey(key = key)
+                    Firebase.database.reference.child("foodSelectionKeys").child(encodeEmail(userEmail)).setValue(foodItemKey)
                 }
 
                 navController.navigate(
