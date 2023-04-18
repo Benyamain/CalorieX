@@ -14,7 +14,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class StartTrackingFragment : Fragment() {
 
@@ -27,11 +30,15 @@ class StartTrackingFragment : Fragment() {
         // Set click listener on the button to launch the dashboard:
         startTrackingBtn.setOnClickListener {
             lifecycleScope.launch {
-                Handler().postDelayed({
-                    findNavController().navigate(R.id.action_startTrackingFragment_to_dashboardFragment)
-                }, 1500)
+                delay(1500) // Replace Handler with delay coroutine
+                withContext(Dispatchers.Main) {
+                    activity?.runOnUiThread {// Navigate on the main thread
+                        findNavController().navigate(R.id.action_startTrackingFragment_to_dashboardFragment)
+                    }
+                }
             }
         }
+
 
         return view
     }

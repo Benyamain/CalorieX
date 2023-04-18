@@ -17,7 +17,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MessageMotivationFragment : Fragment() {
 
@@ -39,9 +42,12 @@ class MessageMotivationFragment : Fragment() {
         // Waiting for the click event from user. Once done so, this will prompt DashboardActivity
         definitelyBtn.setOnClickListener {
             lifecycleScope.launch {
-                Handler().postDelayed({
-                    findNavController().navigate(R.id.action_messageMotivationFragment_to_dashboardFragment)
-                }, 1500)
+                withContext(Dispatchers.IO) {
+                    delay(1500)
+                    activity?.runOnUiThread {
+                        findNavController().navigate(R.id.action_messageMotivationFragment_to_dashboardFragment)
+                    }
+                }
             }
         }
     }

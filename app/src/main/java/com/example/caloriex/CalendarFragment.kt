@@ -15,7 +15,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class CalendarFragment : Fragment() {
 
@@ -40,7 +44,9 @@ class CalendarFragment : Fragment() {
 
         calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
             lifecycleScope.launch {
-                selectedDate = constructDate(year, month + 1, dayOfMonth)
+                withContext(Dispatchers.IO) {
+                    selectedDate = constructDate(year, month + 1, dayOfMonth)
+                }
             }
         }
 

@@ -26,7 +26,9 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -85,10 +87,14 @@ class CameraFragment : Fragment() {
         }
 
         imageIv.setOnClickListener {
-            if(::cameraExecutor.isInitialized) {
+            if (::cameraExecutor.isInitialized) {
                 findNavController().navigate(R.id.action_cameraFragment_to_permissionsFragment)
             } else {
-                Toast.makeText(requireContext(), "Please wait for camera to load!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    "Please wait for camera to load!",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
 
@@ -118,7 +124,11 @@ class CameraFragment : Fragment() {
 
                 // Build and bind the camera use cases
                 lifecycleScope.launch {
-                    bindCameraUseCases()
+                    withContext(Dispatchers.IO) {
+                        activity?.runOnUiThread {
+                            bindCameraUseCases()
+                        }
+                    }
                 }
             },
             ContextCompat.getMainExecutor(requireContext())

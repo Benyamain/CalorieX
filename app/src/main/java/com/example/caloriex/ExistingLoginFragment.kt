@@ -26,7 +26,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ExistingLoginFragment : Fragment() {
 
@@ -61,36 +63,47 @@ class ExistingLoginFragment : Fragment() {
 
         nativeLoginBtn.setOnClickListener {
             lifecycleScope.launch {
-                val emailAddress = view.findViewById<EditText>(R.id.login_email_edittext).text
-                val password = view.findViewById<EditText>(R.id.login_password_edittext).text
+                withContext(Dispatchers.IO) {
+                    val emailAddress = view.findViewById<EditText>(R.id.login_email_edittext).text
+                    val password = view.findViewById<EditText>(R.id.login_password_edittext).text
 
-                if (emailAddress.isNotEmpty() && password.isNotEmpty()) {
-                    auth.signInWithEmailAndPassword(emailAddress.toString(), password.toString())
-                        .addOnCompleteListener(requireActivity()) { task ->
-                            if (task.isSuccessful) {
-                                // Sign in success, update UI with the signed-in user's information
-                                Log.d("Sign in success", "signInWithEmail:success")
-                                Toast.makeText(
-                                    requireContext(),
-                                    "Successfully signed in!",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                                keepUserLoggedIn()
-                            } else {
-                                // If sign in fails, display a message to the user.
-                                Log.w("Sign in fail", "signInWithEmail:failure", task.exception)
-                                Toast.makeText(
-                                    requireContext(), "Authentication Error!",
-                                    Toast.LENGTH_SHORT
-                                ).show()
+                    if (emailAddress.isNotEmpty() && password.isNotEmpty()) {
+                        auth.signInWithEmailAndPassword(
+                            emailAddress.toString(),
+                            password.toString()
+                        )
+                            .addOnCompleteListener(requireActivity()) { task ->
+                                if (task.isSuccessful) {
+                                    // Sign in success, update UI with the signed-in user's information
+                                    Log.d("Sign in success", "signInWithEmail:success")
+                                    activity?.runOnUiThread {
+                                        Toast.makeText(
+                                            requireContext(),
+                                            "Successfully signed in!",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                        keepUserLoggedIn()
+                                    }
+                                } else {
+                                    // If sign in fails, display a message to the user.
+                                    Log.w("Sign in fail", "signInWithEmail:failure", task.exception)
+                                    activity?.runOnUiThread {
+                                        Toast.makeText(
+                                            requireContext(), "Authentication Error!",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                }
                             }
+                    } else {
+                        activity?.runOnUiThread {
+                            Toast.makeText(
+                                requireContext(),
+                                "Fill out the appropriate fields!",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
-                } else {
-                    Toast.makeText(
-                        requireContext(),
-                        "Fill out the appropriate fields!",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    }
                 }
             }
         }
@@ -109,48 +122,55 @@ class ExistingLoginFragment : Fragment() {
         super.onActivityResult(requestCode, resultCode, data)
 
         lifecycleScope.launch {
-            when (requestCode) {
-                100 -> {
-                    // When request code is equal to 100 initialize task
-                    val signInAccountTask: Task<GoogleSignInAccount> =
-                        GoogleSignIn.getSignedInAccountFromIntent(data)
+            withContext(Dispatchers.IO) {
+                when (requestCode) {
+                    100 -> {
+                        // When request code is equal to 100 initialize task
+                        val signInAccountTask: Task<GoogleSignInAccount> =
+                            GoogleSignIn.getSignedInAccountFromIntent(data)
 
-                    // check condition
-                    if (signInAccountTask.isSuccessful) {
-                        try {
-                            // Initialize sign in account
-                            val googleSignInAccount =
-                                signInAccountTask.getResult(ApiException::class.java)
+                        // check condition
+                        if (signInAccountTask.isSuccessful) {
+                            try {
+                                // Initialize sign in account
+                                val googleSignInAccount =
+                                    signInAccountTask.getResult(ApiException::class.java)
 
-                            if (googleSignInAccount != null) {
+                                if (googleSignInAccount != null) {
 
-                                val authCredential: AuthCredential = GoogleAuthProvider.getCredential(
-                                    googleSignInAccount.idToken, null
-                                )
-                                // Gets credential from google sign in and uses the credential to sign in to firebase
-                                auth.signInWithCredential(authCredential)
-                                    .addOnCompleteListener(requireActivity()) { task ->
-                                        // Check condition
-                                        if (task.isSuccessful) {
-                                            // When task is successful redirect to profile activity
-                                            Toast.makeText(
-                                                requireContext(),
-                                                "Successfully signed in!",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
-                                            keepUserLoggedIn()
-                                        } else {
-                                            // When task is unsuccessful display Toast
-                                            Toast.makeText(
-                                                requireContext(),
-                                                "Authentication Error!",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
+                                    val authCredential: AuthCredential =
+                                        GoogleAuthProvider.getCredential(
+                                            googleSignInAccount.idToken, null
+                                        )
+                                    // Gets credential from google sign in and uses the credential to sign in to firebase
+                                    auth.signInWithCredential(authCredential)
+                                        .addOnCompleteListener(requireActivity()) { task ->
+                                            // Check condition
+                                            if (task.isSuccessful) {
+                                                // When task is successful redirect to profile activity
+                                                activity?.runOnUiThread {
+                                                    Toast.makeText(
+                                                        requireContext(),
+                                                        "Successfully signed in!",
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
+                                                    keepUserLoggedIn()
+                                                }
+                                            } else {
+                                                // When task is unsuccessful display Toast
+                                                activity?.runOnUiThread {
+                                                    Toast.makeText(
+                                                        requireContext(),
+                                                        "Authentication Error!",
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
+                                                }
+                                            }
                                         }
-                                    }
+                                }
+                            } catch (e: ApiException) {
+                                e.printStackTrace()
                             }
-                        } catch (e: ApiException) {
-                            e.printStackTrace()
                         }
                     }
                 }

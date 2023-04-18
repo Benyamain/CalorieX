@@ -19,7 +19,10 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class UpdateProfileDetailsFragment : Fragment() {
 
@@ -51,18 +54,32 @@ class UpdateProfileDetailsFragment : Fragment() {
 
         imageIv.setOnClickListener {
             lifecycleScope.launch {
-                if (ageEt.text.toString().isNotEmpty() && heightEt.text.toString().isNotEmpty() && weightEt.text.toString().isNotEmpty() && sexOptionsAutocompleteTextView.text.toString().isNotEmpty()) {
-                    progressBar.visibility = View.VISIBLE
-                    Handler().postDelayed({
-                        navController.navigate(R.id.action_updateProfileDetailsFragment_to_settingsFragment)
-                    }, 1000)
-                    creatingProfile(ageEt.text.toString().toInt(), heightEt.text.toString().toDouble(), weightEt.text.toString().toDouble(), sexOptionsAutocompleteTextView.text.toString())
-                } else {
-                    Toast.makeText(
-                        requireContext(),
-                        "Fill out all the required fields!",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                withContext(Dispatchers.IO) {
+                    if (ageEt.text.toString().isNotEmpty() && heightEt.text.toString()
+                            .isNotEmpty() && weightEt.text.toString()
+                            .isNotEmpty() && sexOptionsAutocompleteTextView.text.toString()
+                            .isNotEmpty()
+                    ) {
+                        activity?.runOnUiThread {
+                            progressBar.visibility = View.VISIBLE
+                        }
+                        delay(1000)
+                        activity?.runOnUiThread {
+                            navController.navigate(R.id.action_updateProfileDetailsFragment_to_settingsFragment)
+                        }
+                        creatingProfile(
+                            ageEt.text.toString().toInt(),
+                            heightEt.text.toString().toDouble(),
+                            weightEt.text.toString().toDouble(),
+                            sexOptionsAutocompleteTextView.text.toString()
+                        )
+                    } else {
+                        Toast.makeText(
+                            requireContext(),
+                            "Fill out all the required fields!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
             }
         }
@@ -80,7 +97,9 @@ class UpdateProfileDetailsFragment : Fragment() {
         }
 
         lifecycleScope.launch {
-            loadData()
+            withContext(Dispatchers.IO) {
+                loadData()
+            }
         }
     }
 
@@ -230,7 +249,9 @@ class UpdateProfileDetailsFragment : Fragment() {
     override fun onStop() {
         super.onStop()
         lifecycleScope.launch {
-            loadData()
+            withContext(Dispatchers.IO) {
+                loadData()
+            }
         }
     }
 }

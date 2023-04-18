@@ -7,7 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class GetStartedFragment : Fragment() {
 
@@ -20,7 +24,13 @@ class GetStartedFragment : Fragment() {
 
         // Waiting for the click event from user. Once done so, this will prompt AccountSignInActivity
         getStartedBtn.setOnClickListener {
-            findNavController().navigate(R.id.action_getStartedFragment_to_accountSignInFragment)
+            lifecycleScope.launch {
+                withContext(Dispatchers.IO) {
+                    activity?.runOnUiThread {
+                        findNavController().navigate(R.id.action_getStartedFragment_to_accountSignInFragment)
+                    }
+                }
+            }
         }
 
         return view

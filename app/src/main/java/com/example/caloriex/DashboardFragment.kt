@@ -39,7 +39,9 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -198,7 +200,11 @@ class DashboardFragment : Fragment() {
                     appearBottomCounter++
                     if (appearBottomCounter == 1) {
                         lifecycleScope.launch {
-                            appearBottom()
+                            withContext(Dispatchers.IO) {
+                                activity?.runOnUiThread {
+                                    appearBottom()
+                                }
+                            }
                         }
                     }
 
@@ -365,7 +371,9 @@ class DashboardFragment : Fragment() {
         }
 
         lifecycleScope.launch {
-            updateCharts()
+            withContext(Dispatchers.IO) {
+                updateCharts()
+            }
         }
     }
 
@@ -374,14 +382,18 @@ class DashboardFragment : Fragment() {
         super.onResume()
 
         lifecycleScope.launch {
-            updateCharts()
+            withContext(Dispatchers.IO) {
+                updateCharts()
+            }
         }
 
         // Read the date when the user navigates back to the DashboardFragment from the CalendarFragment
         val bundle = arguments
         if ((bundle != null) && bundle.containsKey("date")) {
             lifecycleScope.launch {
-                readDate()
+                withContext(Dispatchers.IO) {
+                    readDate()
+                }
             }
         }
     }

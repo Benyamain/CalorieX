@@ -24,7 +24,9 @@ import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ChartsFragment : Fragment() {
 
@@ -83,17 +85,19 @@ class ChartsFragment : Fragment() {
         }
 
         lifecycleScope.launch {
-            val entries: ArrayList<BarEntry> = ArrayList()
-            entries.add(BarEntry(70f, 70f))
+            withContext(Dispatchers.IO) {
+                val entries: ArrayList<BarEntry> = ArrayList()
+                entries.add(BarEntry(70f, 70f))
 
-            val dataSet = BarDataSet(entries, "Mobile OS")
-            dataSet.setDrawIcons(false)
-            dataSet.color = Color.rgb(135,182,120)
+                val dataSet = BarDataSet(entries, "Mobile OS")
+                dataSet.setDrawIcons(false)
+                dataSet.color = Color.rgb(135, 182, 120)
 
-            val data = BarData(dataSet)
-            data.setValueTextColor(Color.WHITE)
+                val data = BarData(dataSet)
+                data.setValueTextColor(Color.WHITE)
 
-            setupBarChart(historyBarChart, data)
+                setupBarChart(historyBarChart, data)
+            }
         }
 
         return view
@@ -103,7 +107,9 @@ class ChartsFragment : Fragment() {
         barChart.description.isEnabled = false
         barChart.dragDecelerationFrictionCoef = 0.95f
         barChart.isHighlightPerTapEnabled = true
-        barChart.animateY(1400, Easing.EaseInOutQuad)
+        barChart.post {
+            barChart.animateY(1400, Easing.EaseInOutQuad)
+        }
         barChart.legend.isEnabled = false
         barChart.data = data
         barChart.xAxis.textColor = Color.WHITE

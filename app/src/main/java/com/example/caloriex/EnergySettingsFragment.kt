@@ -23,7 +23,9 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class EnergySettingsFragment : Fragment() {
 
@@ -41,7 +43,11 @@ class EnergySettingsFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_energy_settings, container, false)
 
         lifecycleScope.launch {
-            changeActivity(view)
+            withContext(Dispatchers.IO) {
+                activity?.runOnUiThread {
+                    changeActivity(view)
+                }
+            }
         }
 
         return view
