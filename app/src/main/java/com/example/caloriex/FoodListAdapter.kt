@@ -11,6 +11,8 @@ import android.widget.Toast
 import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Picasso
 
 const val CALORIE = "calorie"
@@ -43,23 +45,26 @@ class FoodListAdapter(
         Picasso.get().load(currentItem?.image).into(holder.leftIv)
         if (  holder.textView.text != "Not Available!") {
             holder.itemView.setOnClickListener {
-                val bundle = Bundle().apply {
-                    putString(NAME, currentItem?.label.toString())
-                    putString(CALORIE, currentItem?.nutrients?.ENERC_KCAL.toString())
-                    putString(SUGAR, currentItem?.nutrients?.SUGAR.toString())
-                    putString(CARBS, currentItem?.nutrients?.CHOCDF.toString())
-                    putString(PROTEIN, currentItem?.nutrients?.PROCNT.toString())
-                    putString(MONOFAT, currentItem?.nutrients?.FAMS.toString())
-                    putString(POLYFAT, currentItem?.nutrients?.FAPU.toString())
-                    putString(FIBER, currentItem?.nutrients?.FIBTG.toString())
-                    putString(SATFAT, currentItem?.nutrients?.FASAT.toString())
-                    putString(FAT, currentItem?.nutrients?.FAT.toString())
+                val foodItem = FoodItem(
+                    name = currentItem?.label.toString(),
+                    calorie = currentItem?.nutrients?.ENERC_KCAL.toString(),
+                    sugar = currentItem?.nutrients?.SUGAR.toString(),
+                    carbs = currentItem?.nutrients?.CHOCDF.toString(),
+                    protein = currentItem?.nutrients?.PROCNT.toString(),
+                    monofat = currentItem?.nutrients?.FAMS.toString(),
+                    polyfat = currentItem?.nutrients?.FAPU.toString(),
+                    fiber = currentItem?.nutrients?.FIBTG.toString(),
+                    satfat = currentItem?.nutrients?.FASAT.toString(),
+                    fat = currentItem?.nutrients?.FAT.toString(),
+                    image = currentItem?.image.toString()
+                )
+
+                if (userEmail != null) {
+                    Firebase.database.reference.child("foodSelection").child(encodeEmail(userEmail)).setValue(foodItem)
                 }
 
                 navController.navigate(
-                    R.id.action_searchFoodFragment_to_nutritionInfoFragment,
-                    bundle
-                )
+                    R.id.action_searchFoodFragment_to_nutritionInfoFragment)
             }
         } else {
             Toast.makeText(
