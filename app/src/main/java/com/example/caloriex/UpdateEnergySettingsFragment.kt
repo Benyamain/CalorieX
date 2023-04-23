@@ -1,8 +1,6 @@
 package com.example.caloriex
 
-import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -73,16 +71,14 @@ class UpdateEnergySettingsFragment : Fragment() {
                             weightGoalEt.text.toString().toDouble()
                         )
 
-                        userEmail?.let { encodeEmail(it) }?.let { t ->
-                            Firebase.database.getReference("profileDetails")
-                                .child(t)
+                        Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/profileDetails")
                                 .addListenerForSingleValueEvent(object : ValueEventListener {
                                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                                         val profileDetails =
                                             dataSnapshot.getValue(ProfileDetails::class.java)
                                         val age = profileDetails?.age ?: 0
                                         val height = profileDetails?.height ?: 0.0
-                                        val weight = profileDetails?.weight ?: 0.0
+                                        val weight = profileDetails?.weight?.lastIndex?.toDouble() ?: 0.0
                                         val sex = profileDetails?.sex ?: ""
 
                                         if (dataSnapshot.exists()) {
@@ -95,8 +91,7 @@ class UpdateEnergySettingsFragment : Fragment() {
                                                     activityLevelAutocompleteTextView.text.toString(),
                                                     weightGoalEt.text.toString().toDouble()
                                                 )
-                                                Firebase.database.reference.child("energyExpenditure")
-                                                    .child(encodeEmail(userEmail)).setValue(hb)
+                                                Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/energyExpenditure").setValue(hb)
                                             } else {
                                                 val msj = calculateBMRMifflinStJeor(
                                                     sex,
@@ -106,13 +101,10 @@ class UpdateEnergySettingsFragment : Fragment() {
                                                     activityLevelAutocompleteTextView.text.toString(),
                                                     weightGoalEt.text.toString().toDouble()
                                                 )
-                                                Firebase.database.reference.child("energyExpenditure")
-                                                    .child(encodeEmail(userEmail)).setValue(msj)
+                                                Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/energyExpenditure").setValue(msj)
                                             }
 
-                                            userEmail?.let { encodeEmail(it) }?.let { t ->
-                                                Firebase.database.getReference("macroRatios")
-                                                    .child(t)
+                                            Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/macros/macroRatios")
                                                     .addListenerForSingleValueEvent(object :
                                                         ValueEventListener {
                                                         override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -122,12 +114,7 @@ class UpdateEnergySettingsFragment : Fragment() {
                                                                         MacroRatios::class.java
                                                                     )
 
-                                                                userEmail?.let { encodeEmail(it) }
-                                                                    ?.let { t ->
-                                                                        Firebase.database.getReference(
-                                                                            "energyExpenditure"
-                                                                        )
-                                                                            .child(t)
+                                                                Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/energyExpenditure")
                                                                             .addListenerForSingleValueEvent(
                                                                                 object :
                                                                                     ValueEventListener {
@@ -161,17 +148,8 @@ class UpdateEnergySettingsFragment : Fragment() {
                                                                                                     macroRatios?.fatRatio
                                                                                                         ?: 0.0
                                                                                                 )
-                                                                                            Firebase.database.reference.child(
-                                                                                                "macroRatioCalories"
-                                                                                            )
-                                                                                                .child(
-                                                                                                    encodeEmail(
-                                                                                                        userEmail
-                                                                                                    )
-                                                                                                )
-                                                                                                .setValue(
-                                                                                                    ratioCalories
-                                                                                                )
+
+                                                                                            Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/macros/macroRatioCalories").setValue(ratioCalories)
                                                                                         }
                                                                                     }
 
@@ -184,7 +162,6 @@ class UpdateEnergySettingsFragment : Fragment() {
                                                                                         )
                                                                                     }
                                                                                 })
-                                                                    }
                                                             }
                                                         }
 
@@ -192,7 +169,6 @@ class UpdateEnergySettingsFragment : Fragment() {
                                                             Log.d("databaseError", "$databaseError")
                                                         }
                                                     })
-                                            }
                                         } else {
                                             Log.d("dataSnapshot", "No data found")
                                         }
@@ -202,7 +178,6 @@ class UpdateEnergySettingsFragment : Fragment() {
                                         Log.d("databaseError", "$databaseError")
                                     }
                                 })
-                        }
                     } else {
                         Toast.makeText(
                             requireContext(),
@@ -227,9 +202,7 @@ class UpdateEnergySettingsFragment : Fragment() {
         lifecycleScope.launch {
             progressBar.visibility = View.VISIBLE
 
-            userEmail?.let { encodeEmail(it) }?.let {
-                Firebase.database.getReference("energySettings")
-                    .child(it)
+            Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/energySettings")
                     .addListenerForSingleValueEvent(object : ValueEventListener {
                         override fun onDataChange(dataSnapshot: DataSnapshot) {
                             if (dataSnapshot.exists()) {
@@ -247,7 +220,6 @@ class UpdateEnergySettingsFragment : Fragment() {
                             progressBar.visibility = View.GONE
                         }
                     })
-            }
         }
     }
 

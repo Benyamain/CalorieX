@@ -18,7 +18,8 @@ fun getCurrentDayString(): String {
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
-fun constructDate(year: Int, month: Int, dayOfMonth: Int): String = "${getMonthString(month)}-$dayOfMonth-$year"
+fun constructDate(year: Int, month: Int, dayOfMonth: Int): String =
+    "${getMonthString(month)}-$dayOfMonth-$year"
 
 @RequiresApi(Build.VERSION_CODES.O)
 fun getMonthString(month: Int): String = when (month) {
@@ -43,15 +44,16 @@ fun String.makeDateReadable(): String {
     val sb = StringBuilder()
 
     val monthDB = strArr[0]
-    sb.append(monthDB.monthToMonthComplete().firstCharToUpper()).append(" ").append(strArr[1]).append(", " + strArr[2])
+    sb.append(monthDB.monthToMonthComplete().firstCharToUpper()).append(" ").append(strArr[1])
+        .append(", " + strArr[2])
     return sb.toString()
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
-fun String.monthToMonthComplete(): String = when(this) {
+fun String.monthToMonthComplete(): String = when (this) {
     Month.JANUARY.name.lowercase() -> MonthComplete.JANUARY.name.lowercase()
     Month.FEBRUARY.name.lowercase() -> MonthComplete.FEBRUARY.name.lowercase()
-    Month.MARCH.name.lowercase()-> MonthComplete.MARCH.name.lowercase()
+    Month.MARCH.name.lowercase() -> MonthComplete.MARCH.name.lowercase()
     Month.APRIL.name.lowercase() -> MonthComplete.APRIL.name.lowercase()
     Month.MAY.name.lowercase() -> MonthComplete.MAY.name.lowercase()
     Month.JUNE.name.lowercase() -> MonthComplete.JUNE.name.lowercase()
@@ -81,7 +83,14 @@ enum class MonthComplete {
 
 fun String.firstCharToUpper() = this[0].toUpperCase() + this.substring(1, this.length)
 
-fun calculateBMRMifflinStJeor(gender: String, weight: Double, height: Double, age: Int, activityLevel: String, weightGoal: Double?): Int? {
+fun calculateBMRMifflinStJeor(
+    gender: String,
+    weight: Double,
+    height: Double,
+    age: Int,
+    activityLevel: String,
+    weightGoal: Double?
+): Int? {
     var bmr = 0.0
     bmr = if (gender == "Male") {
         88.362 + (13.397 * weight) + (4.799 * height) - (5.677 * age)
@@ -102,7 +111,14 @@ fun calculateBMRMifflinStJeor(gender: String, weight: Double, height: Double, ag
     }
 }
 
-fun calculateBMRHarrisBenedict(gender: String, weight: Double, height: Double, age: Int, activityLevel: String, weightGoal: Double?): Int? {
+fun calculateBMRHarrisBenedict(
+    gender: String,
+    weight: Double,
+    height: Double,
+    age: Int,
+    activityLevel: String,
+    weightGoal: Double?
+): Int? {
     var bmr = 0.0
     bmr = if (gender == "Male") {
         66.5 + (13.75 * weight) + (5.003 * height) - (6.75 * age)
@@ -123,36 +139,74 @@ fun calculateBMRHarrisBenedict(gender: String, weight: Double, height: Double, a
     }
 }
 
-fun calculateMacronutrientRatios(expenditure: Int, proteinRatio: Double, netCarbRatio: Double, fatRatio: Double): Triple<Int?, Int?, Int?> {
+fun calculateMacronutrientRatios(
+    expenditure: Int,
+    proteinRatio: Double,
+    netCarbRatio: Double,
+    fatRatio: Double
+): Triple<Int?, Int?, Int?> {
     val totalRatio = proteinRatio + netCarbRatio + fatRatio
-    val ratioCalories = MacroRatios(((proteinRatio / totalRatio) * expenditure), ((netCarbRatio / totalRatio) * expenditure), ((fatRatio / totalRatio) * expenditure))
+    val ratioCalories = MacroRatios(
+        ((proteinRatio / totalRatio) * expenditure),
+        ((netCarbRatio / totalRatio) * expenditure),
+        ((fatRatio / totalRatio) * expenditure)
+    )
     val ratio = MacroRatios(proteinRatio, netCarbRatio, fatRatio)
 
     if (userEmail != null) {
-        Firebase.database.reference.child("macroRatios").child(encodeEmail(userEmail)).setValue(ratio)
+        Firebase.database.getReference(
+            "/${
+                encodeEmail(
+                    userEmail
+                )
+            }/macros/macroRatios"
+        ).setValue(ratio)
     }
 
-    calculateMacronutrientGrams(Triple(ratioCalories.proteinRatio?.toInt(), ratioCalories.netCarbRatio?.toInt(), ratioCalories.fatRatio?.toInt()) as Triple<Int, Int, Int>)
+    calculateMacronutrientGrams(
+        Triple(
+            ratioCalories.proteinRatio?.toInt(),
+            ratioCalories.netCarbRatio?.toInt(),
+            ratioCalories.fatRatio?.toInt()
+        ) as Triple<Int, Int, Int>
+    )
 
-    return Triple(ratioCalories.proteinRatio?.toInt(), ratioCalories.netCarbRatio?.toInt(), ratioCalories.fatRatio?.toInt())
+    return Triple(
+        ratioCalories.proteinRatio?.toInt(),
+        ratioCalories.netCarbRatio?.toInt(),
+        ratioCalories.fatRatio?.toInt()
+    )
 }
 
 fun calculateMacronutrientGrams(macroGrams: Triple<Int, Int, Int>): Triple<Int?, Int?, Int?> {
-    val ratioGrams = MacroGrams(macroGrams.first.div(4), macroGrams.second.div(4), macroGrams.third.div(9)
+    val ratioGrams = MacroGrams(
+        macroGrams.first.div(4), macroGrams.second.div(4), macroGrams.third.div(9)
     )
 
     if (userEmail != null) {
-        Firebase.database.reference.child("macroGrams").child(encodeEmail(userEmail)).setValue(ratioGrams)
+        Firebase.database.getReference(
+            "/${
+                encodeEmail(
+                    userEmail
+                )
+            }/macros/macroGrams"
+        ).setValue(ratioGrams)
     }
 
     return Triple(ratioGrams.proteinGrams, ratioGrams.carbGrams, ratioGrams.fatGrams)
 }
 
-fun creatingProfile(age: Int, height: Double, weight: Double, sex: String) {
+fun creatingProfile(age: Int, height: Double, weight: ArrayList<Double>, sex: String) {
     val profile = ProfileDetails(age, height, weight, sex)
 
     if (userEmail != null) {
-        Firebase.database.reference.child("profileDetails").child(encodeEmail(userEmail)).setValue(profile)
+        Firebase.database.getReference(
+            "/${
+                encodeEmail(
+                    userEmail
+                )
+            }/profileDetails"
+        ).setValue(profile)
     }
 }
 
@@ -165,7 +219,13 @@ fun energySettings(bmrName: String, activityLevel: String, weightGoal: Double) {
     val energy = EnergySettings(bmrName, activityLevel, weightGoal)
 
     if (userEmail != null) {
-        Firebase.database.reference.child("energySettings").child(encodeEmail(userEmail)).setValue(energy)
+        Firebase.database.getReference(
+            "/${
+                encodeEmail(
+                    userEmail
+                )
+            }/energySettings"
+        ).setValue(energy)
     }
 }
 

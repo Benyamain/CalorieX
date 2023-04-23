@@ -1,7 +1,6 @@
 package com.example.caloriex
 
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -25,8 +24,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.text.SimpleDateFormat
-import java.util.*
 
 class AddWeightFragment : Fragment() {
 
@@ -64,221 +61,185 @@ class AddWeightFragment : Fragment() {
                         progressBar.visibility = View.VISIBLE
                     }
 
-                    var date = ""
-                    Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/calendarDate")
+                    Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/profileDetails")
                         .addListenerForSingleValueEvent(object : ValueEventListener {
                             override fun onDataChange(dataSnapshot: DataSnapshot) {
                                 if (dataSnapshot.exists()) {
-                                    date =
-                                        dataSnapshot.getValue(CalendarDate::class.java)?.date ?: ""
-                                }
+                                    val profileDetails =
+                                        dataSnapshot.getValue(ProfileDetails::class.java)
+                                    creatingProfile(
+                                        profileDetails?.age ?: 0,
+                                        profileDetails?.height ?: 0.0,
+                                        arrayListOf(weightEt.text.toString().toDouble()),
+                                        profileDetails?.sex ?: ""
+                                    )
 
-                                Firebase.database.getReference(
-                                    "/${
-                                        userEmail?.let { email ->
-                                            encodeEmail(
-                                                email
-                                            )
-                                        }
-                                    }/calendarDate/$date/profileDetails"
-                                )
-                                    .addListenerForSingleValueEvent(object : ValueEventListener {
-                                        override fun onDataChange(dataSnapshot: DataSnapshot) {
-                                            if (dataSnapshot.exists()) {
-                                                val profileDetails =
-                                                    dataSnapshot.getValue(ProfileDetails::class.java)
-                                                creatingProfile(
-                                                    profileDetails?.age ?: 0,
-                                                    profileDetails?.height ?: 0.0,
-                                                    weightEt.text.toString().toDouble(),
-                                                    profileDetails?.sex ?: ""
+                                    Firebase.database.getReference(
+                                        "/${
+                                            userEmail?.let { email ->
+                                                encodeEmail(
+                                                    email
                                                 )
-
-                                                Firebase.database.getReference(
-                                                    "/${
-                                                        userEmail?.let { email ->
-                                                            encodeEmail(
-                                                                email
-                                                            )
-                                                        }
-                                                    }/calendarDate/$date/energySettings"
-                                                )
-                                                    .addListenerForSingleValueEvent(object :
-                                                        ValueEventListener {
-                                                        override fun onDataChange(dataSnapshot: DataSnapshot) {
-                                                            if (dataSnapshot.exists()) {
-                                                                val energy =
-                                                                    dataSnapshot.getValue(
-                                                                        EnergySettings::class.java
+                                            }
+                                        }/energySettings"
+                                    )
+                                        .addListenerForSingleValueEvent(object :
+                                            ValueEventListener {
+                                            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                                if (dataSnapshot.exists()) {
+                                                    val energy =
+                                                        dataSnapshot.getValue(EnergySettings::class.java)
+                                                    if (energy?.bmrName.toString() == "Harris Benedict") {
+                                                        val hb = calculateBMRHarrisBenedict(
+                                                            profileDetails?.sex ?: "",
+                                                            weightEt.text.toString()
+                                                                .toDouble(),
+                                                            profileDetails?.height ?: 0.0,
+                                                            profileDetails?.age ?: 0,
+                                                            energy?.activityLevel.toString(),
+                                                            energy?.weightGoal.toString()
+                                                                .toDouble()
+                                                        )
+                                                        Firebase.database.getReference(
+                                                            "/${
+                                                                userEmail?.let { email ->
+                                                                    encodeEmail(
+                                                                        email
                                                                     )
-                                                                if (energy?.bmrName.toString() == "Harris Benedict") {
-                                                                    val hb =
-                                                                        calculateBMRHarrisBenedict(
-                                                                            profileDetails?.sex
-                                                                                ?: "",
-                                                                            weightEt.text.toString()
-                                                                                .toDouble(),
-                                                                            profileDetails?.height
-                                                                                ?: 0.0,
-                                                                            profileDetails?.age
-                                                                                ?: 0,
-                                                                            energy?.activityLevel.toString(),
-                                                                            energy?.weightGoal.toString()
-                                                                                .toDouble()
-                                                                        )
-                                                                    Firebase.database.getReference(
-                                                                        "/${
-                                                                            userEmail?.let { email ->
-                                                                                encodeEmail(
-                                                                                    email
-                                                                                )
-                                                                            }
-                                                                        }/calendarDate/$date/energyExpenditure"
-                                                                    ).setValue(hb)
-                                                                } else {
-                                                                    val msj =
-                                                                        calculateBMRMifflinStJeor(
-                                                                            profileDetails?.sex
-                                                                                ?: "",
-                                                                            weightEt.text.toString()
-                                                                                .toDouble(),
-                                                                            profileDetails?.height
-                                                                                ?: 0.0,
-                                                                            profileDetails?.age
-                                                                                ?: 0,
-                                                                            energy?.activityLevel.toString(),
-                                                                            energy?.weightGoal.toString()
-                                                                                .toDouble()
-                                                                        )
-                                                                    Firebase.database.getReference(
-                                                                        "/${
-                                                                            userEmail?.let { email ->
-                                                                                encodeEmail(
-                                                                                    email
-                                                                                )
-                                                                            }
-                                                                        }/calendarDate/$date/energyExpenditure"
-                                                                    ).setValue(msj)
                                                                 }
+                                                            }/energyExpenditure"
+                                                        ).setValue(hb)
+                                                    } else {
+                                                        val msj = calculateBMRMifflinStJeor(
+                                                            profileDetails?.sex ?: "",
+                                                            weightEt.text.toString()
+                                                                .toDouble(),
+                                                            profileDetails?.height ?: 0.0,
+                                                            profileDetails?.age ?: 0,
+                                                            energy?.activityLevel.toString(),
+                                                            energy?.weightGoal.toString()
+                                                                .toDouble()
+                                                        )
+                                                        Firebase.database.getReference(
+                                                            "/${
+                                                                userEmail?.let { email ->
+                                                                    encodeEmail(
+                                                                        email
+                                                                    )
+                                                                }
+                                                            }/energyExpenditure"
+                                                        ).setValue(msj)
+                                                    }
 
-                                                                Firebase.database.getReference(
-                                                                    "/${
-                                                                        userEmail?.let { email ->
-                                                                            encodeEmail(
-                                                                                email
-                                                                            )
-                                                                        }
-                                                                    }/calendarDate/$date/macroRatios"
-                                                                )
-                                                                    .addListenerForSingleValueEvent(
-                                                                        object :
-                                                                            ValueEventListener {
-                                                                            override fun onDataChange(
-                                                                                dataSnapshot: DataSnapshot
-                                                                            ) {
-                                                                                if (dataSnapshot.exists()) {
-                                                                                    val macroRatios =
-                                                                                        dataSnapshot.getValue(
-                                                                                            MacroRatios::class.java
-                                                                                        )
-
-                                                                                    Firebase.database.getReference(
-                                                                                        "/${
-                                                                                            userEmail?.let { email ->
-                                                                                                encodeEmail(
-                                                                                                    email
-                                                                                                )
-                                                                                            }
-                                                                                        }/calendarDate/$date/energyExpenditure"
-                                                                                    )
-                                                                                        .addListenerForSingleValueEvent(
-                                                                                            object :
-                                                                                                ValueEventListener {
-                                                                                                override fun onDataChange(
-                                                                                                    dataSnapshot: DataSnapshot
-                                                                                                ) {
-                                                                                                    if (dataSnapshot.exists()) {
-                                                                                                        val energyExp =
-                                                                                                            if (dataSnapshot.value is Long) {
-                                                                                                                CalorieAmount(
-                                                                                                                    dataSnapshot.getValue(
-                                                                                                                        Long::class.java
-                                                                                                                    )
-                                                                                                                        ?.toInt()
-                                                                                                                )
-                                                                                                            } else {
-                                                                                                                dataSnapshot.getValue(
-                                                                                                                    CalorieAmount::class.java
-                                                                                                                )
-                                                                                                            }
-                                                                                                        val calorie =
-                                                                                                            energyExp?.calories
-                                                                                                                ?: 0
-                                                                                                        val ratioCalories =
-                                                                                                            calculateMacronutrientRatios(
-                                                                                                                calorie,
-                                                                                                                macroRatios?.proteinRatio
-                                                                                                                    ?: 0.0,
-                                                                                                                macroRatios?.netCarbRatio
-                                                                                                                    ?: 0.0,
-                                                                                                                macroRatios?.fatRatio
-                                                                                                                    ?: 0.0
-                                                                                                            )
-                                                                                                        Firebase.database.getReference(
-                                                                                                            "/${
-                                                                                                                userEmail?.let { email ->
-                                                                                                                    encodeEmail(
-                                                                                                                        email
-                                                                                                                    )
-                                                                                                                }
-                                                                                                            }/calendarDate/$date/macroRatioCalories"
-                                                                                                        )
-                                                                                                            .setValue(
-                                                                                                                ratioCalories
-                                                                                                            )
-                                                                                                    }
-                                                                                                }
-
-                                                                                                override fun onCancelled(
-                                                                                                    databaseError: DatabaseError
-                                                                                                ) {
-                                                                                                    Log.d(
-                                                                                                        "databaseError",
-                                                                                                        "$databaseError"
-                                                                                                    )
-                                                                                                }
-                                                                                            })
-                                                                                }
-                                                                            }
-
-                                                                            override fun onCancelled(
-                                                                                databaseError: DatabaseError
-                                                                            ) {
-                                                                                Log.d(
-                                                                                    "databaseError",
-                                                                                    "$databaseError"
-                                                                                )
-                                                                            }
-                                                                        })
-                                                            } else {
-                                                                Log.d(
-                                                                    "dataSnapshot",
-                                                                    "No data found"
+                                                    Firebase.database.getReference(
+                                                        "/${
+                                                            userEmail?.let { email ->
+                                                                encodeEmail(
+                                                                    email
                                                                 )
                                                             }
-                                                        }
+                                                        }/macros/macroRatios"
+                                                    )
+                                                        .addListenerForSingleValueEvent(
+                                                            object :
+                                                                ValueEventListener {
+                                                                override fun onDataChange(
+                                                                    dataSnapshot: DataSnapshot
+                                                                ) {
+                                                                    if (dataSnapshot.exists()) {
+                                                                        val macroRatios =
+                                                                            dataSnapshot.getValue(
+                                                                                MacroRatios::class.java
+                                                                            )
 
-                                                        override fun onCancelled(databaseError: DatabaseError) {
-                                                            Log.d("databaseError", "$databaseError")
-                                                        }
-                                                    })
+                                                                        Firebase.database.getReference(
+                                                                            "/${
+                                                                                userEmail?.let { email ->
+                                                                                    encodeEmail(
+                                                                                        email
+                                                                                    )
+                                                                                }
+                                                                            }/energyExpenditure"
+                                                                        )
+                                                                            .addListenerForSingleValueEvent(
+                                                                                object :
+                                                                                    ValueEventListener {
+                                                                                    override fun onDataChange(
+                                                                                        dataSnapshot: DataSnapshot
+                                                                                    ) {
+                                                                                        if (dataSnapshot.exists()) {
+                                                                                            val energyExp =
+                                                                                                if (dataSnapshot.value is Long) {
+                                                                                                    CalorieAmount(
+                                                                                                        dataSnapshot.getValue(
+                                                                                                            Long::class.java
+                                                                                                        )
+                                                                                                            ?.toInt()
+                                                                                                    )
+                                                                                                } else {
+                                                                                                    dataSnapshot.getValue(
+                                                                                                        CalorieAmount::class.java
+                                                                                                    )
+                                                                                                }
+                                                                                            val calorie =
+                                                                                                energyExp?.calories
+                                                                                                    ?: 0
+                                                                                            val ratioCalories =
+                                                                                                calculateMacronutrientRatios(
+                                                                                                    calorie,
+                                                                                                    macroRatios?.proteinRatio
+                                                                                                        ?: 0.0,
+                                                                                                    macroRatios?.netCarbRatio
+                                                                                                        ?: 0.0,
+                                                                                                    macroRatios?.fatRatio
+                                                                                                        ?: 0.0
+                                                                                                )
+                                                                                            Firebase.database.getReference(
+                                                                                                "/${
+                                                                                                    userEmail?.let { email ->
+                                                                                                        encodeEmail(
+                                                                                                            email
+                                                                                                        )
+                                                                                                    }
+                                                                                                }/macros/macroRatioCalories"
+                                                                                            )
+                                                                                                .setValue(
+                                                                                                    ratioCalories
+                                                                                                )
+                                                                                        }
+                                                                                    }
+
+                                                                                    override fun onCancelled(
+                                                                                        databaseError: DatabaseError
+                                                                                    ) {
+                                                                                        Log.d(
+                                                                                            "databaseError",
+                                                                                            "$databaseError"
+                                                                                        )
+                                                                                    }
+                                                                                })
+                                                                    }
+                                                                }
+
+                                                                override fun onCancelled(
+                                                                    databaseError: DatabaseError
+                                                                ) {
+                                                                    Log.d(
+                                                                        "databaseError",
+                                                                        "$databaseError"
+                                                                    )
+                                                                }
+                                                            })
+                                                } else {
+                                                    Log.d("dataSnapshot", "No data found")
+                                                }
                                             }
-                                        }
 
-                                        override fun onCancelled(databaseError: DatabaseError) {
-                                            Log.d("databaseError", "$databaseError")
-                                        }
-                                    })
+                                            override fun onCancelled(databaseError: DatabaseError) {
+                                                Log.d("databaseError", "$databaseError")
+                                            }
+                                        })
+                                }
                             }
 
                             override fun onCancelled(databaseError: DatabaseError) {
@@ -308,36 +269,14 @@ class AddWeightFragment : Fragment() {
 
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
-                var date = ""
-                Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/calendarDate")
+                Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/profileDetails")
                     .addListenerForSingleValueEvent(object : ValueEventListener {
                         override fun onDataChange(dataSnapshot: DataSnapshot) {
                             if (dataSnapshot.exists()) {
-                                date = dataSnapshot.getValue(CalendarDate::class.java)?.date ?: ""
+                                val profileDetails =
+                                    dataSnapshot.getValue(ProfileDetails::class.java)
+                                weightEt.setText(profileDetails?.weight?.lastIndex.toString())
                             }
-
-                            Firebase.database.getReference(
-                                "/${
-                                    userEmail?.let { email ->
-                                        encodeEmail(
-                                            email
-                                        )
-                                    }
-                                }/calendarDate/$date/profileDetails"
-                            )
-                                .addListenerForSingleValueEvent(object : ValueEventListener {
-                                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                                        if (dataSnapshot.exists()) {
-                                            val profileDetails =
-                                                dataSnapshot.getValue(ProfileDetails::class.java)
-                                            weightEt.setText(profileDetails?.weight.toString())
-                                        }
-                                    }
-
-                                    override fun onCancelled(databaseError: DatabaseError) {
-                                        Log.d("databaseError", "$databaseError")
-                                    }
-                                })
                         }
 
                         override fun onCancelled(databaseError: DatabaseError) {

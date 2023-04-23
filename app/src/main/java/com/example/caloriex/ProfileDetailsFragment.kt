@@ -82,7 +82,7 @@ class ProfileDetailsFragment : Fragment() {
 
             if (ageEt.text.toString().isNotEmpty() && heightEt.text.toString().isNotEmpty() && weightEt.text.toString().isNotEmpty() && sexOptionsAutocompleteTextView.text.toString().isNotEmpty()) {
                 findNavController().navigate(R.id.action_profileDetailsFragment_to_energySettingsFragment)
-                creatingProfile(ageEt.text.toString().toInt(), heightEt.text.toString().toDouble(), weightEt.text.toString().toDouble(), sexOptionsAutocompleteTextView.text.toString())
+                creatingProfile(ageEt.text.toString().toInt(), heightEt.text.toString().toDouble(), arrayListOf( weightEt.text.toString().toDouble()), sexOptionsAutocompleteTextView.text.toString())
                 Log.d("creatingProfile", "ageEt is: ${ageEt.text}")
                 Log.d("creatingProfile", "heightEt is: ${heightEt.text}")
                 Log.d("creatingProfile", "weightEt is: ${weightEt.text}")
