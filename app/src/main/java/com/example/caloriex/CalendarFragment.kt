@@ -51,7 +51,7 @@ class CalendarFragment : Fragment() {
 
                     if (userEmail != null) {
                         val date = CalendarDate(date = selectedDate)
-                        Firebase.database.reference.child("calendarDate").child(encodeEmail(userEmail)).setValue(date)
+                        Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/calendarDate").setValue(date)
                     }
                 }
             }

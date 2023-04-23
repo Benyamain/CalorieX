@@ -489,10 +489,8 @@ class DashboardFragment : Fragment() {
     @SuppressLint("SetTextI18n", "SimpleDateFormat")
     @RequiresApi(Build.VERSION_CODES.O)
     private fun readDate() {
-        userEmail?.let { encodeEmail(it) }?.let {
-            var date = ""
-            Firebase.database.getReference("calendarDate")
-                .child(it)
+        var date = ""
+        Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/calendarDate")
                 .addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         if (dataSnapshot.exists()) {
@@ -526,7 +524,6 @@ class DashboardFragment : Fragment() {
                         Log.d("databaseError", "$databaseError")
                     }
                 })
-        }
     }
 
     companion object {
