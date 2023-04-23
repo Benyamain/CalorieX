@@ -106,54 +106,93 @@ class DashboardFragment : Fragment() {
         dashboardRecyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         val dashboardData = ArrayList<DashboardItems>()
-        userEmail?.let { encodeEmail(it) }?.let { emailEncoded ->
-            var key = ""
-            Firebase.database.reference.child("foodSelectionKeys").child(emailEncoded)
-                .addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            key = dataSnapshot.getValue(FoodItemKey::class.java)?.key ?: ""
-                        }
 
-                        userEmail?.let { encodeEmail(it) }?.let { s ->
-                            Firebase.database.reference.child("foodSelection").child(s).child(key)
-                                .addListenerForSingleValueEvent(object :
-                                    ValueEventListener {
-                                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                                        if (dataSnapshot.exists()) {
-                                            val foodItem =
-                                                dataSnapshot.getValue(FoodItem::class.java)
+        var date = ""
+        Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/calendarDate")
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        date =
+                            if (dataSnapshot.value is Long) ({
+                                CalendarDate(
+                                    dataSnapshot.getValue(
+                                        Long::class.java
+                                    )
+                                        ?.toString()
+                                )
+                            }).toString() else {
+                                dataSnapshot.getValue(CalendarDate::class.java)?.date ?: ""
+                            }
+                    }
 
-                                            val dashboardItem = DashboardItems(
-                                                foodItem?.image ?: "",
-                                                foodItem?.name ?: "",
-                                                "999 g",
-                                                "${foodItem?.calorie} kcal" ?: ""
+                    var key = ""
+                    Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/calendarDate/$date/foodSelectionKeys")
+                        .addListenerForSingleValueEvent(object : ValueEventListener {
+                            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                if (dataSnapshot.exists()) {
+                                    key =
+                                        if (dataSnapshot.value is Long) ({
+                                            FoodItemKey(
+                                                dataSnapshot.getValue(
+                                                    Long::class.java
+                                                )
+                                                    ?.toString()
                                             )
-                                            dashboardData.add(dashboardItem)
+                                        }).toString() else {
+                                            dataSnapshot.getValue(FoodItemKey::class.java)?.key ?: ""
                                         }
-                                        // Create the DashboardItemsAdapter with the dashboardData list
-                                        val dashboardItemsAdapter =
-                                            DashboardItemsAdapter(
-                                                dashboardData,
-                                                navController,
-                                                appearBottomNavigationView
-                                            )
-                                        dashboardRecyclerView.adapter = dashboardItemsAdapter
-                                    }
+                                }
 
-                                    override fun onCancelled(databaseError: DatabaseError) {
-                                        // Handle any errors here
-                                    }
-                                })
-                        }
-                    }
+                                Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/calendarDate/$date/foodSelection/$key")
+                                    .addListenerForSingleValueEvent(object : ValueEventListener {
+                                        override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                            if (dataSnapshot.exists()) {
+                                                val foodItem =
+                                                    if (dataSnapshot.value is Long) {
+                                                        FoodItem(
+                                                            dataSnapshot.getValue(
+                                                                Long::class.java
+                                                            )?.toString()
+                                                        )
+                                                    } else {
+                                                        dataSnapshot.getValue(FoodItem::class.java)
+                                                    }
 
-                    override fun onCancelled(databaseError: DatabaseError) {
-                        // Handle database error
-                    }
-                })
-        }
+                                                val dashboardItem = DashboardItems(
+                                                    foodItem?.image ?: "",
+                                                    foodItem?.name ?: "",
+                                                    "999 g",
+                                                    "${foodItem?.calorie} kcal" ?: ""
+                                                )
+                                                dashboardData.add(dashboardItem)
+                                            }
+
+                                            // Create the DashboardItemsAdapter with the dashboardData list
+                                            val dashboardItemsAdapter =
+                                                DashboardItemsAdapter(
+                                                    dashboardData,
+                                                    navController,
+                                                    appearBottomNavigationView
+                                                )
+                                            dashboardRecyclerView.adapter = dashboardItemsAdapter
+                                        }
+
+                                        override fun onCancelled(databaseError: DatabaseError) {
+                                            // Handle database error
+                                        }
+                                    })
+                            }
+
+                            override fun onCancelled(databaseError: DatabaseError) {
+                                // Handle database error
+                            }
+                        })
+                }
+
+                override fun onCancelled(databaseError: DatabaseError) {
+                    Log.d("databaseError", "$databaseError")
+                }
+            })
 
         imageIv.setOnClickListener {
             navController.navigate(R.id.action_dashboardFragment_to_calendarFragment)
@@ -243,9 +282,7 @@ class DashboardFragment : Fragment() {
 
     private fun getCalories(callback: (Int) -> Unit) {
         var calories = 0
-        userEmail?.let { encodeEmail(it) }?.let {
-            Firebase.database.getReference("energyExpenditure")
-                .child(it)
+        Firebase.database.getReference("/${userEmail?.let { encodeEmail(it) }}/energyExpenditure")
                 .addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         if (dataSnapshot.exists()) {
@@ -264,16 +301,13 @@ class DashboardFragment : Fragment() {
                         Log.d("databaseError", "$databaseError")
                     }
                 })
-        }
     }
 
     private fun getMacros(callback: (Triple<Int, Int, Int>) -> Unit) {
         var protein = 0
         var carbs = 0
         var fat = 0
-        userEmail?.let { encodeEmail(it) }?.let {
-            Firebase.database.getReference("macroGrams")
-                .child(it)
+        Firebase.database.getReference("/${userEmail?.let { encodeEmail(it) }}/macros/macroGrams")
                 .addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         Log.d("CheckingAgain", "${dataSnapshot.getValue(MacroGrams::class.java)}")
@@ -292,7 +326,6 @@ class DashboardFragment : Fragment() {
                         Log.d("databaseError", "$databaseError")
                     }
                 })
-        }
     }
 
     private fun updateCharts() {
@@ -369,6 +402,7 @@ class DashboardFragment : Fragment() {
     }
 
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -379,6 +413,13 @@ class DashboardFragment : Fragment() {
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
                 updateCharts()
+            }
+        }
+
+        // Read the date when the user navigates back to the DashboardFragment from the CalendarFragment
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                readDate()
             }
         }
     }
@@ -517,6 +558,13 @@ class DashboardFragment : Fragment() {
                                     calendarTv.text = date.makeDateReadable()
                                 }
                             }
+                        } else {
+                            val setDay = CalendarDate(date = getToday())
+                            Firebase.database.getReference("/${userEmail?.let {
+                                encodeEmail(
+                                    it
+                                )
+                            }}/calendarDate").setValue(setDay)
                         }
                     }
 

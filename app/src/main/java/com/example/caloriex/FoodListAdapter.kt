@@ -9,11 +9,18 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Picasso
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class FoodListAdapter(
     val foodsList: ArrayList<FoodApiModel>,
@@ -48,11 +55,29 @@ class FoodListAdapter(
                     image = currentItem?.image.toString()
                 )
 
+                foodItems.add(foodItem)
+
                 if (userEmail != null) {
-                    val key = Firebase.database.reference.child("foodSelection").child(encodeEmail(userEmail)).push().key?: ""
-                    Firebase.database.reference.child("foodSelection").child(encodeEmail(userEmail)).child(key).setValue(foodItem)
-                    val foodItemKey = FoodItemKey(key = key)
-                    Firebase.database.reference.child("foodSelectionKeys").child(encodeEmail(userEmail)).setValue(foodItemKey)
+
+                    var date = ""
+                    Firebase.database.getReference("/${encodeEmail(userEmail)}/calendarDate")
+                        .addListenerForSingleValueEvent(object : ValueEventListener {
+                            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                if (dataSnapshot.exists()) {
+                                    date = dataSnapshot.getValue(CalendarDate::class.java)?.date ?: ""
+                                }
+
+                                val key = Firebase.database.getReference("/${encodeEmail(userEmail)}/calendarDate/$date/foodSelection").push().key?: ""
+                                Firebase.database.getReference("/${encodeEmail(userEmail)}/calendarDate/$date/foodSelection/$key").setValue(foodItems.lastIndex)
+                                val fKey = FoodItemKey(key = key)
+                                foodItemKey.add(fKey)
+                                Firebase.database.getReference("/${encodeEmail(userEmail)}/calendarDate/$date/foodSelectionKeys").setValue(foodItemKey.lastIndex)
+                            }
+
+                            override fun onCancelled(databaseError: DatabaseError) {
+                                Log.d("databaseError", "$databaseError")
+                            }
+                        })
                 }
 
                 navController.navigate(

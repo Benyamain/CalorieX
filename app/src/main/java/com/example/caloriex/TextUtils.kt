@@ -9,6 +9,7 @@ import com.google.firebase.ktx.Firebase
 import java.text.SimpleDateFormat
 import java.time.Month
 import java.util.*
+import kotlin.collections.ArrayList
 
 @SuppressLint("SimpleDateFormat")
 fun getCurrentDayString(): String {
@@ -18,23 +19,28 @@ fun getCurrentDayString(): String {
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
+fun getToday(): String {
+    return constructDate(Calendar.getInstance().get(Calendar.YEAR), Calendar.getInstance().get(Calendar.MONTH), Calendar.getInstance().get(Calendar.DAY_OF_MONTH))
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
 fun constructDate(year: Int, month: Int, dayOfMonth: Int): String =
     "${getMonthString(month)}-$dayOfMonth-$year"
 
 @RequiresApi(Build.VERSION_CODES.O)
 fun getMonthString(month: Int): String = when (month) {
-    1 -> Month.JANUARY.name.lowercase()
-    2 -> Month.FEBRUARY.name.lowercase()
-    3 -> Month.MARCH.name.lowercase()
-    4 -> Month.APRIL.name.lowercase()
-    5 -> Month.MAY.name.lowercase()
-    6 -> Month.JUNE.name.lowercase()
-    7 -> Month.JULY.name.lowercase()
-    8 -> Month.AUGUST.name.lowercase()
-    9 -> Month.SEPTEMBER.name.lowercase()
-    10 -> Month.OCTOBER.name.lowercase()
-    11 -> Month.NOVEMBER.name.lowercase()
-    12 -> Month.DECEMBER.name.lowercase()
+    0 -> Month.JANUARY.name.lowercase()
+    1 -> Month.FEBRUARY.name.lowercase()
+    2 -> Month.MARCH.name.lowercase()
+    3 -> Month.APRIL.name.lowercase()
+    4 -> Month.MAY.name.lowercase()
+    5 -> Month.JUNE.name.lowercase()
+    6 -> Month.JULY.name.lowercase()
+    7 -> Month.AUGUST.name.lowercase()
+    8 -> Month.SEPTEMBER.name.lowercase()
+    9 -> Month.OCTOBER.name.lowercase()
+    10 -> Month.NOVEMBER.name.lowercase()
+    11 -> Month.DECEMBER.name.lowercase()
     else -> ""
 }
 

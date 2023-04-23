@@ -91,6 +91,7 @@ class EnergySettingsFragment : Fragment() {
                                 val age = profileDetails?.age ?: 0
                                 val height = profileDetails?.height ?: 0.0
                                 val weight = profileDetails?.weight?.lastIndex?.toDouble() ?: 0.0
+                                Log.d("Messing up my algorithm", "$weight")
                                 val sex = profileDetails?.sex ?: ""
 
                                 if (dataSnapshot.exists()) {

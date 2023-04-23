@@ -16,3 +16,5 @@ data class FoodItem(
     // No argument constructor is needed whenever dealing with Firebase Realtime Database
 }
 
+val foodItems: ArrayList<FoodItem> = ArrayList()
+

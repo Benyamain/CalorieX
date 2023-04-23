@@ -45,7 +45,7 @@ class CalendarFragment : Fragment() {
         calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
             lifecycleScope.launch {
                 withContext(Dispatchers.IO) {
-                    selectedDate = constructDate(year, month + 1, dayOfMonth)
+                    selectedDate = constructDate(year, month, dayOfMonth)
 
                     Log.d("selectedDate", "$selectedDate")
 

@@ -96,26 +96,51 @@ class NutritionInfoFragment : Fragment() {
                 .addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         if (dataSnapshot.exists()) {
-                            date = dataSnapshot.getValue(CalendarDate::class.java)?.date ?: ""
+                            date = if (dataSnapshot.value is Long) ({
+                                CalendarDate(
+                                    dataSnapshot.getValue(
+                                        Long::class.java
+                                    )
+                                        ?.toString()
+                                ).date
+                            }).toString() else {
+                                    dataSnapshot.getValue(CalendarDate::class.java)?.date ?: ""
+                                }
                         }
 
-                        userEmail?.let { encodeEmail(it) }?.let { emailEncoded ->
-                            var key = ""
-                            Firebase.database.reference.child("foodSelectionKeys").child(emailEncoded)
+                        var key = ""
+                        Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/calendarDate/$date/foodSelectionKeys")
                                 .addListenerForSingleValueEvent(object : ValueEventListener {
                                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                                         if (dataSnapshot.exists()) {
-                                            key = dataSnapshot.getValue(FoodItemKey::class.java)?.key ?: ""
+                                            key =
+                                                if (dataSnapshot.value is Long) ({
+                                                    FoodItemKey(
+                                                        dataSnapshot.getValue(
+                                                            Long::class.java
+                                                        )
+                                                            ?.toString()
+                                                    )
+                                                }).toString() else {
+                                                    dataSnapshot.getValue(FoodItemKey::class.java)?.key ?: ""
+                                                }
                                         }
 
-                                        userEmail?.let { encodeEmail(it) }?.let { emailEncoded ->
-                                            Firebase.database.reference.child("calendarDate").child(encodeEmail(userEmail)).child(date).child("foodSelection")
-                                                .child(key)
+                                        Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/calendarDate/$date/foodSelection/$key")
                                                 .addListenerForSingleValueEvent(object : ValueEventListener {
                                                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                                                         if (dataSnapshot.exists()) {
                                                             val foodItem =
-                                                                dataSnapshot.getValue(FoodItem::class.java)
+                                                                if (dataSnapshot.value is Long) {
+                                                                    FoodItem(
+                                                                        dataSnapshot.getValue(
+                                                                            Long::class.java
+                                                                        )
+                                                                            ?.toString()
+                                                                    )
+                                                                } else {
+                                                                    dataSnapshot.getValue(FoodItem::class.java)
+                                                                }
 
                                                             // Now you can access the values in the `foodItem` object
                                                             lifecycleScope.launch {
@@ -161,14 +186,12 @@ class NutritionInfoFragment : Fragment() {
                                                         // Handle database error
                                                     }
                                                 })
-                                        }
                                     }
 
                                     override fun onCancelled(databaseError: DatabaseError) {
                                         // Handle database error
                                     }
                                 })
-                        }
                     }
 
                     override fun onCancelled(databaseError: DatabaseError) {
