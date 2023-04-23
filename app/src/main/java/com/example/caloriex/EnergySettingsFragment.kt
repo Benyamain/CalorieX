@@ -83,16 +83,14 @@ class EnergySettingsFragment : Fragment() {
                     weightGoalEt.text.toString().toDouble()
                 )
 
-                userEmail?.let { encodeEmail(it) }?.let {
-                    Firebase.database.getReference("profileDetails")
-                        .child(it)
+                Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/profileDetails")
                         .addListenerForSingleValueEvent(object : ValueEventListener {
                             override fun onDataChange(dataSnapshot: DataSnapshot) {
                                 val profileDetails =
                                     dataSnapshot.getValue(ProfileDetails::class.java)
                                 val age = profileDetails?.age ?: 0
                                 val height = profileDetails?.height ?: 0.0
-                                val weight = profileDetails?.weight ?: 0.0
+                                val weight = profileDetails?.weight?.lastIndex?.toDouble() ?: 0.0
                                 val sex = profileDetails?.sex ?: ""
 
                                 if (dataSnapshot.exists()) {
@@ -105,8 +103,7 @@ class EnergySettingsFragment : Fragment() {
                                             activityLevelAutocompleteTextView.text.toString(),
                                             weightGoalEt.text.toString().toDouble()
                                         )
-                                        Firebase.database.reference.child("energyExpenditure")
-                                            .child(encodeEmail(userEmail)).setValue(hb)
+                                        Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/energyExpenditure").setValue(hb)
                                     } else {
                                         val msj = calculateBMRMifflinStJeor(
                                             sex,
@@ -116,8 +113,7 @@ class EnergySettingsFragment : Fragment() {
                                             activityLevelAutocompleteTextView.text.toString(),
                                             weightGoalEt.text.toString().toDouble()
                                         )
-                                        Firebase.database.reference.child("energyExpenditure")
-                                            .child(encodeEmail(userEmail)).setValue(msj)
+                                        Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/energyExpenditure").setValue(msj)
                                     }
                                 } else {
                                     Log.d("dataSnapshot", "No data found")
@@ -128,7 +124,6 @@ class EnergySettingsFragment : Fragment() {
                                 Log.d("databaseError", "$databaseError")
                             }
                         })
-                }
             } else {
                 Toast.makeText(
                     requireContext(),

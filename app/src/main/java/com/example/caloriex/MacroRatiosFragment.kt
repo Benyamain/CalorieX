@@ -78,9 +78,7 @@ class MacroRatiosFragment : Fragment() {
                 val total = proteinEt.text.toString().toDouble().plus(netCarbsEt.text.toString().toDouble()).plus(fatsEt.text.toString().toDouble())
                 if (total == 100.0) {
                     findNavController().navigate(R.id.action_macroRatiosFragment_to_messageMotivationFragment)
-                    userEmail?.let { encodeEmail(it) }?.let {
-                        Firebase.database.getReference("energyExpenditure")
-                            .child(it)
+                    Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/energyExpenditure")
                             .addListenerForSingleValueEvent(object : ValueEventListener {
                                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                                     if (dataSnapshot.exists()) {
@@ -91,8 +89,7 @@ class MacroRatiosFragment : Fragment() {
                                         }
                                         val calorie = energyExp?.calories ?: 0
                                         val ratioCalories = calculateMacronutrientRatios(calorie, proteinEt.text.toString().toDouble(), netCarbsEt.text.toString().toDouble(), fatsEt.text.toString().toDouble())
-                                        Firebase.database.reference.child("macroRatioCalories")
-                                            .child(encodeEmail(userEmail)).setValue(ratioCalories)
+                                        Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/macros/macroRatioCalories").setValue(ratioCalories)
                                     }
                                 }
 
@@ -100,7 +97,6 @@ class MacroRatiosFragment : Fragment() {
                                     Log.d("databaseError", "$databaseError")
                                 }
                             })
-                    }
                 } else {
                     Toast.makeText(
                         requireContext(),

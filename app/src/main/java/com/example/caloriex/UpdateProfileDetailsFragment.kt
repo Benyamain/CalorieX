@@ -67,7 +67,7 @@ class UpdateProfileDetailsFragment : Fragment() {
                         creatingProfile(
                             ageEt.text.toString().toInt(),
                             heightEt.text.toString().toDouble(),
-                            weightEt.text.toString().toDouble(),
+                            arrayListOf(weightEt.text.toString().toDouble()),
                             sexOptionsAutocompleteTextView.text.toString()
                         )
                     } else {
@@ -103,9 +103,7 @@ class UpdateProfileDetailsFragment : Fragment() {
     private fun loadData() {
         progressBar.visibility = View.VISIBLE
 
-        userEmail?.let { encodeEmail(it) }?.let { a ->
-            Firebase.database.getReference("profileDetails")
-                .child(a)
+        Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/profileDetails")
                 .addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         if (dataSnapshot.exists()) {
@@ -114,11 +112,9 @@ class UpdateProfileDetailsFragment : Fragment() {
                             weightEt.setText(profileDetails?.weight.toString())
                             heightEt.setText(profileDetails?.height.toString())
                             sexOptionsAutocompleteTextView.setText(profileDetails?.sex.toString())
-                            creatingProfile(ageEt.text.toString().toInt(), heightEt.text.toString().toDouble(), weightEt.text.toString().toDouble(), sexOptionsAutocompleteTextView.text.toString())
+                            creatingProfile(ageEt.text.toString().toInt(), heightEt.text.toString().toDouble(), arrayListOf(weightEt.text.toString().toDouble()), sexOptionsAutocompleteTextView.text.toString())
 
-                            userEmail?.let { encodeEmail(it) }?.let { s ->
-                                Firebase.database.getReference("energySettings")
-                                    .child(s)
+                            Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/energySettings")
                                     .addListenerForSingleValueEvent(object : ValueEventListener {
                                         override fun onDataChange(dataSnapshot: DataSnapshot) {
                                             if (dataSnapshot.exists()) {
@@ -126,38 +122,32 @@ class UpdateProfileDetailsFragment : Fragment() {
                                                 if (energy?.bmrName.toString() == "Harris Benedict") {
                                                     val hb = calculateBMRHarrisBenedict(
                                                         profileDetails?.sex ?: "",
-                                                        profileDetails?.weight ?: 0.0,
+                                                        profileDetails?.weight?.lastIndex?.toDouble() ?: 0.0,
                                                         profileDetails?.height ?: 0.0,
                                                         profileDetails?.age ?: 0,
                                                         energy?.activityLevel.toString(),
                                                         energy?.weightGoal.toString().toDouble()
                                                     )
-                                                    Firebase.database.reference.child("energyExpenditure")
-                                                        .child(encodeEmail(userEmail)).setValue(hb)
+                                                    Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/energyExpenditure").setValue(hb)
                                                 } else {
                                                     val msj = calculateBMRMifflinStJeor(
                                                         profileDetails?.sex ?: "",
-                                                        profileDetails?.weight ?: 0.0,
+                                                        profileDetails?.weight?.lastIndex?.toDouble() ?: 0.0,
                                                         profileDetails?.height ?: 0.0,
                                                         profileDetails?.age ?: 0,
                                                         energy?.activityLevel.toString(),
                                                         energy?.weightGoal.toString().toDouble()
                                                     )
-                                                    Firebase.database.reference.child("energyExpenditure")
-                                                        .child(encodeEmail(userEmail)).setValue(msj)
+                                                    Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/energyExpenditure").setValue(msj)
                                                 }
 
-                                                userEmail?.let { encodeEmail(it) }?.let { t ->
-                                                    Firebase.database.getReference("macroRatios")
-                                                        .child(t)
+                                                Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/macros/macroRatios")
                                                         .addListenerForSingleValueEvent(object : ValueEventListener {
                                                             override fun onDataChange(dataSnapshot: DataSnapshot) {
                                                                 if (dataSnapshot.exists()) {
                                                                     val macroRatios = dataSnapshot.getValue(MacroRatios::class.java)
 
-                                                                    userEmail?.let { encodeEmail(it) }?.let { t ->
-                                                                        Firebase.database.getReference("energyExpenditure")
-                                                                            .child(t)
+                                                                    Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/energyExpenditure")
                                                                             .addListenerForSingleValueEvent(object : ValueEventListener {
                                                                                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                                                                                     if (dataSnapshot.exists()) {
@@ -175,8 +165,7 @@ class UpdateProfileDetailsFragment : Fragment() {
                                                                                             macroRatios?.netCarbRatio ?: 0.0,
                                                                                             macroRatios?.fatRatio ?: 0.0
                                                                                         )
-                                                                                        Firebase.database.reference.child("macroRatioCalories")
-                                                                                            .child(encodeEmail(userEmail)).setValue(ratioCalories)
+                                                                                        Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/macros/macroRatioCalories").setValue(ratioCalories)
                                                                                     }
                                                                                 }
 
@@ -184,7 +173,6 @@ class UpdateProfileDetailsFragment : Fragment() {
                                                                                     Log.d("databaseError", "$databaseError")
                                                                                 }
                                                                             })
-                                                                    }
                                                                 }
                                                             }
 
@@ -192,7 +180,6 @@ class UpdateProfileDetailsFragment : Fragment() {
                                                                 Log.d("databaseError", "$databaseError")
                                                             }
                                                         })
-                                                }
                                             } else {
                                                 Log.d("dataSnapshot", "No data found")
                                             }
@@ -204,7 +191,6 @@ class UpdateProfileDetailsFragment : Fragment() {
                                             progressBar.visibility = View.GONE
                                         }
                                     })
-                            }
                             changeActivity()
                         }
                         progressBar.visibility = View.GONE
@@ -215,7 +201,6 @@ class UpdateProfileDetailsFragment : Fragment() {
                         progressBar.visibility = View.GONE
                     }
                 })
-        }
     }
 
     private fun changeActivity() {

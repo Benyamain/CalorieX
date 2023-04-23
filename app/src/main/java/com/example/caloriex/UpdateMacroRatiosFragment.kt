@@ -65,9 +65,7 @@ class UpdateMacroRatiosFragment : Fragment() {
                                 navController.navigate(R.id.action_updateMacroRatiosFragment_to_settingsFragment)
                             }
 
-                            userEmail?.let { encodeEmail(it) }?.let {
-                                Firebase.database.getReference("energyExpenditure")
-                                    .child(it)
+                            Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/energyExpenditure")
                                     .addListenerForSingleValueEvent(object : ValueEventListener {
                                         override fun onDataChange(dataSnapshot: DataSnapshot) {
                                             if (dataSnapshot.exists()) {
@@ -86,9 +84,7 @@ class UpdateMacroRatiosFragment : Fragment() {
                                                     netCarbsEt.text.toString().toDouble(),
                                                     fatsEt.text.toString().toDouble()
                                                 )
-                                                Firebase.database.reference.child("macroRatioCalories")
-                                                    .child(encodeEmail(userEmail))
-                                                    .setValue(ratioCalories)
+                                                Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/macros/macroRatioCalories").setValue(ratioCalories)
                                             }
                                         }
 
@@ -96,7 +92,6 @@ class UpdateMacroRatiosFragment : Fragment() {
                                             Log.d("databaseError", "$databaseError")
                                         }
                                     })
-                            }
                         } else {
                             Toast.makeText(
                                 requireContext(),
@@ -137,9 +132,7 @@ class UpdateMacroRatiosFragment : Fragment() {
             withContext(Dispatchers.IO) {
                 progressBar.visibility = View.VISIBLE
 
-                userEmail?.let { encodeEmail(it) }?.let {
-                    Firebase.database.getReference("macroRatios")
-                        .child(it)
+                Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/macros/macroRatios")
                         .addListenerForSingleValueEvent(object : ValueEventListener {
                             override fun onDataChange(dataSnapshot: DataSnapshot) {
                                 if (dataSnapshot.exists()) {
@@ -156,7 +149,6 @@ class UpdateMacroRatiosFragment : Fragment() {
                                 progressBar.visibility = View.GONE
                             }
                         })
-                }
             }
         }
     }

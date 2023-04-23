@@ -91,10 +91,8 @@ class NutritionInfoFragment : Fragment() {
             }
         }
 
-        userEmail?.let { encodeEmail(it) }?.let {
-            var date = ""
-            Firebase.database.getReference("calendarDate")
-                .child(it)
+        var date = ""
+        Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/calendarDate")
                 .addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         if (dataSnapshot.exists()) {
@@ -177,7 +175,6 @@ class NutritionInfoFragment : Fragment() {
                         Log.d("databaseError", "$databaseError")
                     }
                 })
-        }
 
         return view
     }
