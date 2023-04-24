@@ -22,10 +22,8 @@ class LauncherActivity : AppCompatActivity() {
 
         val sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
         val isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false)
-        val emailPref = getSharedPreferences("email", Context.MODE_PRIVATE)
-        val email = emailPref.getString("userEmail", "")
 
-        if (isLoggedIn && email != "") {
+        if (isLoggedIn) {
             navController.navigate(R.id.startTrackingFragment)
             overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
         } else {

@@ -69,11 +69,6 @@ class LogoutFragment : Fragment() {
                 editor.putBoolean("isLoggedIn", false)
                 editor.apply()
 
-                val emailSignOut = requireActivity().getSharedPreferences("email", Context.MODE_PRIVATE)
-                val emailEditor = emailSignOut.edit()
-                emailEditor.putString("userEmail", "")
-                emailEditor.apply()
-
                 val ctw = ContextThemeWrapper(requireContext(), R.style.CustomAlertDialogTheme)
                 val builder = AlertDialog.Builder(ctw)
 

@@ -61,7 +61,7 @@ class CalendarFragment : Fragment() {
         okTextView.setOnClickListener {
             if (userEmail != null) {
                 val date = CalendarDate(date = selectedDate)
-                Firebase.database.getReference("/${encodeEmail(userEmail)}/calendarDate/date").setValue(date.date)
+                Firebase.database.getReference("/${encodeEmail(userEmail)}/calendarDate/adate").setValue(date.date)
             }
 
             findNavController().navigate(R.id.dashboardFragment)
