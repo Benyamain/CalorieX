@@ -59,19 +59,27 @@ class FoodListAdapter(
 
                 if (userEmail != null) {
 
-                    var date = ""
                     Firebase.database.getReference("/${encodeEmail(userEmail)}/calendarDate")
                         .addListenerForSingleValueEvent(object : ValueEventListener {
                             override fun onDataChange(dataSnapshot: DataSnapshot) {
                                 if (dataSnapshot.exists()) {
-                                    date = dataSnapshot.getValue(CalendarDate::class.java)?.date ?: ""
-                                }
+                                    val date = if (dataSnapshot.value is Long) {
+                                        CalendarDate(
+                                            dataSnapshot.getValue(
+                                                Long::class.java
+                                            )
+                                                ?.toString()
+                                        )
+                                    } else {
+                                        dataSnapshot.getValue(CalendarDate::class.java)
+                                    }
 
-                                val key = Firebase.database.getReference("/${encodeEmail(userEmail)}/calendarDate/$date/foodSelection").push().key?: ""
-                                Firebase.database.getReference("/${encodeEmail(userEmail)}/calendarDate/$date/foodSelection/$key").setValue(foodItems.lastIndex)
-                                val fKey = FoodItemKey(key = key)
-                                foodItemKey.add(fKey)
-                                Firebase.database.getReference("/${encodeEmail(userEmail)}/calendarDate/$date/foodSelectionKeys").setValue(foodItemKey.lastIndex)
+                                    val key = Firebase.database.getReference("/${encodeEmail(userEmail)}/calendarDate/${date?.date}/foodSelection").push().key?: ""
+                                    Firebase.database.getReference("/${encodeEmail(userEmail)}/calendarDate/${date?.date}/foodSelection/$key").setValue(foodItem)
+                                    val fKey = FoodItemKey(key = key)
+                                    foodItemKey.add(fKey)
+                                    Firebase.database.getReference("/${encodeEmail(userEmail)}/calendarDate/${date?.date}/foodSelectionKeys").setValue(fKey)
+                                }
                             }
 
                             override fun onCancelled(databaseError: DatabaseError) {

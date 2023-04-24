@@ -78,7 +78,7 @@ class MacroRatiosFragment : Fragment() {
                 val total = proteinEt.text.toString().toDouble().plus(netCarbsEt.text.toString().toDouble()).plus(fatsEt.text.toString().toDouble())
                 if (total == 100.0) {
                     findNavController().navigate(R.id.action_macroRatiosFragment_to_messageMotivationFragment)
-                    Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/energyExpenditure")
+                    Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/energy/energyExpenditure")
                             .addListenerForSingleValueEvent(object : ValueEventListener {
                                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                                     if (dataSnapshot.exists()) {
@@ -125,6 +125,11 @@ class MacroRatiosFragment : Fragment() {
         val editor = sharedPreferences.edit()
         editor.putBoolean("isLoggedIn", false)
         editor.apply()
+
+        val emailSignOut = requireActivity().getSharedPreferences("email", Context.MODE_PRIVATE)
+        val emailEditor = emailSignOut.edit()
+        emailEditor.putString("userEmail", "")
+        emailEditor.apply()
 
         Firebase.auth.signOut()
         Auth.GoogleSignInApi.signOut(googleSignInClient.asGoogleApiClient());

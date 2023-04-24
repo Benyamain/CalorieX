@@ -86,6 +86,7 @@ class AccountSignInFragment : Fragment() {
                                             Toast.LENGTH_SHORT
                                         ).show()
                                         keepUserLoggedIn()
+                                        saveEmail(auth)
                                     }
                                 } else {
                                     // If sign in fails, display a message to the user.
@@ -165,6 +166,7 @@ class AccountSignInFragment : Fragment() {
                                                         Toast.LENGTH_SHORT
                                                     ).show()
                                                     keepUserLoggedIn()
+                                                    saveEmail(auth)
                                                 }
                                             } else {
                                                 // When task is unsuccessful display Toast
@@ -186,6 +188,14 @@ class AccountSignInFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun saveEmail(auth: FirebaseAuth) {
+        // When the user successfully signs in:
+        val sharedPreferences = requireActivity().getSharedPreferences("email", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString("userEmail", auth?.currentUser?.email)
+        editor.apply()
     }
 
     private fun keepUserLoggedIn() {

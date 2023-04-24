@@ -117,6 +117,11 @@ class ProfileDetailsFragment : Fragment() {
         editor.putBoolean("isLoggedIn", false)
         editor.apply()
 
+        val emailSignOut = requireActivity().getSharedPreferences("email", Context.MODE_PRIVATE)
+        val emailEditor = emailSignOut.edit()
+        emailEditor.putString("userEmail", "")
+        emailEditor.apply()
+
         Firebase.auth.signOut()
         Auth.GoogleSignInApi.signOut(googleSignInClient.asGoogleApiClient());
         GoogleSignIn.getClient(

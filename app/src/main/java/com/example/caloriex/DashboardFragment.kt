@@ -107,86 +107,83 @@ class DashboardFragment : Fragment() {
 
         val dashboardData = ArrayList<DashboardItems>()
 
-        var date = ""
         Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/calendarDate")
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     if (dataSnapshot.exists()) {
-                        date =
-                            if (dataSnapshot.value is Long) ({
-                                CalendarDate(
-                                    dataSnapshot.getValue(
-                                        Long::class.java
-                                    )
-                                        ?.toString()
+                        val date = if (dataSnapshot.value is Long) {
+                            CalendarDate(
+                                dataSnapshot.getValue(
+                                    Long::class.java
                                 )
-                            }).toString() else {
-                                dataSnapshot.getValue(CalendarDate::class.java)?.date ?: ""
-                            }
-                    }
+                                    ?.toString()
+                            )
+                        } else {
+                            dataSnapshot.getValue(CalendarDate::class.java)
+                        }
 
-                    var key = ""
-                    Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/calendarDate/$date/foodSelectionKeys")
-                        .addListenerForSingleValueEvent(object : ValueEventListener {
-                            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                                if (dataSnapshot.exists()) {
-                                    key =
-                                        if (dataSnapshot.value is Long) ({
-                                            FoodItemKey(
-                                                dataSnapshot.getValue(
-                                                    Long::class.java
+                        Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/calendarDate/${date?.date}/foodSelectionKeys")
+                            .addListenerForSingleValueEvent(object : ValueEventListener {
+                                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                    if (dataSnapshot.exists()) {
+                                        val key =
+                                            if (dataSnapshot.value is Long) {
+                                                FoodItemKey(
+                                                    dataSnapshot.getValue(
+                                                        Long::class.java
+                                                    )
+                                                        ?.toString()
                                                 )
-                                                    ?.toString()
-                                            )
-                                        }).toString() else {
-                                            dataSnapshot.getValue(FoodItemKey::class.java)?.key ?: ""
-                                        }
-                                }
-
-                                Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/calendarDate/$date/foodSelection/$key")
-                                    .addListenerForSingleValueEvent(object : ValueEventListener {
-                                        override fun onDataChange(dataSnapshot: DataSnapshot) {
-                                            if (dataSnapshot.exists()) {
-                                                val foodItem =
-                                                    if (dataSnapshot.value is Long) {
-                                                        FoodItem(
-                                                            dataSnapshot.getValue(
-                                                                Long::class.java
-                                                            )?.toString()
-                                                        )
-                                                    } else {
-                                                        dataSnapshot.getValue(FoodItem::class.java)
-                                                    }
-
-                                                val dashboardItem = DashboardItems(
-                                                    foodItem?.image ?: "",
-                                                    foodItem?.name ?: "",
-                                                    "999 g",
-                                                    "${foodItem?.calorie} kcal" ?: ""
-                                                )
-                                                dashboardData.add(dashboardItem)
+                                            } else {
+                                                dataSnapshot.getValue(FoodItemKey::class.java)
                                             }
 
-                                            // Create the DashboardItemsAdapter with the dashboardData list
-                                            val dashboardItemsAdapter =
-                                                DashboardItemsAdapter(
-                                                    dashboardData,
-                                                    navController,
-                                                    appearBottomNavigationView
-                                                )
-                                            dashboardRecyclerView.adapter = dashboardItemsAdapter
-                                        }
+                                        Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/calendarDate/${date?.date}/foodSelection/${key?.key}")
+                                            .addListenerForSingleValueEvent(object : ValueEventListener {
+                                                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                                    if (dataSnapshot.exists()) {
+                                                        val foodItem =
+                                                            if (dataSnapshot.value is Long) {
+                                                                FoodItem(
+                                                                    dataSnapshot.getValue(
+                                                                        Long::class.java
+                                                                    )?.toString()
+                                                                )
+                                                            } else {
+                                                                dataSnapshot.getValue(FoodItem::class.java)
+                                                            }
 
-                                        override fun onCancelled(databaseError: DatabaseError) {
-                                            // Handle database error
-                                        }
-                                    })
-                            }
+                                                        val dashboardItem = DashboardItems(
+                                                            foodItem?.image ?: "",
+                                                            foodItem?.name ?: "",
+                                                            "999 g",
+                                                            "${foodItem?.calorie} kcal" ?: ""
+                                                        )
+                                                        dashboardData.add(dashboardItem)
+                                                    }
 
-                            override fun onCancelled(databaseError: DatabaseError) {
-                                // Handle database error
-                            }
-                        })
+                                                    // Create the DashboardItemsAdapter with the dashboardData list
+                                                    val dashboardItemsAdapter =
+                                                        DashboardItemsAdapter(
+                                                            dashboardData,
+                                                            navController,
+                                                            appearBottomNavigationView
+                                                        )
+                                                    dashboardRecyclerView.adapter = dashboardItemsAdapter
+                                                }
+
+                                                override fun onCancelled(databaseError: DatabaseError) {
+                                                    // Handle database error
+                                                }
+                                            })
+                                    }
+                                }
+
+                                override fun onCancelled(databaseError: DatabaseError) {
+                                    // Handle database error
+                                }
+                            })
+                    }
                 }
 
                 override fun onCancelled(databaseError: DatabaseError) {
@@ -282,7 +279,7 @@ class DashboardFragment : Fragment() {
 
     private fun getCalories(callback: (Int) -> Unit) {
         var calories = 0
-        Firebase.database.getReference("/${userEmail?.let { encodeEmail(it) }}/energyExpenditure")
+        Firebase.database.getReference("/${userEmail?.let { encodeEmail(it) }}/energy/energyExpenditure")
                 .addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         if (dataSnapshot.exists()) {
@@ -564,7 +561,7 @@ class DashboardFragment : Fragment() {
                                 encodeEmail(
                                     it
                                 )
-                            }}/calendarDate").setValue(setDay)
+                            }}/calendarDate/date").setValue(setDay.date)
                         }
                     }
 
@@ -593,8 +590,8 @@ class DashboardFragment : Fragment() {
         }
     }
 
-    override fun onPause() {
-        super.onPause()
+    override fun onDestroy() {
+        super.onDestroy()
 
         // This makes sure that if user destroys the app and comes back to it, they have to go thru the sign up process all over again in order to ensure there is no input being missed
         val sharedPreferences =

@@ -81,7 +81,7 @@ class AddWeightFragment : Fragment() {
                                                     email
                                                 )
                                             }
-                                        }/energySettings"
+                                        }/energy/energySettings"
                                     )
                                         .addListenerForSingleValueEvent(object :
                                             ValueEventListener {
@@ -107,7 +107,7 @@ class AddWeightFragment : Fragment() {
                                                                         email
                                                                     )
                                                                 }
-                                                            }/energyExpenditure"
+                                                            }/energy/energyExpenditure"
                                                         ).setValue(hb)
                                                     } else {
                                                         val msj = calculateBMRMifflinStJeor(
@@ -127,7 +127,7 @@ class AddWeightFragment : Fragment() {
                                                                         email
                                                                     )
                                                                 }
-                                                            }/energyExpenditure"
+                                                            }/energy/energyExpenditure"
                                                         ).setValue(msj)
                                                     }
 
@@ -159,7 +159,7 @@ class AddWeightFragment : Fragment() {
                                                                                         email
                                                                                     )
                                                                                 }
-                                                                            }/energyExpenditure"
+                                                                            }/energy/energyExpenditure"
                                                                         )
                                                                             .addListenerForSingleValueEvent(
                                                                                 object :
@@ -275,7 +275,7 @@ class AddWeightFragment : Fragment() {
                             if (dataSnapshot.exists()) {
                                 val profileDetails =
                                     dataSnapshot.getValue(ProfileDetails::class.java)
-                                weightEt.setText(profileDetails?.weight?.lastIndex.toString())
+                                weightEt.setText(profileDetails?.weight?.get(profileDetails?.weight?.lastIndex ?: 0).toString())
                             }
                         }
 

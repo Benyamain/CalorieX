@@ -65,7 +65,7 @@ class UpdateMacroRatiosFragment : Fragment() {
                                 navController.navigate(R.id.action_updateMacroRatiosFragment_to_settingsFragment)
                             }
 
-                            Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/energyExpenditure")
+                            Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/energy/energyExpenditure")
                                     .addListenerForSingleValueEvent(object : ValueEventListener {
                                         override fun onDataChange(dataSnapshot: DataSnapshot) {
                                             if (dataSnapshot.exists()) {

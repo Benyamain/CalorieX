@@ -90,7 +90,7 @@ class EnergySettingsFragment : Fragment() {
                                     dataSnapshot.getValue(ProfileDetails::class.java)
                                 val age = profileDetails?.age ?: 0
                                 val height = profileDetails?.height ?: 0.0
-                                val weight = profileDetails?.weight?.lastIndex?.toDouble() ?: 0.0
+                                val weight = profileDetails?.weight?.get(profileDetails?.weight.lastIndex) ?: 0.0
                                 Log.d("Messing up my algorithm", "$weight")
                                 val sex = profileDetails?.sex ?: ""
 
@@ -104,7 +104,7 @@ class EnergySettingsFragment : Fragment() {
                                             activityLevelAutocompleteTextView.text.toString(),
                                             weightGoalEt.text.toString().toDouble()
                                         )
-                                        Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/energyExpenditure").setValue(hb)
+                                        Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/energy/energyExpenditure").setValue(hb)
                                     } else {
                                         val msj = calculateBMRMifflinStJeor(
                                             sex,
@@ -114,7 +114,7 @@ class EnergySettingsFragment : Fragment() {
                                             activityLevelAutocompleteTextView.text.toString(),
                                             weightGoalEt.text.toString().toDouble()
                                         )
-                                        Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/energyExpenditure").setValue(msj)
+                                        Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/energy/energyExpenditure").setValue(msj)
                                     }
                                 } else {
                                     Log.d("dataSnapshot", "No data found")
@@ -173,6 +173,11 @@ class EnergySettingsFragment : Fragment() {
         val editor = sharedPreferences.edit()
         editor.putBoolean("isLoggedIn", false)
         editor.apply()
+
+        val emailSignOut = requireActivity().getSharedPreferences("email", Context.MODE_PRIVATE)
+        val emailEditor = emailSignOut.edit()
+        emailEditor.putString("userEmail", "")
+        emailEditor.apply()
 
         Firebase.auth.signOut()
         Auth.GoogleSignInApi.signOut(googleSignInClient.asGoogleApiClient());

@@ -109,12 +109,12 @@ class UpdateProfileDetailsFragment : Fragment() {
                         if (dataSnapshot.exists()) {
                             val profileDetails = dataSnapshot.getValue(ProfileDetails::class.java)
                             ageEt.setText(profileDetails?.age.toString())
-                            weightEt.setText(profileDetails?.weight.toString())
+                            weightEt.setText(profileDetails?.weight?.get(profileDetails?.weight?.lastIndex ?: 0).toString())
                             heightEt.setText(profileDetails?.height.toString())
                             sexOptionsAutocompleteTextView.setText(profileDetails?.sex.toString())
                             creatingProfile(ageEt.text.toString().toInt(), heightEt.text.toString().toDouble(), arrayListOf(weightEt.text.toString().toDouble()), sexOptionsAutocompleteTextView.text.toString())
 
-                            Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/energySettings")
+                            Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/energy/energySettings")
                                     .addListenerForSingleValueEvent(object : ValueEventListener {
                                         override fun onDataChange(dataSnapshot: DataSnapshot) {
                                             if (dataSnapshot.exists()) {
@@ -122,23 +122,23 @@ class UpdateProfileDetailsFragment : Fragment() {
                                                 if (energy?.bmrName.toString() == "Harris Benedict") {
                                                     val hb = calculateBMRHarrisBenedict(
                                                         profileDetails?.sex ?: "",
-                                                        profileDetails?.weight?.lastIndex?.toDouble() ?: 0.0,
+                                                        profileDetails?.weight?.get(profileDetails?.weight?.lastIndex ?: 0)?.toDouble() ?: 0.0,
                                                         profileDetails?.height ?: 0.0,
                                                         profileDetails?.age ?: 0,
                                                         energy?.activityLevel.toString(),
                                                         energy?.weightGoal.toString().toDouble()
                                                     )
-                                                    Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/energyExpenditure").setValue(hb)
+                                                    Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/energy/energyExpenditure").setValue(hb)
                                                 } else {
                                                     val msj = calculateBMRMifflinStJeor(
                                                         profileDetails?.sex ?: "",
-                                                        profileDetails?.weight?.lastIndex?.toDouble() ?: 0.0,
+                                                        profileDetails?.weight?.get(profileDetails?.weight?.lastIndex ?: 0)?.toDouble() ?: 0.0,
                                                         profileDetails?.height ?: 0.0,
                                                         profileDetails?.age ?: 0,
                                                         energy?.activityLevel.toString(),
                                                         energy?.weightGoal.toString().toDouble()
                                                     )
-                                                    Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/energyExpenditure").setValue(msj)
+                                                    Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/energy/energyExpenditure").setValue(msj)
                                                 }
 
                                                 Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/macros/macroRatios")
@@ -147,7 +147,7 @@ class UpdateProfileDetailsFragment : Fragment() {
                                                                 if (dataSnapshot.exists()) {
                                                                     val macroRatios = dataSnapshot.getValue(MacroRatios::class.java)
 
-                                                                    Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/energyExpenditure")
+                                                                    Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/energy/energyExpenditure")
                                                                             .addListenerForSingleValueEvent(object : ValueEventListener {
                                                                                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                                                                                     if (dataSnapshot.exists()) {

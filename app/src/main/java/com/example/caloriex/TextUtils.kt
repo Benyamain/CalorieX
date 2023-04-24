@@ -1,8 +1,10 @@
 package com.example.caloriex
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
+import com.google.android.gms.auth.api.Auth
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -230,16 +232,10 @@ fun energySettings(bmrName: String, activityLevel: String, weightGoal: Double) {
                 encodeEmail(
                     userEmail
                 )
-            }/energySettings"
+            }/energy/energySettings"
         ).setValue(energy)
     }
 }
 
 val auth = FirebaseAuth.getInstance()
 val userEmail = auth.currentUser?.email
-
-
-
-
-
-

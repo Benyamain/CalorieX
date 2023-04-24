@@ -23,7 +23,7 @@ import kotlinx.coroutines.withContext
 
 class CalendarFragment : Fragment() {
 
-    private var selectedDate: String = getCurrentDayString()
+    private var selectedDate: String = getToday()
     private lateinit var calendarView: CalendarView
     private lateinit var okTextView: TextView
     private lateinit var cancelTextView: TextView
@@ -48,11 +48,6 @@ class CalendarFragment : Fragment() {
                     selectedDate = constructDate(year, month, dayOfMonth)
 
                     Log.d("selectedDate", "$selectedDate")
-
-                    if (userEmail != null) {
-                        val date = CalendarDate(date = selectedDate)
-                        Firebase.database.getReference("/${encodeEmail(userEmail)}/calendarDate").setValue(date)
-                    }
                 }
             }
         }
@@ -64,6 +59,11 @@ class CalendarFragment : Fragment() {
 
         // Sends the new date
         okTextView.setOnClickListener {
+            if (userEmail != null) {
+                val date = CalendarDate(date = selectedDate)
+                Firebase.database.getReference("/${encodeEmail(userEmail)}/calendarDate/date").setValue(date.date)
+            }
+
             findNavController().navigate(R.id.dashboardFragment)
         }
 
