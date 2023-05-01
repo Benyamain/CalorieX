@@ -122,61 +122,47 @@ class DashboardFragment : Fragment() {
                             dataSnapshot.getValue(CalendarDate::class.java)
                         }
 
-                        Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/calendarDate/${date?.date}/foodSelectionKeys")
+
+                        Firebase.database.getReference(
+                            "/${
+                                userEmail?.let { email ->
+                                    encodeEmail(
+                                        email
+                                    )
+                                }
+                            }/calendarDate/${date?.date}/foodSelection"
+                        )
                             .addListenerForSingleValueEvent(object : ValueEventListener {
                                 override fun onDataChange(dataSnapshot: DataSnapshot) {
-                                    if (dataSnapshot.exists()) {
-                                        val key =
-                                            if (dataSnapshot.value is Long) {
-                                                FoodItemKey(
-                                                    dataSnapshot.getValue(
+                                    for (childSnapshot in dataSnapshot.children) {
+                                        val foodItem =
+                                            if (childSnapshot.value is Long) {
+                                                FoodItem(
+                                                    childSnapshot.getValue(
                                                         Long::class.java
-                                                    )
-                                                        ?.toString()
+                                                    )?.toString()
                                                 )
                                             } else {
-                                                dataSnapshot.getValue(FoodItemKey::class.java)
+                                                childSnapshot.getValue(FoodItem::class.java)
                                             }
 
-                                        Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/calendarDate/${date?.date}/foodSelection/${key?.key}")
-                                            .addListenerForSingleValueEvent(object : ValueEventListener {
-                                                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                                                    if (dataSnapshot.exists()) {
-                                                        val foodItem =
-                                                            if (dataSnapshot.value is Long) {
-                                                                FoodItem(
-                                                                    dataSnapshot.getValue(
-                                                                        Long::class.java
-                                                                    )?.toString()
-                                                                )
-                                                            } else {
-                                                                dataSnapshot.getValue(FoodItem::class.java)
-                                                            }
-
-                                                        val dashboardItem = DashboardItems(
-                                                            foodItem?.image ?: "",
-                                                            foodItem?.name ?: "",
-                                                            "999 g",
-                                                            "${foodItem?.calorie} kcal" ?: ""
-                                                        )
-                                                        dashboardData.add(dashboardItem)
-                                                    }
-
-                                                    // Create the DashboardItemsAdapter with the dashboardData list
-                                                    val dashboardItemsAdapter =
-                                                        DashboardItemsAdapter(
-                                                            dashboardData,
-                                                            navController,
-                                                            appearBottomNavigationView
-                                                        )
-                                                    dashboardRecyclerView.adapter = dashboardItemsAdapter
-                                                }
-
-                                                override fun onCancelled(databaseError: DatabaseError) {
-                                                    // Handle database error
-                                                }
-                                            })
+                                        val dashboardItem = DashboardItems(
+                                            foodItem?.image ?: "",
+                                            foodItem?.name ?: "",
+                                            "999 g",
+                                            "${foodItem?.calorie} kcal" ?: ""
+                                        )
+                                        dashboardData.add(dashboardItem)
                                     }
+
+                                    // Create the DashboardItemsAdapter with the dashboardData list
+                                    val dashboardItemsAdapter =
+                                        DashboardItemsAdapter(
+                                            dashboardData,
+                                            navController,
+                                            appearBottomNavigationView
+                                        )
+                                    dashboardRecyclerView.adapter = dashboardItemsAdapter
                                 }
 
                                 override fun onCancelled(databaseError: DatabaseError) {
@@ -280,24 +266,24 @@ class DashboardFragment : Fragment() {
     private fun getCalories(callback: (Int) -> Unit) {
         var calories = 0
         Firebase.database.getReference("/${userEmail?.let { encodeEmail(it) }}/energy/energyExpenditure")
-                .addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            calories = if (dataSnapshot.value is Long) {
-                                CalorieAmount(
-                                    dataSnapshot.getValue(Long::class.java)?.toInt()
-                                ).calories ?: 0
-                            } else {
-                                dataSnapshot.getValue(CalorieAmount::class.java)?.calories ?: 0
-                            }
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        calories = if (dataSnapshot.value is Long) {
+                            CalorieAmount(
+                                dataSnapshot.getValue(Long::class.java)?.toInt()
+                            ).calories ?: 0
+                        } else {
+                            dataSnapshot.getValue(CalorieAmount::class.java)?.calories ?: 0
                         }
-                        callback(calories)
                     }
+                    callback(calories)
+                }
 
-                    override fun onCancelled(databaseError: DatabaseError) {
-                        Log.d("databaseError", "$databaseError")
-                    }
-                })
+                override fun onCancelled(databaseError: DatabaseError) {
+                    Log.d("databaseError", "$databaseError")
+                }
+            })
     }
 
     private fun getMacros(callback: (Triple<Int, Int, Int>) -> Unit) {
@@ -305,24 +291,24 @@ class DashboardFragment : Fragment() {
         var carbs = 0
         var fat = 0
         Firebase.database.getReference("/${userEmail?.let { encodeEmail(it) }}/macros/macroGrams")
-                .addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        Log.d("CheckingAgain", "${dataSnapshot.getValue(MacroGrams::class.java)}")
-                        if (dataSnapshot.exists()) {
-                            protein =
-                                dataSnapshot.getValue(MacroGrams::class.java)?.proteinGrams ?: 0
-                            carbs = dataSnapshot.getValue(MacroGrams::class.java)?.carbGrams ?: 0
-                            fat = dataSnapshot.getValue(MacroGrams::class.java)?.fatGrams ?: 0
-                            Log.d("Running???", "$dataSnapshot")
-                        }
-                        callback(Triple(protein, carbs, fat))
-                        Log.d("Hmmmmmmmmmmmmmmmmmmmmmm", "${Triple(protein, carbs, fat)}")
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    Log.d("CheckingAgain", "${dataSnapshot.getValue(MacroGrams::class.java)}")
+                    if (dataSnapshot.exists()) {
+                        protein =
+                            dataSnapshot.getValue(MacroGrams::class.java)?.proteinGrams ?: 0
+                        carbs = dataSnapshot.getValue(MacroGrams::class.java)?.carbGrams ?: 0
+                        fat = dataSnapshot.getValue(MacroGrams::class.java)?.fatGrams ?: 0
+                        Log.d("Running???", "$dataSnapshot")
                     }
+                    callback(Triple(protein, carbs, fat))
+                    Log.d("Hmmmmmmmmmmmmmmmmmmmmmm", "${Triple(protein, carbs, fat)}")
+                }
 
-                    override fun onCancelled(databaseError: DatabaseError) {
-                        Log.d("databaseError", "$databaseError")
-                    }
-                })
+                override fun onCancelled(databaseError: DatabaseError) {
+                    Log.d("databaseError", "$databaseError")
+                }
+            })
     }
 
     private fun updateCharts() {
@@ -529,46 +515,50 @@ class DashboardFragment : Fragment() {
     private fun readDate() {
         var date = ""
         Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/calendarDate")
-                .addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            date = dataSnapshot.getValue(CalendarDate::class.java)?.date ?: ""
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        date = dataSnapshot.getValue(CalendarDate::class.java)?.date ?: ""
 
-                            val today = getCurrentDayString()
+                        val today = getCurrentDayString()
 
-                            // Use Calendar class to manipulate the dates
-                            val cal = Calendar.getInstance()
-                            cal.time = SimpleDateFormat("MMM-dd-yyyy").parse(date) as Date
-                            val selectedDay = cal.get(Calendar.DAY_OF_YEAR)
-                            cal.time = SimpleDateFormat("MMM-dd-yyyy").parse(today) as Date
-                            val currentDay = cal.get(Calendar.DAY_OF_YEAR)
+                        // Use Calendar class to manipulate the dates
+                        val cal = Calendar.getInstance()
+                        cal.time = SimpleDateFormat("MMM-dd-yyyy").parse(date) as Date
+                        val selectedDay = cal.get(Calendar.DAY_OF_YEAR)
+                        cal.time = SimpleDateFormat("MMM-dd-yyyy").parse(today) as Date
+                        val currentDay = cal.get(Calendar.DAY_OF_YEAR)
 
-                            // Calculate the difference in days between selected date and current date
+                        // Calculate the difference in days between selected date and current date
 
-                            // Show "Yesterday" or "Tomorrow" if the difference is +/- 1
-                            when (selectedDay - currentDay) {
-                                -1 -> calendarTv.text = "Yesterday"
-                                0 -> calendarTv.text = "Today"
-                                1 -> calendarTv.text = "Tomorrow"
-                                else -> {
-                                    // For any other case, show the selected date
-                                    calendarTv.text = date.makeDateReadable()
-                                }
+                        // Show "Yesterday" or "Tomorrow" if the difference is +/- 1
+                        when (selectedDay - currentDay) {
+                            -1 -> calendarTv.text = "Yesterday"
+                            0 -> calendarTv.text = "Today"
+                            1 -> calendarTv.text = "Tomorrow"
+                            else -> {
+                                // For any other case, show the selected date
+                                calendarTv.text = date.makeDateReadable()
                             }
-                        } else {
-                            val setDay = CalendarDate(date = getToday())
-                            Firebase.database.getReference("/${userEmail?.let {
-                                encodeEmail(
-                                    it
-                                )
-                            }}/calendarDate/date").setValue(setDay.date)
                         }
+                    } else {
+                        val setDay = CalendarDate(date = getToday())
+                        Firebase.database.getReference(
+                            "/${
+                                userEmail?.let {
+                                    encodeEmail(
+                                        it
+                                    )
+                                }
+                            }/calendarDate/date"
+                        ).setValue(setDay.date)
                     }
+                }
 
-                    override fun onCancelled(databaseError: DatabaseError) {
-                        Log.d("databaseError", "$databaseError")
-                    }
-                })
+                override fun onCancelled(databaseError: DatabaseError) {
+                    Log.d("databaseError", "$databaseError")
+                }
+            })
     }
 
     companion object {

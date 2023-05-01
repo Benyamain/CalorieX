@@ -108,25 +108,25 @@
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/dashboard_coordinator_layout"
         android:layout_width="match_parent"
-        android:layout_height="389dp"
+        android:layout_height="333dp"
         android:background="@color/app_background"
         android:layout_below="@id/appBarLayout">
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:clipToPadding="false"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content">
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/dashboard_recycler_view"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    tools:itemCount="30"
+                    android:layout_height="wrap_content"
+                    tools:itemCount="1"
                     tools:listitem="@layout/dashboard_item" />
             </RelativeLayout>
 
