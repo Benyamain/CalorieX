@@ -18,7 +18,7 @@ class DashboardFoodItems(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.dashboard_item, parent, false)
+            .inflate(R.layout.dashboard_food, parent, false)
 
         return ViewHolder(view)
     }

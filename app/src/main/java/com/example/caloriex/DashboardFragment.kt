@@ -62,7 +62,8 @@ class DashboardFragment : Fragment() {
     private lateinit var dashboardFoodLogs: TextView
     private lateinit var dashboardWeightLogs: TextView
     private lateinit var imageIv: ImageView
-    private lateinit var dashboardRecyclerView: RecyclerView
+    private lateinit var dashboardFoodRecyclerView: RecyclerView
+    private lateinit var dashboardWeightRecyclerView: RecyclerView
     private var appearBottomCounter = 0
 
     private val requestPermissionLauncher =
@@ -105,10 +106,13 @@ class DashboardFragment : Fragment() {
         bottomNavigationView.setupWithNavController(navController)
         appearBottomNavigationView.setupWithNavController(navController)
 
-        dashboardRecyclerView = view.findViewById(R.id.dashboard_recycler_view)
-        dashboardRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        dashboardFoodRecyclerView = view.findViewById(R.id.dashboard_food_recycler_view)
+        dashboardFoodRecyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        loadDashboardData()
+        dashboardWeightRecyclerView = view.findViewById(R.id.dashboard_weight_recycler_view)
+        dashboardWeightRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+
+        loadDashboardFoodData()
 
         imageIv.setOnClickListener {
             navController.navigate(R.id.action_dashboardFragment_to_calendarFragment)
@@ -116,11 +120,11 @@ class DashboardFragment : Fragment() {
         }
 
         dashboardFoodLogs.setOnClickListener {
-            loadDashboardData()
+            loadDashboardFoodData()
         }
 
         dashboardWeightLogs.setOnClickListener {
-
+            loadDashboardWeightData()
         }
 
         // Customize the label visibility mode
@@ -521,8 +525,52 @@ class DashboardFragment : Fragment() {
         }
     }
 
-    private fun loadDashboardData() {
-        val dashboardData = ArrayList<DashboardFood>()
+    private fun loadDashboardWeightData() {
+        dashboardFoodRecyclerView.visibility = View.INVISIBLE
+        dashboardWeightRecyclerView.visibility = View.VISIBLE
+
+        val dashboardWeightData = ArrayList<DashboardWeight>()
+
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/profileDetails")
+                    .addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onDataChange(dataSnapshot: DataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                val profileDetails =
+                                    dataSnapshot.getValue(ProfileDetails::class.java)
+                                val weight = profileDetails?.weight?.get(profileDetails?.weight?.lastIndex ?: 0)?.toInt()
+
+                                val dashboardWeightItem = DashboardWeight(
+                                    R.drawable.ic_heart_foreground,
+                                    "Weight",
+                                    "${weight.toString()} kg" ?: ""
+                                )
+                                dashboardWeightData.add(dashboardWeightItem)
+                            }
+
+                            val weightItems =
+                                DashboardWeightItems(
+                                    dashboardWeightData,
+                                    navController,
+                                    appearBottomNavigationView
+                                )
+                            dashboardWeightRecyclerView.adapter = weightItems
+                        }
+
+                        override fun onCancelled(databaseError: DatabaseError) {
+                            Log.d("databaseError", "$databaseError")
+                        }
+                    })
+            }
+        }
+    }
+
+    private fun loadDashboardFoodData() {
+        dashboardWeightRecyclerView.visibility = View.INVISIBLE
+        dashboardFoodRecyclerView.visibility = View.VISIBLE
+
+        val dashboardFoodData = ArrayList<DashboardFood>()
 
         Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/calendarDate")
             .addListenerForSingleValueEvent(object : ValueEventListener {
@@ -551,7 +599,7 @@ class DashboardFragment : Fragment() {
                         )
                             .addListenerForSingleValueEvent(object : ValueEventListener {
                                 override fun onDataChange(dataSnapshot: DataSnapshot) {
-                                    dashboardData.clear()
+                                    dashboardFoodData.clear()
 
                                     for (childSnapshot in dataSnapshot.children) {
                                         val foodItem =
@@ -571,17 +619,17 @@ class DashboardFragment : Fragment() {
                                             "999 g",
                                             "${foodItem?.calorie} kcal" ?: ""
                                         )
-                                        dashboardData.add(dashboardItem)
+                                        dashboardFoodData.add(dashboardItem)
                                     }
 
                                     // Create the DashboardItemsAdapter with the dashboardData list
                                     val dashboardFoodItems =
                                         DashboardFoodItems(
-                                            dashboardData,
+                                            dashboardFoodData,
                                             navController,
                                             appearBottomNavigationView
                                         )
-                                    dashboardRecyclerView.adapter = dashboardFoodItems
+                                    dashboardFoodRecyclerView.adapter = dashboardFoodItems
                                 }
 
                                 override fun onCancelled(databaseError: DatabaseError) {

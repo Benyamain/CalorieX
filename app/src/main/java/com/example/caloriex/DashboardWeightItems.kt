@@ -17,7 +17,7 @@ class DashboardWeightItems(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.dashboard_item, parent, false)
+            .inflate(R.layout.dashboard_weight, parent, false)
 
         return ViewHolder(view)
     }
@@ -25,9 +25,9 @@ class DashboardWeightItems(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
         val itemsViewModel = list[position]
-        holder.centerTv.text = itemsViewModel.centerText
-        holder.rightTv.text = itemsViewModel.rightText
-        holder.leftIv.setImageResource(itemsViewModel.leftImage)
+        holder.centerTv?.text = itemsViewModel.centerText
+        holder.rightTv?.text = itemsViewModel.rightText
+        holder.leftIv?.setImageResource(itemsViewModel.leftImage)
         holder.itemView.setOnClickListener {
             if (appearBottomNavigationView.visibility != View.VISIBLE) {
                 navController.navigate(R.id.action_dashboardFragment_to_addWeightFragment)
@@ -40,8 +40,13 @@ class DashboardWeightItems(
     }
 
     class ViewHolder(ItemView: View) : RecyclerView.ViewHolder(ItemView) {
-        val centerTv: TextView = itemView.findViewById(R.id.weight_dashboard_center_text_view)
-        val rightTv: TextView = itemView.findViewById(R.id.weight_dashboard_right_text_view)
-        val leftIv: ImageView = itemView.findViewById(R.id.weight_dashboard_left_image_view)
+        var centerTv: TextView? = null
+        var rightTv: TextView? = null
+        var leftIv: ImageView? = null
+        init {
+            centerTv = itemView.findViewById(R.id.weight_dashboard_center_text_view)
+            rightTv = itemView.findViewById(R.id.weight_dashboard_right_text_view)
+            leftIv = itemView.findViewById(R.id.weight_dashboard_left_image_view)
+        }
     }
 }
