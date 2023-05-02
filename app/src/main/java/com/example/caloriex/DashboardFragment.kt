@@ -60,6 +60,8 @@ class DashboardFragment : Fragment() {
     private lateinit var fatPieChart: PieChart
     private lateinit var toolbar: androidx.appcompat.widget.Toolbar
     private lateinit var calendarTv: TextView
+    private lateinit var dashboardFoodLogs: TextView
+    private lateinit var dashboardWeightLogs: TextView
     private lateinit var imageIv: ImageView
     private lateinit var dashboardRecyclerView: RecyclerView
     private var appearBottomCounter = 0
@@ -96,6 +98,8 @@ class DashboardFragment : Fragment() {
         fatPieChart = view.findViewById(R.id.pieChartFat)
         toolbar = view.findViewById(R.id.toolbar)
         calendarTv = view.findViewById(R.id.calendar_text_view)
+        dashboardFoodLogs = view.findViewById(R.id.dashboard_food_logs)
+        dashboardWeightLogs = view.findViewById(R.id.dashboard_weight_logs)
         imageIv = view.findViewById(R.id.calendar_image_view)
 
         navController = findNavController()
@@ -180,6 +184,14 @@ class DashboardFragment : Fragment() {
         imageIv.setOnClickListener {
             navController.navigate(R.id.action_dashboardFragment_to_calendarFragment)
             appearBottomCounter = 0
+        }
+
+        dashboardFoodLogs.setOnClickListener {
+
+        }
+
+        dashboardWeightLogs.setOnClickListener {
+
         }
 
         // Customize the label visibility mode
