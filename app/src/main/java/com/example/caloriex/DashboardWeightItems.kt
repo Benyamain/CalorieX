@@ -8,13 +8,12 @@ import android.widget.TextView
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.squareup.picasso.Picasso
 
-class DashboardItemsAdapter(
-    private val list: List<DashboardItems>,
+class DashboardWeightItems(
+    private val list: List<DashboardWeight>,
     private val navController: NavController,
     private var appearBottomNavigationView: BottomNavigationView
-) : RecyclerView.Adapter<DashboardItemsAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<DashboardWeightItems.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -26,13 +25,12 @@ class DashboardItemsAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
         val itemsViewModel = list[position]
-        holder.centerTextView.text = itemsViewModel.centerText
-        holder.rightTextView.text = itemsViewModel.rightText
-        holder.belowTextView.text = itemsViewModel.belowText
-        Picasso.get().load(itemsViewModel?.leftImage).into(holder.leftImageView)
+        holder.centerTv.text = itemsViewModel.centerText
+        holder.rightTv.text = itemsViewModel.rightText
+        holder.leftIv.setImageResource(itemsViewModel.leftImage)
         holder.itemView.setOnClickListener {
             if (appearBottomNavigationView.visibility != View.VISIBLE) {
-                navController.navigate(R.id.action_dashboardFragment_to_nutritionInfoFragment)
+                navController.navigate(R.id.action_dashboardFragment_to_addWeightFragment)
             }
         }
     }
@@ -42,9 +40,8 @@ class DashboardItemsAdapter(
     }
 
     class ViewHolder(ItemView: View) : RecyclerView.ViewHolder(ItemView) {
-        val centerTextView: TextView = itemView.findViewById(R.id.dashboard_center_text_view)
-        val belowTextView: TextView = itemView.findViewById(R.id.dashboard_below_text_view)
-        val rightTextView: TextView = itemView.findViewById(R.id.dashboard_right_text_view)
-        val leftImageView: ImageView = itemView.findViewById(R.id.dashboard_left_image_view)
+        val centerTv: TextView = itemView.findViewById(R.id.weight_dashboard_center_text_view)
+        val rightTv: TextView = itemView.findViewById(R.id.weight_dashboard_right_text_view)
+        val leftIv: ImageView = itemView.findViewById(R.id.weight_dashboard_left_image_view)
     }
 }

@@ -30,7 +30,6 @@ import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
-import com.github.mikephil.charting.formatter.PercentFormatter
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView
@@ -109,77 +108,7 @@ class DashboardFragment : Fragment() {
         dashboardRecyclerView = view.findViewById(R.id.dashboard_recycler_view)
         dashboardRecyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        val dashboardData = ArrayList<DashboardItems>()
-
-        Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/calendarDate")
-            .addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    if (dataSnapshot.exists()) {
-                        val date = if (dataSnapshot.value is Long) {
-                            CalendarDate(
-                                dataSnapshot.getValue(
-                                    Long::class.java
-                                )
-                                    ?.toString()
-                            )
-                        } else {
-                            dataSnapshot.getValue(CalendarDate::class.java)
-                        }
-
-
-                        Firebase.database.getReference(
-                            "/${
-                                userEmail?.let { email ->
-                                    encodeEmail(
-                                        email
-                                    )
-                                }
-                            }/calendarDate/${date?.date}/dashboard/foodSelection"
-                        )
-                            .addListenerForSingleValueEvent(object : ValueEventListener {
-                                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                                    for (childSnapshot in dataSnapshot.children) {
-                                        val foodItem =
-                                            if (childSnapshot.value is Long) {
-                                                FoodItem(
-                                                    childSnapshot.getValue(
-                                                        Long::class.java
-                                                    )?.toString()
-                                                )
-                                            } else {
-                                                childSnapshot.getValue(FoodItem::class.java)
-                                            }
-
-                                        val dashboardItem = DashboardItems(
-                                            foodItem?.image ?: "",
-                                            foodItem?.name ?: "",
-                                            "999 g",
-                                            "${foodItem?.calorie} kcal" ?: ""
-                                        )
-                                        dashboardData.add(dashboardItem)
-                                    }
-
-                                    // Create the DashboardItemsAdapter with the dashboardData list
-                                    val dashboardItemsAdapter =
-                                        DashboardItemsAdapter(
-                                            dashboardData,
-                                            navController,
-                                            appearBottomNavigationView
-                                        )
-                                    dashboardRecyclerView.adapter = dashboardItemsAdapter
-                                }
-
-                                override fun onCancelled(databaseError: DatabaseError) {
-                                    // Handle database error
-                                }
-                            })
-                    }
-                }
-
-                override fun onCancelled(databaseError: DatabaseError) {
-                    Log.d("databaseError", "$databaseError")
-                }
-            })
+        loadDashboardData()
 
         imageIv.setOnClickListener {
             navController.navigate(R.id.action_dashboardFragment_to_calendarFragment)
@@ -187,7 +116,7 @@ class DashboardFragment : Fragment() {
         }
 
         dashboardFoodLogs.setOnClickListener {
-
+            loadDashboardData()
         }
 
         dashboardWeightLogs.setOnClickListener {
@@ -590,6 +519,82 @@ class DashboardFragment : Fragment() {
         } else {
             requestPermissionLauncher.launch(Manifest.permission.CAMERA)
         }
+    }
+
+    private fun loadDashboardData() {
+        val dashboardData = ArrayList<DashboardFood>()
+
+        Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/calendarDate")
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        val date = if (dataSnapshot.value is Long) {
+                            CalendarDate(
+                                dataSnapshot.getValue(
+                                    Long::class.java
+                                )
+                                    ?.toString()
+                            )
+                        } else {
+                            dataSnapshot.getValue(CalendarDate::class.java)
+                        }
+
+
+                        Firebase.database.getReference(
+                            "/${
+                                userEmail?.let { email ->
+                                    encodeEmail(
+                                        email
+                                    )
+                                }
+                            }/calendarDate/${date?.date}/dashboard/foodSelection"
+                        )
+                            .addListenerForSingleValueEvent(object : ValueEventListener {
+                                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                    dashboardData.clear()
+
+                                    for (childSnapshot in dataSnapshot.children) {
+                                        val foodItem =
+                                            if (childSnapshot.value is Long) {
+                                                FoodItem(
+                                                    childSnapshot.getValue(
+                                                        Long::class.java
+                                                    )?.toString()
+                                                )
+                                            } else {
+                                                childSnapshot.getValue(FoodItem::class.java)
+                                            }
+
+                                        val dashboardItem = DashboardFood(
+                                            foodItem?.image ?: "",
+                                            foodItem?.name ?: "",
+                                            "999 g",
+                                            "${foodItem?.calorie} kcal" ?: ""
+                                        )
+                                        dashboardData.add(dashboardItem)
+                                    }
+
+                                    // Create the DashboardItemsAdapter with the dashboardData list
+                                    val dashboardFoodItems =
+                                        DashboardFoodItems(
+                                            dashboardData,
+                                            navController,
+                                            appearBottomNavigationView
+                                        )
+                                    dashboardRecyclerView.adapter = dashboardFoodItems
+                                }
+
+                                override fun onCancelled(databaseError: DatabaseError) {
+                                    // Handle database error
+                                }
+                            })
+                    }
+                }
+
+                override fun onCancelled(databaseError: DatabaseError) {
+                    Log.d("databaseError", "$databaseError")
+                }
+            })
     }
 
     override fun onDestroy() {
