@@ -55,8 +55,6 @@ class FoodListAdapter(
                     image = currentItem?.image.toString()
                 )
 
-                foodItems.add(foodItem)
-
                 if (userEmail != null) {
 
                     Firebase.database.getReference("/${encodeEmail(userEmail)}/calendarDate")
@@ -73,12 +71,7 @@ class FoodListAdapter(
                                     } else {
                                         dataSnapshot.getValue(CalendarDate::class.java)
                                     }
-
-                                    val key = Firebase.database.getReference("/${encodeEmail(userEmail)}/calendarDate/${date?.date}/foodSelection").push().key?: ""
-                                    Firebase.database.getReference("/${encodeEmail(userEmail)}/calendarDate/${date?.date}/foodSelection/$key").setValue(foodItem)
-                                    val fKey = FoodItemKey(key = key)
-                                    foodItemKey.add(fKey)
-                                    Firebase.database.getReference("/${encodeEmail(userEmail)}/calendarDate/${date?.date}/foodSelectionKeys").setValue(fKey)
+                                    Firebase.database.getReference("/${encodeEmail(userEmail)}/calendarDate/${date?.date}/nutrition/foodSelection").setValue(foodItem)
                                 }
                             }
 

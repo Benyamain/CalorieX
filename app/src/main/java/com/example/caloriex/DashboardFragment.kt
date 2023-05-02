@@ -130,7 +130,7 @@ class DashboardFragment : Fragment() {
                                         email
                                     )
                                 }
-                            }/calendarDate/${date?.date}/foodSelection"
+                            }/calendarDate/${date?.date}/dashboard/foodSelection"
                         )
                             .addListenerForSingleValueEvent(object : ValueEventListener {
                                 override fun onDataChange(dataSnapshot: DataSnapshot) {

@@ -2,7 +2,6 @@ package com.example.caloriex
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -13,7 +12,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
-import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -79,6 +77,93 @@ class NutritionInfoFragment : Fragment() {
         saveBtn.setOnClickListener {
             lifecycleScope.launch {
                 withContext(Dispatchers.IO) {
+                    if (userEmail != null) {
+
+                        Firebase.database.getReference("/${encodeEmail(userEmail)}/calendarDate")
+                            .addListenerForSingleValueEvent(object : ValueEventListener {
+                                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                    if (dataSnapshot.exists()) {
+                                        val date = if (dataSnapshot.value is Long) {
+                                            CalendarDate(
+                                                dataSnapshot.getValue(
+                                                    Long::class.java
+                                                )
+                                                    ?.toString()
+                                            )
+                                        } else {
+                                            dataSnapshot.getValue(CalendarDate::class.java)
+                                        }
+
+                                        val dashboardKey =
+                                            Firebase.database.getReference("/${encodeEmail(userEmail)}/calendarDate/${date?.date}/dashboard/foodSelection")
+                                                .push().key ?: ""
+
+                                        Firebase.database.getReference(
+                                            "/${
+                                                userEmail?.let { email ->
+                                                    encodeEmail(
+                                                        email
+                                                    )
+                                                }
+                                            }/calendarDate/${date?.date}/nutrition/foodSelection"
+                                        )
+                                            .addListenerForSingleValueEvent(object :
+                                                ValueEventListener {
+                                                override fun onDataChange(
+                                                    dataSnapshot: DataSnapshot
+                                                ) {
+                                                    Log.d(
+                                                        "Ara is helping me",
+                                                        "onDataChange: $dataSnapshot"
+                                                    )
+                                                    if (dataSnapshot.exists()) {
+                                                        val foodItem =
+                                                            if (dataSnapshot.value is Long) {
+                                                                FoodItem(
+                                                                    dataSnapshot.getValue(
+                                                                        Long::class.java
+                                                                    )
+                                                                        ?.toString()
+                                                                )
+                                                            } else {
+                                                                dataSnapshot.getValue(
+                                                                    FoodItem::class.java
+                                                                )
+                                                            }
+
+                                                        Firebase.database.getReference(
+                                                            "/${
+                                                                encodeEmail(
+                                                                    userEmail
+                                                                )
+                                                            }/calendarDate/${date?.date}/dashboard/foodSelection/$dashboardKey"
+                                                        ).setValue(foodItem)
+
+                                                        if (foodItem != null) {
+                                                            foodItems.add(foodItem)
+                                                        }
+
+                                                    }
+                                                }
+
+                                                override fun onCancelled(
+                                                    databaseError: DatabaseError
+                                                ) {
+                                                    // Handle database error
+                                                }
+                                            })
+
+                                        val fKey = FoodItemKey(key = dashboardKey)
+                                        foodItemKey.add(fKey)
+                                    }
+                                }
+
+                                override fun onCancelled(databaseError: DatabaseError) {
+                                    Log.d("databaseError", "$databaseError")
+                                }
+                            })
+                    }
+
                     activity?.runOnUiThread {
                         view?.findViewById<ProgressBar>(R.id.ni_progress_circular)?.visibility =
                             View.VISIBLE
@@ -92,114 +177,103 @@ class NutritionInfoFragment : Fragment() {
         }
 
         Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/calendarDate")
-                .addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            val date = if (dataSnapshot.value is Long) {
-                                CalendarDate(
-                                    dataSnapshot.getValue(
-                                        Long::class.java
-                                    )
-                                        ?.toString()
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        val date = if (dataSnapshot.value is Long) {
+                            CalendarDate(
+                                dataSnapshot.getValue(
+                                    Long::class.java
                                 )
-                            } else {
-                                    dataSnapshot.getValue(CalendarDate::class.java)
+                                    ?.toString()
+                            )
+                        } else {
+                            dataSnapshot.getValue(CalendarDate::class.java)
+                        }
+
+
+                        Firebase.database.getReference(
+                            "/${
+                                userEmail?.let { email ->
+                                    encodeEmail(
+                                        email
+                                    )
                                 }
-
-                            Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/calendarDate/${date?.date}/foodSelectionKeys")
-                                .addListenerForSingleValueEvent(object : ValueEventListener {
-                                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                                        if (dataSnapshot.exists()) {
-                                            val key =
-                                                if (dataSnapshot.value is Long) {
-                                                    FoodItemKey(
-                                                        dataSnapshot.getValue(
-                                                            Long::class.java
-                                                        )
-                                                            ?.toString()
+                            }/calendarDate/${date?.date}/nutrition/foodSelection"
+                        )
+                            .addListenerForSingleValueEvent(object :
+                                ValueEventListener {
+                                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                    Log.d(
+                                        "Ara is helping me",
+                                        "onDataChange: $dataSnapshot"
+                                    )
+                                    if (dataSnapshot.exists()) {
+                                        val foodItem =
+                                            if (dataSnapshot.value is Long) {
+                                                FoodItem(
+                                                    dataSnapshot.getValue(
+                                                        Long::class.java
                                                     )
-                                                } else {
-                                                    dataSnapshot.getValue(FoodItemKey::class.java)
+                                                        ?.toString()
+                                                )
+                                            } else {
+                                                dataSnapshot.getValue(FoodItem::class.java)
+                                            }
+
+
+                                        // Now you can access the values in the `foodItem` object
+                                        lifecycleScope.launch {
+                                            withContext(Dispatchers.IO) {
+                                                activity?.runOnUiThread {
+                                                    val weightUnits = " g"
+                                                    val calorieUnits = " kcal"
+                                                    nutritionInfoTv.text =
+                                                        foodItem?.name ?: ""
+                                                    detailedProteinsValue.text =
+                                                        foodItem?.protein?.let { if (it == "null") "0" else it } + weightUnits
+                                                    detailedKcalValue.text =
+                                                        foodItem?.calorie?.let { if (it == "null") "0" else it } + calorieUnits
+                                                    detailedCarbsValue.text =
+                                                        foodItem?.carbs?.let { if (it == "null") "0" else it } + weightUnits
+                                                    detailedFatsValue.text =
+                                                        foodItem?.fat?.let { if (it == "null") "0" else it } + weightUnits
+                                                    detailedNutritionCaloriesValue.text =
+                                                        foodItem?.calorie?.let { if (it == "null") "0" else it } + calorieUnits
+                                                    detailedNutritionProteinValue.text =
+                                                        foodItem?.protein?.let { if (it == "null") "0" else it } + weightUnits
+                                                    detailedNutritionFatsValue.text =
+                                                        foodItem?.fat?.let { if (it == "null") "0" else it } + weightUnits
+                                                    detailedNutritionCarbsValue.text =
+                                                        foodItem?.carbs?.let { if (it == "null") "0" else it } + weightUnits
+                                                    detailedNutritionSValue.text =
+                                                        foodItem?.satfat?.let { if (it == "null") "0" else it } + weightUnits
+                                                    detailedNutritionPolyValue.text =
+                                                        foodItem?.polyfat?.let { if (it == "null") "0" else it } + weightUnits
+                                                    detailedNutritionMonoValue.text =
+                                                        foodItem?.monofat?.let { if (it == "null") "0" else it } + weightUnits
+                                                    detailedNutritionSugarValue.text =
+                                                        foodItem?.sugar?.let { if (it == "null") "0" else it } + weightUnits
+                                                    detailedNutritionFiberValue.text =
+                                                        foodItem?.fiber?.let { if (it == "null") "0" else it } + weightUnits
+                                                    amountEt.setText("")
                                                 }
-
-                                            Log.d("The Firebase path", "${"/${userEmail?.let { email -> encodeEmail(email) }}/calendarDate/$date/foodSelection/$key"}")
-
-                                            Firebase.database.getReference("/${userEmail?.let { email -> encodeEmail(email) }}/calendarDate/${date?.date}/foodSelection/${key?.key}")
-                                                .addListenerForSingleValueEvent(object : ValueEventListener {
-                                                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                                                        Log.d("Ara is helping me", "onDataChange: $dataSnapshot")
-                                                        if (dataSnapshot.exists()) {
-                                                            val foodItem =
-                                                                if (dataSnapshot.value is Long) {
-                                                                    FoodItem(
-                                                                        dataSnapshot.getValue(
-                                                                            Long::class.java
-                                                                        )
-                                                                            ?.toString()
-                                                                    )
-                                                                } else {
-                                                                    dataSnapshot.getValue(FoodItem::class.java)
-                                                                }
-
-
-                                                            // Now you can access the values in the `foodItem` object
-                                                            lifecycleScope.launch {
-                                                                withContext(Dispatchers.IO) {
-                                                                    activity?.runOnUiThread {
-                                                                        val weightUnits = " g"
-                                                                        val calorieUnits = " kcal"
-                                                                        nutritionInfoTv.text = foodItem?.name ?: ""
-                                                                        detailedProteinsValue.text =
-                                                                            foodItem?.protein?.let { if (it == "null") "0" else it } + weightUnits
-                                                                        detailedKcalValue.text =
-                                                                            foodItem?.calorie?.let { if (it == "null") "0" else it } + calorieUnits
-                                                                        detailedCarbsValue.text =
-                                                                            foodItem?.carbs?.let { if (it == "null") "0" else it } + weightUnits
-                                                                        detailedFatsValue.text =
-                                                                            foodItem?.fat?.let { if (it == "null") "0" else it } + weightUnits
-                                                                        detailedNutritionCaloriesValue.text =
-                                                                            foodItem?.calorie?.let { if (it == "null") "0" else it } + calorieUnits
-                                                                        detailedNutritionProteinValue.text =
-                                                                            foodItem?.protein?.let { if (it == "null") "0" else it } + weightUnits
-                                                                        detailedNutritionFatsValue.text =
-                                                                            foodItem?.fat?.let { if (it == "null") "0" else it } + weightUnits
-                                                                        detailedNutritionCarbsValue.text =
-                                                                            foodItem?.carbs?.let { if (it == "null") "0" else it } + weightUnits
-                                                                        detailedNutritionSValue.text =
-                                                                            foodItem?.satfat?.let { if (it == "null") "0" else it } + weightUnits
-                                                                        detailedNutritionPolyValue.text =
-                                                                            foodItem?.polyfat?.let { if (it == "null") "0" else it } + weightUnits
-                                                                        detailedNutritionMonoValue.text =
-                                                                            foodItem?.monofat?.let { if (it == "null") "0" else it } + weightUnits
-                                                                        detailedNutritionSugarValue.text =
-                                                                            foodItem?.sugar?.let { if (it == "null") "0" else it } + weightUnits
-                                                                        detailedNutritionFiberValue.text =
-                                                                            foodItem?.fiber?.let { if (it == "null") "0" else it } + weightUnits
-                                                                        amountEt.setText("")
-                                                                    }
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-
-                                                    override fun onCancelled(databaseError: DatabaseError) {
-                                                        // Handle database error
-                                                    }
-                                                })
+                                            }
                                         }
                                     }
+                                }
 
-                                    override fun onCancelled(databaseError: DatabaseError) {
-                                        // Handle database error
-                                    }
-                                })
-                        }
+                                override fun onCancelled(databaseError: DatabaseError) {
+                                    // Handle database error
+                                }
+                            })
                     }
+                }
 
-                    override fun onCancelled(databaseError: DatabaseError) {
-                        Log.d("databaseError", "$databaseError")
-                    }
-                })
+                override fun onCancelled(databaseError: DatabaseError) {
+                    Log.d("databaseError", "$databaseError")
+                }
+            })
 
         return view
     }
