@@ -12,6 +12,7 @@ data class FoodItem(
     val satfat: String? = null,
     val fat: String? = null,
     val image: String? = null,
+    val weight: String? = null
 ) {
     // No argument constructor is needed whenever dealing with Firebase Realtime Database
 }

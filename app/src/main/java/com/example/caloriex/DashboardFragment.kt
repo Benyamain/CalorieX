@@ -616,7 +616,7 @@ class DashboardFragment : Fragment() {
                                         val dashboardItem = DashboardFood(
                                             foodItem?.image ?: "",
                                             foodItem?.name ?: "",
-                                            "999 g",
+                                            "${(foodItem?.weight ?: 0)} g",
                                             "${foodItem?.calorie} kcal" ?: ""
                                         )
                                         dashboardFoodData.add(dashboardItem)

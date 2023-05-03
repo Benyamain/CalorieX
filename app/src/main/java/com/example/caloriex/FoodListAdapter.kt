@@ -39,7 +39,7 @@ class FoodListAdapter(
         val currentItem = foodsList[position].hints.firstOrNull()?.food
         holder.textView.text = currentItem?.label?.toString() ?: "Not Available!"
         Picasso.get().load(currentItem?.image).into(holder.leftIv)
-        if (  holder.textView.text != "Not Available!") {
+        if (holder.textView.text != "Not Available!") {
             holder.itemView.setOnClickListener {
                 val foodItem = FoodItem(
                     name = currentItem?.label.toString(),
@@ -52,7 +52,8 @@ class FoodListAdapter(
                     fiber = currentItem?.nutrients?.FIBTG.toString(),
                     satfat = currentItem?.nutrients?.FASAT.toString(),
                     fat = currentItem?.nutrients?.FAT.toString(),
-                    image = currentItem?.image.toString()
+                    image = currentItem?.image.toString(),
+                    weight = ""
                 )
 
                 if (userEmail != null) {
@@ -71,7 +72,8 @@ class FoodListAdapter(
                                     } else {
                                         dataSnapshot.getValue(CalendarDate::class.java)
                                     }
-                                    Firebase.database.getReference("/${encodeEmail(userEmail)}/calendarDate/${date?.date}/nutrition/foodSelection").setValue(foodItem)
+                                    Firebase.database.getReference("/${encodeEmail(userEmail)}/calendarDate/${date?.date}/nutrition/foodSelection")
+                                        .setValue(foodItem)
                                 }
                             }
 
@@ -82,7 +84,8 @@ class FoodListAdapter(
                 }
 
                 navController.navigate(
-                    R.id.action_searchFoodFragment_to_nutritionInfoFragment)
+                    R.id.action_searchFoodFragment_to_nutritionInfoFragment
+                )
             }
         } else {
             Toast.makeText(

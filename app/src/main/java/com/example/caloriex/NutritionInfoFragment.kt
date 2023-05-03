@@ -256,7 +256,7 @@ class NutritionInfoFragment : Fragment() {
                                                         foodItem?.sugar?.let { if (it == "null") "0" else it } + weightUnits
                                                     detailedNutritionFiberValue.text =
                                                         foodItem?.fiber?.let { if (it == "null") "0" else it } + weightUnits
-                                                    amountEt.setText("")
+                                                    amountEt.setText((foodItem?.weight ?: 0).toString())
                                                 }
                                             }
                                         }

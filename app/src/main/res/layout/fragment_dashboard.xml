@@ -157,7 +157,7 @@
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/dashboard_coordinator_layout"
         android:layout_width="match_parent"
-        android:layout_height="309dp"
+        android:layout_height="490dp"
         android:layout_marginTop="25dp"
         android:background="@color/app_background"
         android:layout_below="@id/appBarLayout">
