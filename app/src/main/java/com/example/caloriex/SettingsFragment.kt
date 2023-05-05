@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.activity.addCallback
 import androidx.annotation.RequiresApi
 import androidx.navigation.NavController
@@ -22,6 +23,7 @@ class SettingsFragment : Fragment() {
 
     private lateinit var navController: NavController
     private lateinit var navigationView: BottomNavigationView
+    private lateinit var bottomAccountTv: TextView
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreateView(
@@ -32,6 +34,7 @@ class SettingsFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_settings, container, false)
 
         navigationView = view.findViewById(R.id.bottom_navigation)
+        bottomAccountTv = view.findViewById(R.id.bottom_account_text_view)
 
         navController = findNavController()
         navigationView.setupWithNavController(navController)
@@ -81,6 +84,8 @@ class SettingsFragment : Fragment() {
                 else -> false
             }
         }
+
+        bottomAccountTv.text = userEmail
 
         return view
     }

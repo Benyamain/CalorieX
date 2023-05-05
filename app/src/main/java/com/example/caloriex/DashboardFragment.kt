@@ -388,12 +388,6 @@ class DashboardFragment : Fragment() {
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
                 updateCharts()
-            }
-        }
-
-        // Read the date when the user navigates back to the DashboardFragment from the CalendarFragment
-        lifecycleScope.launch {
-            withContext(Dispatchers.IO) {
                 readDate()
             }
         }
@@ -669,6 +663,7 @@ class DashboardFragment : Fragment() {
                                         dashboardFoodData.add(dashboardItem)
                                         caloriesConsumed += (foodItem?.calorie ?: "").toFloat()
                                         proteinConsumed += (foodItem?.protein ?: "").toFloat()
+                                        Log.d("proteinConsumed", "$proteinConsumed")
                                         carbsConsumed += (foodItem?.carbs ?: "").toFloat()
                                         fatConsumed += (foodItem?.fat ?: "").toFloat()
                                     }
