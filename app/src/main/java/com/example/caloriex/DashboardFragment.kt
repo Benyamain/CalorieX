@@ -31,7 +31,6 @@ import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.formatter.ValueFormatter
-import com.github.mikephil.charting.utils.ColorTemplate
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView
 import com.google.firebase.database.DataSnapshot
@@ -66,7 +65,10 @@ class DashboardFragment : Fragment() {
     private lateinit var dashboardFoodRecyclerView: RecyclerView
     private lateinit var dashboardWeightRecyclerView: RecyclerView
     private var appearBottomCounter = 0
-    private var amountEaten: Float = 0f
+    private var caloriesConsumed: Float = 0f
+    private var proteinConsumed: Float = 0f
+    private var carbsConsumed: Float = 0f
+    private var fatConsumed: Float = 0f
 
 
     private val requestPermissionLauncher =
@@ -263,8 +265,8 @@ class DashboardFragment : Fragment() {
         getCalories { calories ->
             val entries: ArrayList<PieEntry> = ArrayList()
             val colors: ArrayList<Int> = ArrayList()
-            entries.add(PieEntry(calories.toFloat() - amountEaten))
-            entries.add(PieEntry(amountEaten))
+            entries.add(PieEntry(calories.toFloat() - caloriesConsumed))
+            entries.add(PieEntry(caloriesConsumed))
             Log.d("getCalories", "$calories")
 
             colors.add(Color.rgb(162, 165, 171))
@@ -283,7 +285,6 @@ class DashboardFragment : Fragment() {
                         colors.add(Color.rgb(135, 182, 120))
                         return ""
                     } else return "${value.toInt()} kcal"
-
                 }
             })
 
@@ -300,11 +301,24 @@ class DashboardFragment : Fragment() {
             val proteinEntries: ArrayList<PieEntry> = ArrayList()
             val carbsEntries: ArrayList<PieEntry> = ArrayList()
             val fatEntries: ArrayList<PieEntry> = ArrayList()
+            val proteinColors: ArrayList<Int> = ArrayList()
+            val carbsColors: ArrayList<Int> = ArrayList()
+            val fatColors: ArrayList<Int> = ArrayList()
 
-            proteinEntries.add(PieEntry(macros.first.toFloat()))
-            carbsEntries.add(PieEntry(macros.second.toFloat()))
-            fatEntries.add(PieEntry(macros.third.toFloat()))
+            proteinEntries.add(PieEntry(macros.first.toFloat() - proteinConsumed))
+            proteinEntries.add(PieEntry(proteinConsumed))
+            carbsEntries.add(PieEntry(macros.second.toFloat() - carbsConsumed))
+            carbsEntries.add(PieEntry(carbsConsumed))
+            fatEntries.add(PieEntry(macros.third.toFloat() - fatConsumed))
+            fatEntries.add(PieEntry(fatConsumed))
             Log.d("getProtein", "${macros.first}")
+
+            proteinColors.add(Color.rgb(162, 165, 171))
+            proteinColors.add(Color.rgb(135, 182, 120))
+            carbsColors.add(Color.rgb(162, 165, 171))
+            carbsColors.add(Color.rgb(135, 182, 120))
+            fatColors.add(Color.rgb(162, 165, 171))
+            fatColors.add(Color.rgb(135, 182, 120))
 
             val proteinData = PieDataSet(proteinEntries, "Protein")
             val carbsData = PieDataSet(carbsEntries, "Carbs")
@@ -314,26 +328,41 @@ class DashboardFragment : Fragment() {
             carbsData.setDrawIcons(false)
             proteinData.setDrawIcons(false)
 
-            proteinData.color = Color.rgb(135, 182, 120)
-            carbsData.color = Color.rgb(135, 182, 120)
-            fatsData.color = Color.rgb(135, 182, 120)
+            proteinData.colors = proteinColors
+            carbsData.colors = carbsColors
+            fatsData.colors = fatColors
 
             val pData = PieData(proteinData)
             pData.setValueFormatter(object : ValueFormatter() {
                 override fun getFormattedValue(value: Float): String {
-                    return "${value.toInt()} g"
+                    if (value.toInt() == 0) return ""
+                    else if (value.toInt() < 0) {
+                        proteinColors.clear()
+                        proteinColors.add(Color.rgb(135, 182, 120))
+                        return ""
+                    } else return "${value.toInt()} g"
                 }
             })
             val cData = PieData(carbsData)
             cData.setValueFormatter(object : ValueFormatter() {
                 override fun getFormattedValue(value: Float): String {
-                    return "${value.toInt()} g"
+                    if (value.toInt() == 0) return ""
+                    else if (value.toInt() < 0) {
+                        carbsColors.clear()
+                        carbsColors.add(Color.rgb(135, 182, 120))
+                        return ""
+                    } else return "${value.toInt()} g"
                 }
             })
             val fData = PieData(fatsData)
             fData.setValueFormatter(object : ValueFormatter() {
                 override fun getFormattedValue(value: Float): String {
-                    return "${value.toInt()} g"
+                    if (value.toInt() == 0) return ""
+                    else if (value.toInt() < 0) {
+                        fatColors.clear()
+                        fatColors.add(Color.rgb(135, 182, 120))
+                        return ""
+                    } else return "${value.toInt()} g"
                 }
             })
 
@@ -638,7 +667,10 @@ class DashboardFragment : Fragment() {
                                             "${foodItem?.calorie} kcal" ?: ""
                                         )
                                         dashboardFoodData.add(dashboardItem)
-                                        amountEaten += (foodItem?.calorie ?: "").toFloat()
+                                        caloriesConsumed += (foodItem?.calorie ?: "").toFloat()
+                                        proteinConsumed += (foodItem?.protein ?: "").toFloat()
+                                        carbsConsumed += (foodItem?.carbs ?: "").toFloat()
+                                        fatConsumed += (foodItem?.fat ?: "").toFloat()
                                     }
 
                                     // Create the DashboardItemsAdapter with the dashboardData list
