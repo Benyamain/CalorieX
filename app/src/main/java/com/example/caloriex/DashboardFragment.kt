@@ -31,6 +31,7 @@ import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.formatter.ValueFormatter
+import com.github.mikephil.charting.utils.ColorTemplate
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView
 import com.google.firebase.database.DataSnapshot
@@ -43,7 +44,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
+
 
 private const val TAG = "ANNOYING"
 private val PERMISSIONS_REQUIRED = arrayOf(Manifest.permission.CAMERA)
@@ -65,6 +66,8 @@ class DashboardFragment : Fragment() {
     private lateinit var dashboardFoodRecyclerView: RecyclerView
     private lateinit var dashboardWeightRecyclerView: RecyclerView
     private var appearBottomCounter = 0
+    private var amountEaten: Float = 0f
+
 
     private val requestPermissionLauncher =
         registerForActivityResult(
@@ -259,23 +262,38 @@ class DashboardFragment : Fragment() {
     private fun updateCharts() {
         getCalories { calories ->
             val entries: ArrayList<PieEntry> = ArrayList()
-            entries.add(PieEntry(calories.toFloat()))
+            val colors: ArrayList<Int> = ArrayList()
+            entries.add(PieEntry(calories.toFloat() - amountEaten))
+            entries.add(PieEntry(amountEaten))
             Log.d("getCalories", "$calories")
+
+            colors.add(Color.rgb(162, 165, 171))
+            colors.add(Color.rgb(135, 182, 120))
 
             val dataSet = PieDataSet(entries, "Mobile OS")
             dataSet.setDrawIcons(false)
-            dataSet.color = Color.rgb(135, 182, 120)
+            dataSet.colors = colors
 
             val data = PieData(dataSet)
             data.setValueFormatter(object : ValueFormatter() {
                 override fun getFormattedValue(value: Float): String {
-                    return "${value.toInt()} kcal"
+                    if (value.toInt() == 0) return ""
+                    else if (value.toInt() < 0) {
+                        colors.clear()
+                        colors.add(Color.rgb(135, 182, 120))
+                        return ""
+                    } else return "${value.toInt()} kcal"
+
                 }
             })
 
-            data.setValueTextColor(Color.WHITE)
-
-            setupPieChart(caloriePieChart, data)
+            if (entries.isNotEmpty()) {
+                data.setValueTextColor(Color.WHITE)
+                setupPieChart(caloriePieChart, data)
+            } else {
+                Toast.makeText(requireContext(), ":)", Toast.LENGTH_SHORT)
+                    .show()
+            }
         }
 
         getMacros { macros ->
@@ -620,6 +638,7 @@ class DashboardFragment : Fragment() {
                                             "${foodItem?.calorie} kcal" ?: ""
                                         )
                                         dashboardFoodData.add(dashboardItem)
+                                        amountEaten += (foodItem?.calorie ?: "").toFloat()
                                     }
 
                                     // Create the DashboardItemsAdapter with the dashboardData list
