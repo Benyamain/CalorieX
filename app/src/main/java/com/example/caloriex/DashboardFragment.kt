@@ -387,8 +387,8 @@ class DashboardFragment : Fragment() {
 
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
-                updateCharts()
                 readDate()
+                updateCharts()
             }
         }
     }
@@ -399,14 +399,8 @@ class DashboardFragment : Fragment() {
 
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
-                updateCharts()
-            }
-        }
-
-        // Read the date when the user navigates back to the DashboardFragment from the CalendarFragment
-        lifecycleScope.launch {
-            withContext(Dispatchers.IO) {
                 readDate()
+                updateCharts()
             }
         }
     }

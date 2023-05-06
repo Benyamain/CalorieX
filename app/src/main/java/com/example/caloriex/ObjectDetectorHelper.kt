@@ -32,7 +32,7 @@ import org.tensorflow.lite.task.gms.vision.detector.ObjectDetector
 class ObjectDetectorHelper(
   var threshold: Float = 0.5f,
   var numThreads: Int = 2,
-  var maxResults: Int = 3,
+  var maxResults: Int = 1,
   val context: Context,
   val objectDetectorListener: DetectorListener
 ) {

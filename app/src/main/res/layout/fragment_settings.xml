@@ -44,7 +44,7 @@
             android:textAlignment="center"
             android:textAllCaps="false"
             android:textColor="@color/gray"
-            android:textSize="12sp" />
+            android:textSize="16sp" />
 
         <include layout="@layout/bottom_navigation_view" />
     </RelativeLayout>
