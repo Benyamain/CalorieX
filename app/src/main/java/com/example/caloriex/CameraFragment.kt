@@ -20,7 +20,6 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.findFragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import kotlinx.coroutines.Dispatchers
@@ -225,15 +224,18 @@ class CameraFragment : Fragment(), ObjectDetectorHelper.DetectorListener {
         imageWidth: Int
     ) {
         activity?.runOnUiThread {
-            // Pass necessary information to OverlayView for drawing on the canvas
-            requireView().findViewById<OverlayView>(R.id.overlay).setResults(
-                results ?: LinkedList<Detection>(),
-                imageHeight,
-                imageWidth
-            )
+            // Check if the view has been created
+            if (view != null) {
+                // Pass necessary information to OverlayView for drawing on the canvas
+                requireView().findViewById<OverlayView>(R.id.overlay).setResults(
+                    results ?: LinkedList<Detection>(),
+                    imageHeight,
+                    imageWidth
+                )
 
-            // Force a redraw
-            requireView().findViewById<OverlayView>(R.id.overlay).invalidate()
+                // Force a redraw
+                requireView().findViewById<OverlayView>(R.id.overlay).invalidate()
+            }
         }
     }
 }
