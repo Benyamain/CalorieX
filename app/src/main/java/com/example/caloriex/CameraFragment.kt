@@ -224,6 +224,16 @@ class CameraFragment : Fragment(), ObjectDetectorHelper.DetectorListener {
         imageHeight: Int,
         imageWidth: Int
     ) {
+        activity?.runOnUiThread {
+            // Pass necessary information to OverlayView for drawing on the canvas
+            requireView().findViewById<OverlayView>(R.id.overlay).setResults(
+                results ?: LinkedList<Detection>(),
+                imageHeight,
+                imageWidth
+            )
 
+            // Force a redraw
+            requireView().findViewById<OverlayView>(R.id.overlay).invalidate()
+        }
     }
 }

@@ -14,7 +14,10 @@
 
     <include layout="@layout/appear_bottom_toolbar" />
 
-
+    <com.example.caloriex.OverlayView
+        android:id="@+id/overlay"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent" />
 
     <androidx.core.widget.ContentLoadingProgressBar
         android:id="@+id/progress_circular"
