@@ -10,11 +10,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.squareup.picasso.Picasso
 
-class DashboardFoodItems(
+class DashboardFoodAdapter(
     private val list: List<DashboardFood>,
     private val navController: NavController,
     private var appearBottomNavigationView: BottomNavigationView
-) : RecyclerView.Adapter<DashboardFoodItems.ViewHolder>() {
+) : RecyclerView.Adapter<DashboardFoodAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)

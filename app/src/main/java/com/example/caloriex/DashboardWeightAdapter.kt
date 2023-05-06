@@ -9,11 +9,11 @@ import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-class DashboardWeightItems(
+class DashboardWeightAdapter(
     private val list: List<DashboardWeight>,
     private val navController: NavController,
     private var appearBottomNavigationView: BottomNavigationView
-) : RecyclerView.Adapter<DashboardWeightItems.ViewHolder>() {
+) : RecyclerView.Adapter<DashboardWeightAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)

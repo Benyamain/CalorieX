@@ -14,28 +14,28 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.addCallback
-import androidx.camera.core.AspectRatio
-import androidx.camera.core.Camera
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.ImageAnalysis
+import androidx.camera.core.*
 import androidx.camera.core.ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888
-import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.findFragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.tensorflow.lite.task.gms.vision.detector.Detection
+import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 private const val TAG = "CameraFragment"
 
-class CameraFragment : Fragment() {
+class CameraFragment : Fragment(), ObjectDetectorHelper.DetectorListener {
 
+    private lateinit var objectDetectorHelper: ObjectDetectorHelper
     private lateinit var bitmapBuffer: Bitmap
     private var preview: Preview? = null
     private var imageAnalyzer: ImageAnalysis? = null
@@ -81,6 +81,10 @@ class CameraFragment : Fragment() {
         cameraTv = view.findViewById(R.id.appear_bottom_toolbar_title_textview)
         cameraTv.text = "Snap Food"
 
+        objectDetectorHelper = ObjectDetectorHelper(
+            context = requireContext(),
+            objectDetectorListener = this)
+
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             // Do nothing
@@ -97,21 +101,6 @@ class CameraFragment : Fragment() {
                 ).show()
             }
         }
-
-
-        Handler().postDelayed({
-            // Initialize our background executor
-            cameraExecutor = Executors.newSingleThreadExecutor()
-
-            // Wait for the views to be properly laid out
-            requireView().findViewById<PreviewView>(R.id.view_finder).post {
-                // Set up the camera and its use cases
-                setUpCamera()
-            }
-
-            requireView().findViewById<ProgressBar>(R.id.progress_circular).visibility = View.GONE
-        }, 2000)
-
     }
 
     // Initialize CameraX, and prepare to bind the camera use cases
@@ -173,6 +162,7 @@ class CameraFragment : Fragment() {
                                 Bitmap.Config.ARGB_8888
                             )
                         }
+                        detectObjects(image)
                     }
                 }
 
@@ -194,5 +184,46 @@ class CameraFragment : Fragment() {
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         imageAnalyzer?.targetRotation = requireView().display.rotation
+    }
+
+    private fun detectObjects(image: ImageProxy) {
+        // Copy out RGB bits to the shared bitmap buffer
+        image.use { bitmapBuffer.copyPixelsFromBuffer(image.planes[0].buffer) }
+
+        val imageRotation = image.imageInfo.rotationDegrees
+        // Pass Bitmap and rotation to the object detector helper for processing and detection
+        objectDetectorHelper.detect(bitmapBuffer, imageRotation)
+    }
+
+    override fun onInitialized() {
+        Handler().postDelayed({
+            objectDetectorHelper.setupObjectDetector()
+            // Initialize our background executor
+            cameraExecutor = Executors.newSingleThreadExecutor()
+
+            // Wait for the views to be properly laid out
+            requireView().findViewById<PreviewView>(R.id.view_finder).post {
+                // Set up the camera and its use cases
+                setUpCamera()
+            }
+
+            requireView().findViewById<ProgressBar>(R.id.progress_circular).visibility = View.GONE
+        }, 2000)
+    }
+
+    override fun onError(error: String) {
+        activity?.runOnUiThread {
+            Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    // Update UI after objects have been detected. Extracts original image height/width
+    // to scale and place bounding boxes properly through OverlayView
+    override fun onResults(
+        results: MutableList<Detection>?,
+        imageHeight: Int,
+        imageWidth: Int
+    ) {
+
     }
 }

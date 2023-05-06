@@ -591,7 +591,7 @@ class DashboardFragment : Fragment() {
                             }
 
                             val weightItems =
-                                DashboardWeightItems(
+                                DashboardWeightAdapter(
                                     dashboardWeightData,
                                     navController,
                                     appearBottomNavigationView
@@ -669,13 +669,13 @@ class DashboardFragment : Fragment() {
                                     }
 
                                     // Create the DashboardItemsAdapter with the dashboardData list
-                                    val dashboardFoodItems =
-                                        DashboardFoodItems(
+                                    val dashboardFoodAdapter =
+                                        DashboardFoodAdapter(
                                             dashboardFoodData,
                                             navController,
                                             appearBottomNavigationView
                                         )
-                                    dashboardFoodRecyclerView.adapter = dashboardFoodItems
+                                    dashboardFoodRecyclerView.adapter = dashboardFoodAdapter
                                 }
 
                                 override fun onCancelled(databaseError: DatabaseError) {

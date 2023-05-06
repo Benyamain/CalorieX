@@ -91,8 +91,10 @@ dependencies {
     implementation "androidx.camera:camera-view:$camerax_version"
 
     // TensorFlow
-    implementation 'org.tensorflow:tensorflow-lite-task-vision:0.3.1'
-    implementation 'org.tensorflow:tensorflow-lite:2.7.0'
+//    implementation 'org.tensorflow:tensorflow-lite-task-vision:0.3.1'
+//    implementation 'org.tensorflow:tensorflow-lite:2.7.0'
+    implementation 'org.tensorflow:tensorflow-lite-task-vision-play-services:0.4.2'
+    implementation 'com.google.android.gms:play-services-tflite-gpu:16.0.0'
 
     // Retrofit && OkHttp
     implementation 'com.squareup.okhttp3:okhttp:4.9.3'
