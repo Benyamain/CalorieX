@@ -1,4 +1,4 @@
-# CalorieX
+# CalorieX 🏋️🥘
 A fitness and nutrition tracker that aims to make the experience more engaging and motivating by incorporating gamification features
 such as tracking an individual's progress. Users will be able to create an account and login to the app to track their progress, log their food and exercise, 
 set and track goals, and view their progress and goals in an easy-to-understand format.
